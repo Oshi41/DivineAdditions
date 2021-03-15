@@ -1,0 +1,5 @@
+{
+    "variants": {
+        "normal": { "model": "divineadditions:test_block2_model" }
+    }
+}

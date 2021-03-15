@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "down": "divineadditions:blocks/mbe01_block_simple_face0",
+        "up": "divineadditions:blocks/mbe01_block_simple_face1",
+        "north": "divineadditions:blocks/mbe01_block_simple_face2",
+        "east": "divineadditions:blocks/mbe01_block_simple_face5",
+        "south": "divineadditions:blocks/mbe01_block_simple_face3",
+        "west": "divineadditions:blocks/mbe01_block_simple_face4",
+        "particle": "blocks/lapis_block"
+    }
+}

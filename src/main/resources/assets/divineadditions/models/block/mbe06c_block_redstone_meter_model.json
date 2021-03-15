@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "down": "blocks/iron_block",
+        "up": "blocks/iron_block",
+        "north": "divineadditions:blocks/mbe06c_block_redstone_meter",
+        "east": "divineadditions:blocks/mbe06c_block_redstone_meter",
+        "south": "divineadditions:blocks/mbe06c_block_redstone_meter",
+        "west": "divineadditions:blocks/mbe06c_block_redstone_meter",
+        "particle": "divineadditions:blocks/mbe06c_block_redstone_meter"
+    }
+}

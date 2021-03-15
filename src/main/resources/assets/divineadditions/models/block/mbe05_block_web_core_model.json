@@ -1,0 +1,24 @@
+{
+  "ambientocclusion": false,
+  "textures": {
+    "down": "divineadditions:blocks/mbe05_block_3d_web",
+    "up": "divineadditions:blocks/mbe05_block_3d_web",
+    "north": "divineadditions:blocks/mbe05_block_3d_web",
+    "south": "divineadditions:blocks/mbe05_block_3d_web",
+    "east": "divineadditions:blocks/mbe05_block_3d_web",
+    "west": "divineadditions:blocks/mbe05_block_3d_web"
+  },
+  "elements": [
+    {  "from": [5.5, 5.5, 5.5],
+      "to": [10.5, 10.5, 10.5],
+      "faces": {
+        "down": {"uv": [ 5, 5, 10, 10], "texture": "#down"},
+        "up": {"uv": [ 5, 5, 10, 10], "texture": "#up"},
+        "north": {"uv": [ 0, 0, 5, 5], "texture": "#north"},
+        "south": {"uv": [ 0, 0, 5, 5], "texture": "#south"},
+        "west": {"uv": [ 11, 11, 16, 16], "texture": "#west"},
+        "east": {"uv": [ 11, 11, 16, 16], "texture": "#east"}
+      }
+    }
+  ]
+}

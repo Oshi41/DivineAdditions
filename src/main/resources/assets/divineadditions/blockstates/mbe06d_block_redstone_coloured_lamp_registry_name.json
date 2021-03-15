@@ -1,0 +1,8 @@
+{
+    "variants": {
+           "facing=north": { "model": "divineadditions:mbe06d_block_redstone_coloured_lamp_model"},
+            "facing=east": { "model": "divineadditions:mbe06d_block_redstone_coloured_lamp_model", "y": 90 },
+           "facing=south": { "model": "divineadditions:mbe06d_block_redstone_coloured_lamp_model", "y": 180 },
+            "facing=west": { "model": "divineadditions:mbe06d_block_redstone_coloured_lamp_model", "y": 270 }
+    }
+}
