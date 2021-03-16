@@ -2,6 +2,7 @@ package divineadditions.render;
 
 import divineadditions.api.IEntityCage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.entity.Entity;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +31,16 @@ public class RenderModItemStack extends TileEntityItemStackRenderer {
                 if (entity != null) {
                     Render render = Minecraft.getMinecraft().getRenderManager().entityRenderMap.get(entity.getClass());
                     if (render != null) {
+                        GlStateManager.pushMatrix();
+                        float maxWidth = 1.5F;
+                        if (Math.abs(entity.height - maxWidth) >= Double.MIN_VALUE) {
+                            float scale = maxWidth / entity.height;
+                            GlStateManager.scale(scale, scale, scale);
+                        }
+                        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                         render.doRender(entity, 0, 0, 0, 0, partialTicks);
+                        GL11.glPopAttrib();
+                        GlStateManager.popMatrix();
                         return;
                     }
                 }

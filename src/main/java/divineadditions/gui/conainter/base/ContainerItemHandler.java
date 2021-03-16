@@ -1,15 +1,19 @@
 package divineadditions.gui.conainter.base;
 
-import divineadditions.utils.IItemHandlerHelper;
+import divineadditions.utils.InventoryHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketOpenWindow;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
+
+import javax.annotation.Nullable;
 
 /**
  * Written by @offbeatwitch.
@@ -19,8 +23,14 @@ public class ContainerItemHandler extends Container {
     protected IItemHandler handler;
     protected int inventoryEnd;
 
+    @Nullable
+    private IInventory possibleInventory;
+
     public ContainerItemHandler(IItemHandler handler, EntityPlayer player) {
         this.handler = handler;
+        if (handler instanceof InvWrapper) {
+            possibleInventory = ((InvWrapper) handler).getInv();
+        }
 
         drawHandlerSlots(handler);
         inventoryEnd = handler.getSlots();
@@ -29,7 +39,7 @@ public class ContainerItemHandler extends Container {
     }
 
     public ContainerItemHandler(EntityPlayer player) {
-        this(IItemHandlerHelper.fromMainHand(player), player);
+        this(InventoryHelper.fromMainHand(player), player);
     }
 
     protected void drawHandlerSlots(IItemHandler handler) {
@@ -60,7 +70,7 @@ public class ContainerItemHandler extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return true;
+        return possibleInventory == null || possibleInventory.isUsableByPlayer(playerIn);
     }
 
     public SPacketOpenWindow toPacket(String type, String name) {

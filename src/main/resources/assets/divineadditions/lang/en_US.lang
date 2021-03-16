@@ -1,7 +1,15 @@
+# Tab
+itemGroup.divineadditions=Divine Additions
+
+# Item
 item.armor_essence.name=Эссенция брони
-item.rifle_entity_bullet.name=Нарезной патрон удержания
-entity.entity_cage_bullet.name=Пуля
-gui.rifle=Берём мобов под контроль
+item.rifle_bullet.name=Нарезной патрон
 item.rifle.name=Охотничья винтовка
 item.caged_mob.name=Запертый моб
 item.rifle_mob_core.name=Ядро пойманного моба
+
+# Entity
+entity.entity_cage_bullet.name=Пуля
+
+# Gui
+gui.rifle=Берём мобов под контроль

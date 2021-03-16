@@ -22,7 +22,7 @@ public class ItemRegistryHandler {
         IForgeRegistry<Item> registry = event.getRegistry();
 
         registerObj(registry, new ItemArmorEssence().setCreativeTab(Tabs.Main), "armor_essence");
-        registerObj(registry, new Item().setCreativeTab(Tabs.Main), "rifle_entity_bullet");
+        registerObj(registry, new Item().setCreativeTab(Tabs.Main), "rifle_bullet");
         registerObj(registry, new ItemModRifle().setCreativeTab(Tabs.Main), "rifle");
         registerObj(registry, new ItemRifleMobCore().setCreativeTab(Tabs.Main), "rifle_mob_core");
         registerObj(registry, new ItemCagedMob().setCreativeTab(Tabs.Main), "caged_mob");

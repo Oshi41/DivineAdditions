@@ -32,7 +32,13 @@ public class ItemModRifle extends Item {
     @Nullable
     @Override
     public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-        return new CapabilityItemProvider(new InvWrapper(new RifleInventory()));
+        CapabilityItemProvider provider = new CapabilityItemProvider(new InvWrapper(new RifleInventory()));
+
+        if (nbt != null) {
+            provider.deserializeNBT(nbt);
+        }
+
+        return provider;
     }
 
     @Override
@@ -64,6 +70,7 @@ public class ItemModRifle extends Item {
                     ItemStack usingCatalyst = catalysts.stream().filter(stack -> coreItem.acceptableForCatalyst(stack, false)).findFirst().orElse(ItemStack.EMPTY);
                     if (!usingCatalyst.isEmpty()) {
                         coreItem.shoot(worldIn, playerIn, usingBullets, usingCatalyst);
+                        core.damageItem(1, playerIn);
                     }
                 }
             }

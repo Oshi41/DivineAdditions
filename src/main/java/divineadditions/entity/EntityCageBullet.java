@@ -34,7 +34,7 @@ public class EntityCageBullet extends EntityThrowable implements IEntityCatcher 
             return;
         }
 
-        if (tryCatch(result.entityHit, (IEntityCage) Items.rifle_mob_core)
+        if (tryCatch(result.entityHit, (IEntityCage) Items.caged_mob)
                 && getEntityWorld().isRemote) {
             spawnParticles(world, result.entityHit.getPosition());
         }

@@ -14,7 +14,7 @@ public class RifleMobCore {
 
     @Config.Comment("Bullets that current core can apply. Number means amount of ammo using per shot")
     public Map<String, Integer> bullets = new HashMap<String, Integer>() {{
-        put(new ResourceLocation(DivineAdditions.MOD_ID, "rifle_entity_bullet").toString(), 1);
+        put(new ResourceLocation(DivineAdditions.MOD_ID, "rifle_bullet").toString(), 1);
     }};
 
     @Config.RangeInt(min = 15, max = 60)
