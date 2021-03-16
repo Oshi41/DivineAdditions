@@ -1,8 +1,11 @@
 package divineadditions.debug;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
+import openmods.reflection.ReflectionHelper;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -36,13 +39,13 @@ public class LangHelper {
         notTranslated.addAll(findNotTranslated(ForgeRegistries.BLOCKS, "block"));
         notTranslated.addAll(findNotTranslated(ForgeRegistries.BIOMES, "biome"));
 
-//        try {
-//            RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>> tileRegistry = (RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>>) ReflectionHelper.getField(TileEntity.class, "REGISTRY").get(null);
-//            notTranslated.addAll(findNotTranslated(tileRegistry.getKeys(), "tile"));
-//
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>> tileRegistry = (RegistryNamespaced<ResourceLocation, Class<? extends TileEntity>>) ReflectionHelper.getField(TileEntity.class, "REGISTRY").get(null);
+            notTranslated.addAll(findNotTranslated(tileRegistry.getKeys(), "tile"));
+
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
 
         if (notTranslated.isEmpty())
             return;
@@ -52,7 +55,7 @@ public class LangHelper {
 
         langFiles.forEach((file, list) -> {
             notTranslated.forEach(location -> {
-                list.add(String.format("%s.%s..name=%s",
+                list.add(String.format("%s.%s.name=%s",
                         location.getResourceDomain(),
                         location.getResourcePath(),
                         location.getResourcePath()));

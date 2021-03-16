@@ -1,11 +1,18 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
+import divineadditions.entity.EntityCageBullet;
+import divineadditions.render.RenderItem;
+import divinerpg.registry.RenderRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.entity.RenderEntityItem;
+import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -22,6 +29,8 @@ public class ModelRegistryEventHandler {
                 .stream()
                 .filter(x -> DivineAdditions.MOD_ID.equals(x.getKey().getResourceDomain()))
                 .forEach(x -> registerItemModel(x.getValue()));
+
+        registerEntityRenders();
     }
 
     private static void registerItemModel(Item item) {
@@ -32,5 +41,9 @@ public class ModelRegistryEventHandler {
         ResourceLocation registryName = item.getRegistryName();
         ModelResourceLocation modelResourceLocation = new ModelResourceLocation(registryName, "inventory");
         ModelLoader.setCustomModelResourceLocation(item, meta, modelResourceLocation);
+    }
+
+    private static void registerEntityRenders() {
+        RenderingRegistry.registerEntityRenderingHandler(EntityCageBullet.class, manager -> new RenderItem<>(manager, Minecraft.getMinecraft().getRenderItem()));
     }
 }
