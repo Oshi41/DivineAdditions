@@ -15,20 +15,23 @@ public class RifleGuiContainer extends GuiContainer {
     public RifleGuiContainer(Container inventorySlotsIn, EntityPlayer player) {
         super(inventorySlotsIn);
         inventoryPlayer = player.inventory;
-
-        this.ySize = 168;
-        this.xSize = 176;
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        int inventoryRows = 4;
-
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.mc.getTextureManager().bindTexture(background);
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(i, j, 0, 0, this.xSize, inventoryRows * 18 + 17);
-        this.drawTexturedModalRect(i, j + inventoryRows * 18 + 17, 0, 126, this.xSize, 96);
+        this.drawTexturedModalRect(i, j, 0, 0, this.xSize, this.ySize);
+
+//        int inventoryRows = 4;
+//
+//        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+//        this.mc.getTextureManager().bindTexture(background);
+//        int i = (this.width - this.xSize) / 2;
+//        int j = (this.height - this.ySize) / 2;
+//        this.drawTexturedModalRect(i, j, 0, 0, this.xSize, inventoryRows * 18 + 17);
+//        this.drawTexturedModalRect(i, j + inventoryRows * 18 + 17, 0, 126, this.xSize, 96);
     }
 }

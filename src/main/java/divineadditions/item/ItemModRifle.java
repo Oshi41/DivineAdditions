@@ -1,17 +1,26 @@
 package divineadditions.item;
 
 import divineadditions.DivineAdditions;
+import divineadditions.api.IItemEntityBullet;
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.gui.GuiHandler;
+import divineadditions.gui.conainter.RifleContainer;
+import divineadditions.gui.inventory.RifleInventory;
+import divineadditions.utils.ItemStackHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
+
+import java.util.List;
 
 public class ItemModRifle extends Item {
 
@@ -33,24 +42,36 @@ public class ItemModRifle extends Item {
 
                 return new ActionResult<>(EnumActionResult.SUCCESS, heldItem);
             } else {
-                ItemStack bullets = itemHandler.getStackInSlot(0);
-                ItemStack catalyst = itemHandler.getStackInSlot(1);
+                if (itemHandler instanceof InvWrapper && ((InvWrapper) itemHandler).getInv() instanceof RifleInventory) {
+                    RifleInventory container = (RifleInventory) ((InvWrapper) itemHandler).getInv();
+                    List<ItemStack> bullets = container.getBullets();
+                    if (!bullets.isEmpty()) {
+                        ItemStack bullet = bullets.get(0);
+                        IItemEntityBullet bulletItem = (IItemEntityBullet) bullet.getItem();
 
-                if (!worldIn.isRemote && !bullets.isEmpty()) {
-                    if (bullets.getItem() instanceof ItemEntityBullet) {
-                        ItemEntityBullet bullet = (ItemEntityBullet) bullets.getItem();
-                        if (tryConsume(catalyst, bullet.getCatalyst())) {
-                            bullets.shrink(1);
+                        ItemStack neededCatalyst = bulletItem.getCatalyst();
 
-                            Entity entity = bullet.createBulletEntity(worldIn, playerIn);
+                        for (ItemStack catalyst : container.getCatalysts()) {
+                            if (bulletItem.tryConsume(playerIn, catalyst, neededCatalyst)) {
+                                ItemStackHelper.shrink(bullet, playerIn, 1);
 
-                            if (entity != null) {
-                                worldIn.spawnEntity(entity);
+                                Entity entity = bulletItem.createBulletEntity(worldIn, playerIn);
+                                if (entity != null) {
 
-                                playerIn.getCooldownTracker().setCooldown(heldItem.getItem(), DivineAdditionsConfig.rifleSettings.rifleCooldown);
+                                    if (!worldIn.isRemote) {
+                                        worldIn.spawnEntity(entity);
+                                    }
 
-                                heldItem.damageItem(1, playerIn);
-                                return new ActionResult<>(EnumActionResult.SUCCESS, heldItem);
+                                    playerIn.getCooldownTracker().setCooldown(heldItem.getItem(), DivineAdditionsConfig.rifleSettings.rifleCooldown);
+
+                                    heldItem.damageItem(1, playerIn);
+
+                                    if (worldIn.isRemote) {
+                                        particleExplosion(worldIn, playerIn);
+                                    }
+
+                                    return new ActionResult<>(EnumActionResult.SUCCESS, heldItem);
+                                }
                             }
                         }
                     }
@@ -61,23 +82,21 @@ public class ItemModRifle extends Item {
         return ActionResult.newResult(EnumActionResult.FAIL, heldItem);
     }
 
-    /**
-     * trying to consume catalyst from slot
-     *
-     * @param source   - current slot
-     * @param catalyst - needed catalyst
-     * @return
-     */
-    public static boolean tryConsume(ItemStack source, ItemStack catalyst) {
-        if (source.getItem() == catalyst.getItem()) {
-            if (ItemStack.areItemStackShareTagsEqual(source, catalyst)) {
-                if (source.getCount() >= catalyst.getCount()) {
-                    source.shrink(catalyst.getCount());
-                    return true;
-                }
-            }
-        }
+    private void particleExplosion(World world, EntityLivingBase entity) {
+        Vec3d position = entity.getPositionEyes(1).add(entity.getLookVec());
 
-        return false;
+        for (int i = 0; i < 20; i++) {
+            Vec3d scale = entity.getLookVec().scale(world.rand.nextFloat());
+
+            world.spawnParticle(
+                    EnumParticleTypes.SMOKE_NORMAL,
+                    position.x + world.rand.nextFloat() - world.rand.nextFloat(),
+                    position.y + world.rand.nextFloat() - world.rand.nextFloat(),
+                    position.z + world.rand.nextFloat() - world.rand.nextFloat(),
+                    scale.x,
+                    scale.y,
+                    scale.z
+            );
+        }
     }
 }

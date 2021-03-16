@@ -8,7 +8,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketOpenWindow;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -17,12 +16,23 @@ import net.minecraftforge.items.SlotItemHandler;
  * Licensed under MIT.
  */
 public class ContainerItemHandler extends Container {
-    private IItemHandler handler;
-
-    private int inventoryEnd;
+    protected IItemHandler handler;
+    protected int inventoryEnd;
 
     public ContainerItemHandler(IItemHandler handler, EntityPlayer player) {
         this.handler = handler;
+
+        drawHandlerSlots(handler);
+        inventoryEnd = handler.getSlots();
+
+        drawPlayerSlots(player, 102, 159);
+    }
+
+    public ContainerItemHandler(EntityPlayer player) {
+        this(IItemHandlerHelper.fromMainHand(player), player);
+    }
+
+    protected void drawHandlerSlots(IItemHandler handler) {
         int i = 0;
 
         while (i < handler.getSlots()) {
@@ -34,25 +44,19 @@ public class ContainerItemHandler extends Container {
 
             i++;
         }
+    }
 
-        inventoryEnd = inventorySlots.size();
-
+    protected void drawPlayerSlots(EntityPlayer player, int topSlotHeight, int hotbarHeight) {
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlotToContainer(new Slot(player.inventory, j1 + l * 9 + 9, 8 + j1 * 18, 102 + l * 18 + i));
+                this.addSlotToContainer(new Slot(player.inventory, j1 + l * 9 + 9, 8 + j1 * 18, topSlotHeight + l * 18));
             }
         }
 
         for (int i1 = 0; i1 < 9; ++i1) {
-            this.addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, 159 + i));
+            this.addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, hotbarHeight));
         }
-
     }
-
-    public ContainerItemHandler(EntityPlayer player) {
-        this(IItemHandlerHelper.fromMainHand(player), player);
-    }
-
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
