@@ -2,13 +2,7 @@ package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
 import divineadditions.entity.EntityCageBullet;
-import divineadditions.holders.Tabs;
-import divineadditions.item.ItemArmorEssence;
-import divineadditions.item.ItemEntityBullet;
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
@@ -17,7 +11,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.function.Function;
 

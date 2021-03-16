@@ -3,3 +3,5 @@ item.rifle_entity_bullet.name=Нарезной патрон удержания
 entity.entity_cage_bullet.name=Пуля
 gui.rifle=Берём мобов под контроль
 item.rifle.name=Охотничья винтовка
+item.caged_mob.name=Запертый моб
+item.rifle_mob_core.name=Ядро пойманного моба

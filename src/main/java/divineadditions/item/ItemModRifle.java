@@ -1,102 +1,74 @@
 package divineadditions.item;
 
 import divineadditions.DivineAdditions;
-import divineadditions.api.IItemEntityBullet;
-import divineadditions.config.DivineAdditionsConfig;
+import divineadditions.api.IRifleCore;
+import divineadditions.capability.CapabilityItemProvider;
 import divineadditions.gui.GuiHandler;
-import divineadditions.gui.conainter.RifleContainer;
 import divineadditions.gui.inventory.RifleInventory;
-import divineadditions.utils.ItemStackHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemModRifle extends Item {
 
     public ItemModRifle() {
-        setMaxDamage(DivineAdditionsConfig.rifleSettings.rifleDurability);
+        setMaxDamage(824);
         setMaxStackSize(1);
+    }
+
+    @Nullable
+    @Override
+    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+        return new CapabilityItemProvider(new InvWrapper(new RifleInventory()));
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        ItemStack heldItem = playerIn.getHeldItem(handIn);
 
-        IItemHandler itemHandler = heldItem.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        if (itemHandler != null) {
-            if (playerIn.isSneaking()) {
-                BlockPos position = playerIn.getPosition();
+        ItemStack itemStack = playerIn.getHeldItem(handIn);
+        IItemHandler itemHandler = itemStack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
-                playerIn.openGui(DivineAdditions.instance, GuiHandler.RifleGuiId, worldIn, position.getX(), position.getY(), position.getZ());
+        if (itemHandler == null)
+            return super.onItemRightClick(worldIn, playerIn, handIn);
 
-                return new ActionResult<>(EnumActionResult.SUCCESS, heldItem);
-            } else {
-                if (itemHandler instanceof InvWrapper && ((InvWrapper) itemHandler).getInv() instanceof RifleInventory) {
-                    RifleInventory container = (RifleInventory) ((InvWrapper) itemHandler).getInv();
-                    List<ItemStack> bullets = container.getBullets();
-                    if (!bullets.isEmpty()) {
-                        ItemStack bullet = bullets.get(0);
-                        IItemEntityBullet bulletItem = (IItemEntityBullet) bullet.getItem();
+        if (playerIn.isSneaking()) {
+            BlockPos position = playerIn.getPosition();
+            playerIn.openGui(DivineAdditions.instance, GuiHandler.RifleGuiId, worldIn, position.getX(), position.getY(), position.getZ());
+            return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
+        }
 
-                        ItemStack neededCatalyst = bulletItem.getCatalyst();
+        if (itemHandler instanceof InvWrapper && ((InvWrapper) itemHandler).getInv() instanceof RifleInventory) {
+            RifleInventory rifleInventory = (RifleInventory) ((InvWrapper) itemHandler).getInv();
+            ItemStack core = rifleInventory.getCore();
+            List<ItemStack> bullets = rifleInventory.getBullets();
+            List<ItemStack> catalysts = rifleInventory.getCatalysts();
 
-                        for (ItemStack catalyst : container.getCatalysts()) {
-                            if (bulletItem.tryConsume(playerIn, catalyst, neededCatalyst)) {
-                                ItemStackHelper.shrink(bullet, playerIn, 1);
+            if (!core.isEmpty() && !bullets.isEmpty()) {
+                IRifleCore coreItem = (IRifleCore) core.getItem();
 
-                                Entity entity = bulletItem.createBulletEntity(worldIn, playerIn);
-                                if (entity != null) {
-
-                                    if (!worldIn.isRemote) {
-                                        worldIn.spawnEntity(entity);
-                                    }
-
-                                    playerIn.getCooldownTracker().setCooldown(heldItem.getItem(), DivineAdditionsConfig.rifleSettings.rifleCooldown);
-
-                                    heldItem.damageItem(1, playerIn);
-
-                                    if (worldIn.isRemote) {
-                                        particleExplosion(worldIn, playerIn);
-                                    }
-
-                                    return new ActionResult<>(EnumActionResult.SUCCESS, heldItem);
-                                }
-                            }
-                        }
+                ItemStack usingBullets = bullets.stream().filter(stack -> coreItem.acceptableForBullets(stack, false)).findFirst().orElse(ItemStack.EMPTY);
+                if (!usingBullets.isEmpty()) {
+                    ItemStack usingCatalyst = catalysts.stream().filter(stack -> coreItem.acceptableForCatalyst(stack, false)).findFirst().orElse(ItemStack.EMPTY);
+                    if (!usingCatalyst.isEmpty()) {
+                        coreItem.shoot(worldIn, playerIn, usingBullets, usingCatalyst);
                     }
                 }
             }
         }
 
-        return ActionResult.newResult(EnumActionResult.FAIL, heldItem);
-    }
-
-    private void particleExplosion(World world, EntityLivingBase entity) {
-        Vec3d position = entity.getPositionEyes(1).add(entity.getLookVec());
-
-        for (int i = 0; i < 20; i++) {
-            Vec3d scale = entity.getLookVec().scale(world.rand.nextFloat());
-
-            world.spawnParticle(
-                    EnumParticleTypes.SMOKE_NORMAL,
-                    position.x + world.rand.nextFloat() - world.rand.nextFloat(),
-                    position.y + world.rand.nextFloat() - world.rand.nextFloat(),
-                    position.z + world.rand.nextFloat() - world.rand.nextFloat(),
-                    scale.x,
-                    scale.y,
-                    scale.z
-            );
-        }
+        return new ActionResult<>(EnumActionResult.FAIL, itemStack);
     }
 }

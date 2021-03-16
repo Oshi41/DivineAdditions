@@ -27,7 +27,9 @@ public class CapabilityItemProvider implements ICapabilitySerializable<NBTBase> 
     @Nullable
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        return CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(instance);
+        return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY
+                ? CapabilityItemHandler.ITEM_HANDLER_CAPABILITY.cast(this.instance)
+                : null;
     }
 
     @Override

@@ -3,10 +3,6 @@ package divineadditions.api;
 import divineadditions.DivineAdditions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -14,8 +10,9 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public interface IEntityCage extends IEntityCatcher {
-    static String entityIdName = "id";
+public interface IEntityCage {
+    String entityIdName = "id";
+    String cagedTagName = "cage";
 
     /**
      * Spawning containing entity
@@ -48,6 +45,23 @@ public interface IEntityCage extends IEntityCatcher {
         }
 
         return false;
+    }
+
+    /**
+     * Put current entity to cage
+     *
+     * @param entity   - entity to store. You need to despawn it by yourself!
+     * @param compound - NBT tag
+     * @return
+     */
+    default boolean imprison(Entity entity, NBTTagCompound compound) {
+        if (entity == null || compound == null) {
+            return false;
+        }
+
+        NBTTagCompound entityTag = entity.serializeNBT();
+        compound.setTag(cagedTagName, entityTag);
+        return true;
     }
 
     @Nullable

@@ -2,12 +2,11 @@ package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
 import divineadditions.entity.EntityCageBullet;
-import divineadditions.render.RenderItem;
-import divinerpg.registry.RenderRegistry;
+import divineadditions.render.RenderModItemStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.entity.RenderSnowball;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -31,7 +30,9 @@ public class ModelRegistryEventHandler {
                 .forEach(x -> registerItemModel(x.getValue()));
 
         registerEntityRenders();
+        registerTESR();
     }
+
 
     private static void registerItemModel(Item item) {
         if (item == null)
@@ -44,6 +45,10 @@ public class ModelRegistryEventHandler {
     }
 
     private static void registerEntityRenders() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityCageBullet.class, manager -> new RenderItem<>(manager, Minecraft.getMinecraft().getRenderItem()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityCageBullet.class, manager -> new RenderSnowball<>(manager, Items.NETHER_STAR, Minecraft.getMinecraft().getRenderItem()));
+    }
+
+    private static void registerTESR() {
+        divineadditions.holders.Items.caged_mob.setTileEntityItemStackRenderer(new RenderModItemStack());
     }
 }

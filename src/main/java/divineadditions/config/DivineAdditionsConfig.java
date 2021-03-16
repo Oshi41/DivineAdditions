@@ -6,6 +6,6 @@ import net.minecraftforge.common.config.Config;
 @Config(modid = DivineAdditions.MOD_ID, type = Config.Type.INSTANCE)
 public class DivineAdditionsConfig {
     @Config.Comment("Settings for mob rifle")
-    public static RifleSettings rifleSettings = new RifleSettings();
+    public static RifleMobCore rifleMobCore = new RifleMobCore();
 
 }

@@ -30,6 +30,8 @@ public class RifleContainer extends ContainerItemHandler {
                 addSlotToContainer(slot);
             }
         }
+
+        addSlotToContainer(new SlotItemHandler(handler, index++, 143, 36));
     }
 
     @Override

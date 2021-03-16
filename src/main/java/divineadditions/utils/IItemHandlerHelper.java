@@ -2,7 +2,6 @@ package divineadditions.utils;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -39,7 +38,8 @@ public class IItemHandlerHelper {
         NBTTagList items = compound.getTagList("Items", 10);
 
         for (int i = 0; i < maxSlot; i++) {
-            handler.insertItem(i, new ItemStack(items.getCompoundTagAt(i)), false);
+            ItemStack itemStack = new ItemStack(items.getCompoundTagAt(i));
+            handler.insertItem(i, itemStack, false);
         }
     }
 
