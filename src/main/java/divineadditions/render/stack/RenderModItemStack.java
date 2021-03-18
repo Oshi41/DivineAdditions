@@ -1,4 +1,4 @@
-package divineadditions.render;
+package divineadditions.render.stack;
 
 import divineadditions.api.IEntityCage;
 import net.minecraft.client.Minecraft;

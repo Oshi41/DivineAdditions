@@ -1,4 +1,4 @@
-package divineadditions.render;
+package divineadditions.render.entity;
 
 import divineadditions.api.ISingleItemHandler;
 import net.minecraft.client.renderer.entity.RenderManager;

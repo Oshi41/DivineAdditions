@@ -2,6 +2,7 @@ package divineadditions.item;
 
 import divineadditions.api.IArmorEssence;
 import divinerpg.api.DivineAPI;
+import divinerpg.api.armor.IFullSetInfo;
 import divinerpg.api.armor.registry.IArmorDescription;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -12,8 +13,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ItemArmorEssence extends Item implements IArmorEssence {
     private static final String armorDescriptionName = "ArmorId";
@@ -41,7 +44,7 @@ public class ItemArmorEssence extends Item implements IArmorEssence {
         if (checkStack(essence) && items != null && description != null) {
             NBTTagCompound compound = essence.getTagCompound();
 
-            if (!"".equals(compound.getString(armorDescriptionName))) {
+            if (compound.getString(armorDescriptionName).isEmpty()) {
                 compound.setString(armorDescriptionName, description.getRegistryName().toString());
                 int durability = items
                         .values()
@@ -51,6 +54,7 @@ public class ItemArmorEssence extends Item implements IArmorEssence {
                         .sum();
 
                 compound.setInteger(durabilityName, durability);
+                essence.setItemDamage(0);
                 return true;
             }
         }
@@ -77,8 +81,18 @@ public class ItemArmorEssence extends Item implements IArmorEssence {
 
         IArmorDescription description = getDescription(stack);
         if (description != null) {
-            tooltip.add(description.getFullSetPerks().getFormattedText());
+            tooltip.addAll(printFullSetPerks(description));
         }
+    }
+
+    private List<String> printFullSetPerks(IArmorDescription description) {
+        IFullSetInfo item = Arrays.stream(EntityEquipmentSlot.values())
+                .map(x -> description.getPossibleItems(x).stream().filter(y -> y instanceof IFullSetInfo).findFirst().orElse(null))
+                .filter(x -> x != null)
+                .map(x -> (IFullSetInfo) x)
+                .findFirst().orElse(null);
+
+        return item.getFullSetPerks().getSiblings().stream().map(x -> x.getFormattedText()).collect(Collectors.toList());
     }
 
     private boolean checkStack(ItemStack stack) {

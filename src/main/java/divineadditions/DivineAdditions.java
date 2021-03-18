@@ -1,9 +1,8 @@
 package divineadditions;
 
 import divineadditions.api.IProxy;
-import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.gui.GuiHandler;
-import divineadditions.trash.GuiHandlerRegistry;
+import divineadditions.registry.TilesRegistryHandler;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -40,9 +39,11 @@ public class DivineAdditions {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        proxy.pre();
+
         ConfigManager.sync(DivineAdditions.MOD_ID, Config.Type.INSTANCE);
         NetworkRegistry.INSTANCE.registerGuiHandler(DivineAdditions.instance, new GuiHandler());
-        proxy.pre();
+        TilesRegistryHandler.register();
     }
 
     @EventHandler
