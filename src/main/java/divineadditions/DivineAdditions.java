@@ -14,6 +14,8 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Mod(
         modid = DivineAdditions.MOD_ID,
@@ -37,8 +39,11 @@ public class DivineAdditions {
     @SidedProxy(clientSide = "divineadditions.proxy.ClientProxy", serverSide = "divineadditions.proxy.ServerProxy")
     public static IProxy proxy;
 
+    public static Logger logger = LogManager.getLogger();
+
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        logger = event.getModLog();
         proxy.pre();
 
         ConfigManager.sync(DivineAdditions.MOD_ID, Config.Type.INSTANCE);

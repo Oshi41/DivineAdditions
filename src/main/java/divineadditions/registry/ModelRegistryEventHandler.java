@@ -1,7 +1,9 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
+import divineadditions.entity.EntityArmorDefender;
 import divineadditions.entity.EntityCageBullet;
+import divineadditions.render.entity.RenderEntityArmorDefender;
 import divineadditions.render.stack.RenderModItemStack;
 import divineadditions.render.tile.TileEntityStackHolderRenderer;
 import divineadditions.tile.TileEntityStackHolder;
@@ -50,6 +52,7 @@ public class ModelRegistryEventHandler {
 
     private static void registerEntityRenders() {
         RenderingRegistry.registerEntityRenderingHandler(EntityCageBullet.class, manager -> new RenderSnowball<>(manager, Items.NETHER_STAR, Minecraft.getMinecraft().getRenderItem()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityArmorDefender.class, RenderEntityArmorDefender::new);
     }
 
     private static void registerTESR() {

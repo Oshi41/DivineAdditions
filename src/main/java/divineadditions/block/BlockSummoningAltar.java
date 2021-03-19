@@ -23,7 +23,7 @@ public class BlockSummoningAltar extends BlockContainer {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntitySummoningAltar();
+        return new TileEntitySummoningAltar(3);
     }
 
     @Override

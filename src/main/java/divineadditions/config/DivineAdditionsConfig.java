@@ -8,4 +8,6 @@ public class DivineAdditionsConfig {
     @Config.Comment("Settings for mob rifle")
     public static RifleMobCore rifleMobCore = new RifleMobCore();
 
+    @Config.Comment("Entities configuration")
+    public static MobConfig mobsConfig = new MobConfig();
 }

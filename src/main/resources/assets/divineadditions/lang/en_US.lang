@@ -26,4 +26,5 @@ gui.rifle=Берём мобов под контроль
 divineadditions.wrong_pedestal_count=Пъедесталов должно быть %s
 divineadditions.armor_is_not_powered=У этой брони нет особых умений
 divineadditions.armor_multiple_power=Выложено несколько сетов брони с особыми умениями, а нужен только один
-divineadditions.sword_is_needed=Для призыва необходим меч
+divineadditions.weapon_is_needed=Для призыва необходимо оружие
+entity.armor_defender.name=armor_defender
