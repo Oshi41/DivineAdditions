@@ -6,12 +6,13 @@ import divineadditions.api.IPedestal;
 import divineadditions.entity.EntityArmorDefender;
 import divineadditions.holders.Items;
 import divineadditions.item.ItemArmorEssence;
+import divineadditions.tile.base.TileSyncBase;
 import divineadditions.utils.InventoryHelper;
-import divineadditions.utils.NbtUtils;
 import divinerpg.DivineRPG;
 import divinerpg.api.DivineAPI;
 import divinerpg.api.armor.ArmorEquippedEvent;
 import divinerpg.api.armor.registry.IArmorDescription;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,21 +24,19 @@ import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.items.IItemHandler;
-import openmods.tileentity.SimpleNetTileEntity;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class TileEntitySummoningAltar extends SimpleNetTileEntity {
-    private static final String summonTriesName = "SummonCount";
+public class TileEntitySummoningAltar extends TileSyncBase {
     private int radius;
 
     public TileEntitySummoningAltar() {
@@ -55,7 +54,7 @@ public class TileEntitySummoningAltar extends SimpleNetTileEntity {
         if (!acceptItem(player))
             return false;
 
-        List<IItemHandler> pedestals = findPedestals(radius);
+        List<IPedestal> pedestals = findPedestals(radius);
         int length = EntityEquipmentSlot.values().length;
         if (pedestals.size() != length) {
             if (!world.isRemote)
@@ -67,7 +66,7 @@ public class TileEntitySummoningAltar extends SimpleNetTileEntity {
                 .collect(Collectors.toMap(x -> x, x -> ItemStack.EMPTY));
 
         List<ItemStack> stacks = pedestals.stream()
-                .map(x -> x.getStackInSlot(0))
+                .map(x -> x.getHandler().getStackInSlot(0))
                 .filter(x -> !x.isEmpty())
                 .collect(Collectors.toList());
 
@@ -87,8 +86,7 @@ public class TileEntitySummoningAltar extends SimpleNetTileEntity {
             return false;
         }
 
-        pedestals.forEach(InventoryHelper::clear);
-        player.getHeldItemMainhand().shrink(1);
+        shrinkItems(player, pedestals);
 
         spawnEffects(world, getPos());
 
@@ -121,14 +119,21 @@ public class TileEntitySummoningAltar extends SimpleNetTileEntity {
      * @param radius
      * @return
      */
-    private List<IItemHandler> findPedestals(int radius) {
+    private List<IPedestal> findPedestals(int radius) {
         return StreamSupport.stream(BlockPos.getAllInBox(pos.add(-radius, 0, -radius), pos.add(radius, 0, radius)).spliterator(), false)
                 .map(world::getTileEntity)
                 .filter(x -> x instanceof IPedestal)
-                .map(x -> ((IPedestal) x).getHandler())
+                .map(x -> ((IPedestal) x))
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Detecting armor desciption here
+     *
+     * @param items  - pedestal items
+     * @param sender - summoner
+     * @return
+     */
     private IArmorDescription detectDescription(Map<EntityEquipmentSlot, ItemStack> items, ICommandSender sender) {
         ArmorEquippedEvent equippedEvent = new ArmorEquippedEvent(items);
         MinecraftForge.EVENT_BUS.post(equippedEvent);
@@ -155,6 +160,13 @@ public class TileEntitySummoningAltar extends SimpleNetTileEntity {
         return armorDescription;
     }
 
+    /**
+     * Checking is pedestal items contains sword/bow
+     *
+     * @param items
+     * @param sender
+     * @return
+     */
     private boolean checkAttackEqupment(Map<EntityEquipmentSlot, ItemStack> items, ICommandSender sender) {
         Item item = items.get(EntityEquipmentSlot.MAINHAND).getItem();
 
@@ -184,6 +196,34 @@ public class TileEntitySummoningAltar extends SimpleNetTileEntity {
         return ItemStack.EMPTY;
     }
 
+    private void shrinkItems(EntityPlayer player, List<IPedestal> pedestals) {
+        if (player == null || pedestals == null || world == null) {
+            DivineAdditions.logger.warn("TileEntitySummoningAltar: player,pedestals or world is null");
+            return;
+        }
+
+        if (player.isCreative())
+            return;
+
+        for (IPedestal pedestal : pedestals) {
+            InventoryHelper.clear(pedestal.getHandler());
+
+            // We need this to tell client that pedestal are empty now
+
+            BlockPos pos = ((TileEntity) pedestal).getPos();
+            IBlockState blockState = world.getBlockState(pos);
+            world.notifyBlockUpdate(pos, blockState, blockState, 3);
+        }
+
+        player.getHeldItemMainhand().shrink(1);
+    }
+
+    /**
+     * spawn particles/lightnings/etc
+     *
+     * @param world
+     * @param pos
+     */
     private void spawnEffects(World world, BlockPos pos) {
         if (world.isRemote) {
             Random rand = world.rand;
@@ -207,16 +247,19 @@ public class TileEntitySummoningAltar extends SimpleNetTileEntity {
         }
     }
 
+    /**
+     * Summon boss here
+     *
+     * @param items
+     * @param summoner
+     * @param essence
+     * @return
+     */
     private boolean summonEntity(Map<EntityEquipmentSlot, ItemStack> items, EntityPlayer summoner, ItemStack essence) {
         if (items == null || items.isEmpty() || summoner == null || essence == null || essence.isEmpty())
             return false;
 
-        NBTTagCompound tag = NbtUtils.getOrCreateModPlayerPersistTag(summoner, DivineAdditions.MOD_NAME);
-        int tries = tag.getInteger(summonTriesName);
-
-
-        EntityArmorDefender armorDefender = new EntityArmorDefender(world, summoner, items, essence);
-        armorDefender.increaseStats(1 + tries / 5.);
+        EntityArmorDefender armorDefender = new EntityArmorDefender(world, items, summoner, essence);
 
         Random rand = getWorld().rand;
 
@@ -226,27 +269,21 @@ public class TileEntitySummoningAltar extends SimpleNetTileEntity {
                 rand.nextInt(7) - 7
         );
 
-        armorDefender.setPosition(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+        armorDefender.setPosition(blockPos.getX(), world.getHeight(blockPos.getX(), blockPos.getZ()), blockPos.getZ());
 
-        world.spawnEntity(armorDefender);
-
-        tag.setInteger(summonTriesName, tries + 1);
-        return true;
+        return world.spawnEntity(armorDefender);
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         NBTTagCompound nbt = super.writeToNBT(compound);
-
         nbt.setInteger("Radius", radius);
-
         return nbt;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-
         radius = compound.getInteger("Radius");
     }
 }

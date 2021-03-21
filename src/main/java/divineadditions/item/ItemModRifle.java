@@ -2,7 +2,7 @@ package divineadditions.item;
 
 import divineadditions.DivineAdditions;
 import divineadditions.api.IRifleCore;
-import divineadditions.capability.CapabilityItemProvider;
+import divineadditions.capability.item_provider.CapabilityItemProvider;
 import divineadditions.gui.GuiHandler;
 import divineadditions.gui.inventory.RifleInventory;
 import net.minecraft.entity.player.EntityPlayer;

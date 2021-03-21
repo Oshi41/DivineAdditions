@@ -1,4 +1,4 @@
-package divineadditions.capability;
+package divineadditions.capability.item_provider;
 
 import divineadditions.utils.InventoryHelper;
 import net.minecraft.nbt.NBTBase;

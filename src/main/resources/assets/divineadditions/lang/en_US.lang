@@ -18,7 +18,7 @@ block.pedestal.name=Пъедестал
 block.summoning_altar.name=Алтарь призыва
 
 # Tile
-tile.stack_holder.name=stack_holder
+tile.stack_holder.name=Пъедестал
 tile.summoning_altar.name=Алтарь призыва
 
 # Gui
@@ -27,4 +27,4 @@ divineadditions.wrong_pedestal_count=Пъедесталов должно быт�
 divineadditions.armor_is_not_powered=У этой брони нет особых умений
 divineadditions.armor_multiple_power=Выложено несколько сетов брони с особыми умениями, а нужен только один
 divineadditions.weapon_is_needed=Для призыва необходимо оружие
-entity.armor_defender.name=armor_defender
+entity.armor_defender.name=Защитник

@@ -1,12 +1,17 @@
 package divineadditions.entity;
 
+import divineadditions.DivineAdditions;
+import divineadditions.ai.EntityAIAttackMelee;
+import divineadditions.api.IArmorEssence;
 import divineadditions.config.DivineAdditionsConfig;
-import divineadditions.item.ItemArmorEssence;
 import divineadditions.utils.EntityAttributeHelper;
-import divinerpg.api.DivineAPI;
-import divinerpg.api.armor.registry.IArmorDescription;
+import divineadditions.utils.NbtUtils;
+import divinerpg.objects.entities.ai.AIDivineLookAround;
+import divinerpg.objects.entities.ai.AIDivineRandomFly;
 import divinerpg.objects.entities.ai.GhastLikeMoveHelper;
-import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.ai.attributes.IAttribute;
@@ -22,120 +27,51 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.world.DifficultyInstance;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 public class EntityArmorDefender extends AbstractSkeleton {
-    private EntityAIAttackRangedBow<AbstractSkeleton> aiArrowAttack;
-    private EntityAIAttackMelee aiAttackOnCollide;
-
-    private IArmorDescription description;
+    private final static String killsCount = "DefenderKills";
+    private final EntityAIAttackRangedBow<AbstractSkeleton> aiArrowAttack = new EntityAIAttackRangedBow<AbstractSkeleton>(this, 1.0D, 20, 15.0F);
     private EntityPlayer summoner;
+    private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false);
     private ItemStack essence;
+    private final AIDivineRandomFly aiDivineRandomFly = new AIDivineRandomFly(this);
+    private final AIDivineLookAround aiDivineLookAround = new AIDivineLookAround(this);
+    private final EntityAIMoveTowardsRestriction aiMoveTowardsRestriction = new EntityAIMoveTowardsRestriction(this, 1);
+    private final EntityAIWander aiEntityAIWander = new EntityAIWander(this, 1);
+    private ResourceLocation description;
+    private boolean canFly;
+    private int generation;
+
 
     public EntityArmorDefender(World worldIn) {
         super(worldIn);
-
-        aiArrowAttack = new EntityAIAttackRangedBow<AbstractSkeleton>(this, 1.2, 20, 15.0F);
-        aiAttackOnCollide = new EntityAIAttackMelee(this, 1.4, false);
     }
 
-    public EntityArmorDefender(World worldIn, EntityPlayer victim, Map<EntityEquipmentSlot, ItemStack> items, ItemStack essence) {
+    public EntityArmorDefender(World worldIn, Map<EntityEquipmentSlot, ItemStack> items, EntityPlayer summoner, ItemStack essence) {
         this(worldIn);
 
-        this.description = ((ItemArmorEssence) essence.getItem()).getDescription(essence);
-        this.essence = essence;
-        this.summoner = victim;
+        generation = NbtUtils.getOrCreateModPlayerPersistTag(summoner, DivineAdditions.MOD_ID).getInteger(killsCount);
 
-        setAttackTarget(victim);
-        setCustomNameTag(victim.getName());
+        this.summoner = summoner;
+        setEssence(essence);
+        setPreferredPaths();
+        setCustomNameTag(summoner.getName());
 
         items.forEach((slot, stack) -> {
-            setItemStackToSlot(slot, stack);
+            setItemStackToSlot(slot, stack.copy());
             setDropChance(slot, 0);
         });
-    }
 
-    @Nullable
-    @Override
-    public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata) {
-        return super.onInitialSpawn(difficulty, livingdata);
-    }
-
-    @Override
-    protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty) {
-        // ignored
-    }
-
-    @Override
-    public void setCombatTask() {
-        if (this.world != null && !this.world.isRemote) {
-
-            if (aiAttackOnCollide != null && aiArrowAttack != null) {
-                this.tasks.removeTask(this.aiAttackOnCollide);
-                this.tasks.removeTask(this.aiArrowAttack);
-
-                ItemStack itemstack = this.getHeldItemMainhand();
-
-                if (itemstack.getItem() instanceof ItemBow) {
-                    int i = 20;
-
-                    if (this.world.getDifficulty() != EnumDifficulty.HARD) {
-                        i = 40;
-                    }
-
-                    this.aiArrowAttack.setAttackCooldown(i);
-                    this.tasks.addTask(1, this.aiArrowAttack);
-                } else {
-                    this.tasks.addTask(1, this.aiAttackOnCollide);
-                }
-            }
-
-            if (preferWater()) {
-                for (PathNodeType value : PathNodeType.values()) {
-
-                    if (value != PathNodeType.WATER)
-                        setPathPriority(value, -1);
-                    else
-                        setPathPriority(value, 16);
-                }
-            }
-
-            if (preferLava()) {
-                for (PathNodeType value : PathNodeType.values()) {
-
-                    if (value != PathNodeType.LAVA && value != PathNodeType.DAMAGE_FIRE)
-                        setPathPriority(value, -1);
-                    else
-                        setPathPriority(value, 16);
-                }
-            }
-
-            IAttributeInstance speedAttr = getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
-
-            if (speedAttr.getAttributeValue() > 3.5) {
-                tasks.addTask(3, new EntityAIMoveTowardsTarget(this, speedAttr.getAttributeValue(), 32.0F));
-            }
-        }
-
-        this.moveHelper = canFly()
-                ? new GhastLikeMoveHelper(this)
-                : new EntityMoveHelper(this);
-    }
-
-    @Override
-    protected void initEntityAI() {
-        this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+        increaseStats(generation);
     }
 
     @Override
@@ -145,53 +81,114 @@ public class EntityArmorDefender extends AbstractSkeleton {
     }
 
     @Override
+    protected void initEntityAI() {
+        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+        this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+
+        this.tasks.addTask(8, new EntityAILookIdle(this));
+        this.tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+    }
+
+    @Override
+    public void setCombatTask() {
+        if (world == null
+                || world.isRemote
+                || aiAttackOnCollide == null
+                || aiArrowAttack == null
+                || aiDivineLookAround == null
+                || aiDivineRandomFly == null
+                || aiMoveTowardsRestriction == null
+                || aiEntityAIWander == null
+        )
+            return;
+
+        this.tasks.removeTask(this.aiAttackOnCollide);
+        this.tasks.removeTask(this.aiArrowAttack);
+        tasks.removeTask(aiDivineLookAround);
+        tasks.removeTask(aiDivineRandomFly);
+        tasks.removeTask(aiMoveTowardsRestriction);
+        tasks.removeTask(aiEntityAIWander);
+
+
+        ItemStack itemstack = this.getHeldItemMainhand();
+
+        if (itemstack.getItem() instanceof ItemBow) {
+            int i = 20;
+
+            if (this.world.getDifficulty() != EnumDifficulty.HARD) {
+                i = 40;
+            }
+
+            i -= generation / 10.;
+
+            this.aiArrowAttack.setAttackCooldown(i);
+            this.tasks.addTask(4, this.aiArrowAttack);
+
+        } else {
+            this.tasks.addTask(4, this.aiAttackOnCollide);
+        }
+
+
+        if (canFly) {
+            this.tasks.addTask(7, aiDivineLookAround);
+            this.tasks.addTask(5, aiDivineRandomFly);
+        } else {
+            this.tasks.addTask(5, aiMoveTowardsRestriction);
+            this.tasks.addTask(7, aiEntityAIWander);
+        }
+    }
+
+    @Override
     protected SoundEvent getStepSound() {
         return SoundEvents.ENTITY_STRAY_STEP;
     }
 
     @Override
-    public boolean isNonBoss() {
-        return false;
+    public void readEntityFromNBT(NBTTagCompound compound) {
+        canFly = compound.getBoolean("CanFly");
+        generation = compound.getInteger("Generation");
+        setEssence(new ItemStack(compound.getCompoundTag("Essence")));
+
+        if (summoner != null)
+            compound.setUniqueId("Summoner", summoner.getUniqueID());
+
+        super.readEntityFromNBT(compound);
+
+        setPreferredPaths();
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        NBTTagCompound nbt = super.writeToNBT(compound);
+    public void writeEntityToNBT(NBTTagCompound compound) {
+        compound.setBoolean("CanFly", canFly);
 
-        if (description != null) {
-            nbt.setString("ArmorId", description.getRegistryName().toString());
-        }
+        if (essence != null && essence.isEmpty())
+            compound.setTag("Essence", essence.serializeNBT());
+
+        compound.setInteger("Generation", generation);
 
         if (summoner != null) {
-            nbt.setUniqueId("Summoner", summoner.getUniqueID());
+            compound.setUniqueId("Summoner", summoner.getUniqueID());
         }
 
-        if (essence != null) {
-            nbt.setTag("Essence", essence.serializeNBT());
-        }
-
-        return nbt;
+        super.writeEntityToNBT(compound);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        String string = compound.getString("ArmorId");
-        if (!string.isEmpty()) {
-            description = DivineAPI.getArmorDescriptionRegistry().getValue(new ResourceLocation(string));
+    public void travel(float strafe, float vertical, float forward) {
+        if (canFly) {
+            travelFly(strafe, vertical, forward);
+        } else {
+            super.travel(strafe, vertical, forward);
         }
-
-        UUID id = compound.getUniqueId("Summoner");
-        if (world != null) {
-            summoner = world.getPlayerEntityByUUID(id);
-        }
-
-        if (compound.hasKey("Essence")) {
-            essence = new ItemStack(compound.getCompoundTag("Essence"));
-        }
-
-        super.readFromNBT(compound);
     }
 
+    /**
+     * Dropping here essence
+     *
+     * @param wasRecentlyHit
+     * @param lootingModifier
+     * @param source
+     */
     @Override
     protected void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
         super.dropLoot(wasRecentlyHit, lootingModifier, source);
@@ -200,56 +197,153 @@ public class EntityArmorDefender extends AbstractSkeleton {
         }
     }
 
+    @Override
+    public boolean isNonBoss() {
+        return false;
+    }
+
     @Nullable
-    public EntityPlayer getSummoner() {
-        return summoner;
+    @Override
+    public EntityLivingBase getAttackTarget() {
+        if (summoner != null)
+            return summoner;
+
+        return super.getAttackTarget();
     }
 
-    private boolean canFly() {
-        if (description != null) {
-            return description.getRegistryName().getResourcePath().contains("angelic");
+    @Override
+    public void onDeath(DamageSource cause) {
+        super.onDeath(cause);
+
+        EntityPlayer player = null;
+
+        if (getAttackTarget() instanceof EntityPlayer) {
+            player = (EntityPlayer) getAttackTarget();
         }
 
-        return false;
-    }
-
-    private boolean preferWater() {
-        if (description != null) {
-            String resourcePath = description.getRegistryName().getResourcePath();
-
-            return resourcePath.equals("aqua")
-                    || resourcePath.equals("wildwood")
-                    || resourcePath.equals("kraken");
+        if (player == null && getRevengeTarget() instanceof EntityPlayer) {
+            player = (EntityPlayer) getRevengeTarget();
         }
 
-        return false;
+        if (player != null) {
+            NBTTagCompound tag = NbtUtils.getOrCreateModPlayerPersistTag(player, DivineAdditions.MOD_ID);
+            tag.setInteger(killsCount, 1 + tag.getInteger(killsCount));
+        }
     }
 
-    private boolean preferLava() {
-        if (description != null) {
-            String resourcePath = description.getRegistryName().getResourcePath();
+    // region Private methods
 
-            return resourcePath.equals("bedrock")
-                    || resourcePath.equals("netherite")
-                    || resourcePath.equals("inferno");
+    private void travelFly(float strafe, float vertical, float forward) {
+        if (this.isInWater()) {
+            this.moveRelative(strafe, vertical, forward, 0.02F);
+            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+            this.motionX *= 0.800000011920929D;
+            this.motionY *= 0.800000011920929D;
+            this.motionZ *= 0.800000011920929D;
+        } else if (this.isInLava()) {
+            this.moveRelative(strafe, vertical, forward, 0.02F);
+            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+            this.motionX *= 0.5D;
+            this.motionY *= 0.5D;
+            this.motionZ *= 0.5D;
+        } else {
+            float f = 0.91F;
+
+            if (this.onGround) {
+                BlockPos underPos = new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.getEntityBoundingBox().minY) - 1, MathHelper.floor(this.posZ));
+                IBlockState underState = this.world.getBlockState(underPos);
+                f = underState.getBlock().getSlipperiness(underState, this.world, underPos, this) * 0.91F;
+            }
+
+            float f1 = 0.16277136F / (f * f * f);
+            this.moveRelative(strafe, vertical, forward, this.onGround ? 0.1F * f1 : 0.02F);
+            f = 0.91F;
+
+            if (this.onGround) {
+                BlockPos underPos = new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.getEntityBoundingBox().minY) - 1, MathHelper.floor(this.posZ));
+                IBlockState underState = this.world.getBlockState(underPos);
+                f = underState.getBlock().getSlipperiness(underState, this.world, underPos, this) * 0.91F;
+            }
+
+            this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+            this.motionX *= f;
+            this.motionY *= f;
+            this.motionZ *= f;
         }
 
-        return false;
+        this.prevLimbSwingAmount = this.limbSwingAmount;
+        double d1 = this.posX - this.prevPosX;
+        double d0 = this.posZ - this.prevPosZ;
+        float f2 = MathHelper.sqrt(d1 * d1 + d0 * d0) * 4.0F;
+
+        if (f2 > 1.0F) {
+            f2 = 1.0F;
+        }
+
+        this.limbSwingAmount += (f2 - this.limbSwingAmount) * 0.4F;
+        this.limbSwing += this.limbSwingAmount;
     }
 
-    public void increaseStats(double increase) {
-        List<IAttribute> attrs = Arrays.asList(SharedMonsterAttributes.ARMOR,
-                SharedMonsterAttributes.MAX_HEALTH,
-                SharedMonsterAttributes.ATTACK_DAMAGE,
-                SharedMonsterAttributes.ATTACK_SPEED,
-                SharedMonsterAttributes.MOVEMENT_SPEED);
+    private EntityMoveHelper createMoveHelper() {
+        return canFly
+                ? new GhastLikeMoveHelper(this)
+                : new EntityMoveHelper(this);
+    }
 
-        for (IAttribute attribute : attrs) {
-            IAttributeInstance instance = getEntityAttribute(attribute);
-            if (instance != null) {
-                double newValue = instance.getAttributeValue() * increase;
-                instance.setBaseValue(newValue);
+    private void setEssence(ItemStack essence) {
+        this.essence = essence;
+
+        if (essence.getItem() instanceof IArmorEssence) {
+            description = ((IArmorEssence) essence.getItem()).getDescription(essence).getRegistryName();
+        }
+    }
+
+    private void increaseStats(int killsCount) {
+        if (killsCount < 1)
+            return;
+
+        increaseWith(SharedMonsterAttributes.MAX_HEALTH, 100 * killsCount);
+        increaseWith(SharedMonsterAttributes.ATTACK_DAMAGE, 3 * killsCount);
+        increaseWith(SharedMonsterAttributes.MOVEMENT_SPEED, 0.03 * killsCount);
+        increaseWith(SharedMonsterAttributes.ATTACK_SPEED, -0.1 * killsCount);
+
+        setHealth(getMaxHealth());
+    }
+
+    private void increaseWith(IAttribute attribute, double value) {
+        IAttributeInstance instance = getEntityAttribute(attribute);
+        double result = instance.getAttributeValue() + value;
+        instance.setBaseValue(result);
+    }
+
+    private void setPreferredPaths() {
+        if (description != null) {
+            String id = description.toString();
+
+            if (DivineAdditionsConfig.mobsConfig.aerSets.contains(id)) {
+                canFly = true;
+            }
+
+            List<PathNodeType> paths = new ArrayList<>();
+
+            if (DivineAdditionsConfig.mobsConfig.waterSets.contains(id)) {
+                paths.add(PathNodeType.WATER);
+            }
+
+            if (DivineAdditionsConfig.mobsConfig.fireSets.contains(id)) {
+                paths.add(PathNodeType.LAVA);
+                paths.add(PathNodeType.DAMAGE_FIRE);
+            }
+
+            if (!paths.isEmpty()) {
+                for (int i = 0; i < paths.size(); i++) {
+                    setPathPriority(paths.get(i), 16 - i);
+                }
             }
         }
+
+        this.moveHelper = createMoveHelper();
     }
+
+    // endregion
 }

@@ -1,8 +1,8 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
-import divineadditions.capability.CapabilityItemProvider;
-import divineadditions.gui.conainter.PedestalItemHandler;
+import divineadditions.capability.item_provider.CapabilityItemProvider;
+import divineadditions.capability.item_provider.PedestalItemHandler;
 import divineadditions.tile.TileEntityStackHolder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;

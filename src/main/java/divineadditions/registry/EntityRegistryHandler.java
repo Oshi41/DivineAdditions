@@ -40,6 +40,7 @@ public class EntityRegistryHandler {
                 .name(id.toString().replace(':', '.'))
                 .tracker(128, 3, true)
                 .factory(func::apply)
+                .egg(0, Integer.MAX_VALUE)
                 .build();
     }
 
