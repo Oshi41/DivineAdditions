@@ -39,26 +39,19 @@ public interface IBlankArmor {
         if (description == null)
             return false;
 
+        if (isWearing(armor, description)) {
+            return false;
+        }
+
         IItemHandlerModifiable handler = getHandler(armor);
         if (handler == null)
             return false;
 
-        int emptySlot = -1;
+        int slot = 0;
 
-        for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stackInSlot = handler.getStackInSlot(i);
-            if (stackInSlot.getItem() instanceof IArmorEssence
-                    && description == ((IArmorEssence) stackInSlot.getItem()).getDescription(stackInSlot)) {
-                // was already absorbed
-                return false;
-            }
-        }
-
-        for (int i = 0; i < handler.getSlots(); i++) {
-            ItemStack stackInSlot = handler.getStackInSlot(i);
-            if (stackInSlot.isEmpty()
-                    && handler.isItemValid(i, essence)) {
-                handler.setStackInSlot(i, essence);
+        while (slot < handler.getSlots()) {
+            if (handler.getStackInSlot(slot).isEmpty() && handler.isItemValid(slot, essence)) {
+                handler.setStackInSlot(slot, essence);
                 return true;
             }
         }

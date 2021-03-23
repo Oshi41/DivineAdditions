@@ -5,10 +5,9 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class MobConfig {
     @Config.Comment("Base attributes for Armor Defender boss entity. Other summonses from one player and armor can increase its characteristics")
@@ -22,21 +21,21 @@ public class MobConfig {
     }};
 
     @Config.Comment("Armor set ids for Armor Defender boss that gives ability to fly")
-    public Set<String> aerSets = new HashSet<String>() {{
-        add(new ResourceLocation(DivineRPG.MODID, "angelic").toString());
-    }};
+    public String[] aerSets = Arrays.asList(
+            new ResourceLocation(DivineRPG.MODID, "angelic").toString())
+            .toArray(new String[0]);
 
     @Config.Comment("Armor set ids for Armor Defender boss that enpowers him in water")
-    public Set<String> waterSets = new HashSet<String>() {{
-        add(new ResourceLocation(DivineRPG.MODID, "aqua").toString());
-        add(new ResourceLocation(DivineRPG.MODID, "wildwood").toString());
-        add(new ResourceLocation(DivineRPG.MODID, "kraken").toString());
-    }};
+    public String[] waterSets = Arrays.asList(
+            new ResourceLocation(DivineRPG.MODID, "aqua").toString(),
+            new ResourceLocation(DivineRPG.MODID, "wildwood").toString(),
+            new ResourceLocation(DivineRPG.MODID, "kraken").toString())
+            .toArray(new String[0]);
 
     @Config.Comment("Armor set ids for Armor Defender boss that gives immunity to fire")
-    public Set<String> fireSets = new HashSet<String>() {{
-        add(new ResourceLocation(DivineRPG.MODID, "bedrock").toString());
-        add(new ResourceLocation(DivineRPG.MODID, "netherite").toString());
-        add(new ResourceLocation(DivineRPG.MODID, "inferno").toString());
-    }};
+    public String[] fireSets = Arrays.asList(
+            new ResourceLocation(DivineRPG.MODID, "bedrock").toString(),
+            new ResourceLocation(DivineRPG.MODID, "netherite").toString(),
+            new ResourceLocation(DivineRPG.MODID, "inferno").toString())
+            .toArray(new String[0]);
 }

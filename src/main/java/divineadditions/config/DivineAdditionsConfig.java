@@ -10,4 +10,7 @@ public class DivineAdditionsConfig {
 
     @Config.Comment("Entities configuration")
     public static MobConfig mobsConfig = new MobConfig();
+
+    @Config.Comment("Config for planet dimension")
+    public static PlanetDimensionConfig planetDimensionConfig = new PlanetDimensionConfig();
 }

@@ -11,4 +11,9 @@ public class Items {
     public static final Item rifle = null;
     public static final Item caged_mob = null;
     public static final Item rifle_mob_core = null;
+
+    public static final Item blank_head = null;
+    public static final Item blank_chest = null;
+    public static final Item blank_legs = null;
+    public static final Item blank_feet = null;
 }

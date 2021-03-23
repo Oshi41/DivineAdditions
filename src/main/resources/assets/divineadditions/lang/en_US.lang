@@ -9,9 +9,14 @@ item.caged_mob.name=Запертый моб
 item.rifle_mob_core.name=Ядро пойманного моба
 item.pedestal.name=Пъедестал
 item.summoning_altar.name=Алтарь призыва
+item.blank_legs.name=Пустые штаны
+item.blank_head.name=Пустой шлем
+item.blank_chest.name=Пустой нагрудник
+item.blank_feet.name=Пустые ботинки
 
 # Entity
 entity.entity_cage_bullet.name=Пуля
+entity.armor_defender.name=Защитник
 
 # Block
 block.pedestal.name=Пъедестал
@@ -27,4 +32,6 @@ divineadditions.wrong_pedestal_count=Пъедесталов должно быт�
 divineadditions.armor_is_not_powered=У этой брони нет особых умений
 divineadditions.armor_multiple_power=Выложено несколько сетов брони с особыми умениями, а нужен только один
 divineadditions.weapon_is_needed=Для призыва необходимо оружие
-entity.armor_defender.name=Защитник
+divineadditions.blank_armor_info=Собирает способности других сетов
+divineadditions.blank_armor_uning_caps=Используемые способности:
+

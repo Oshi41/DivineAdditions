@@ -34,6 +34,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -320,17 +321,17 @@ public class EntityArmorDefender extends AbstractSkeleton {
         if (description != null) {
             String id = description.toString();
 
-            if (DivineAdditionsConfig.mobsConfig.aerSets.contains(id)) {
+            if (Arrays.asList(DivineAdditionsConfig.mobsConfig.aerSets).contains(id)) {
                 canFly = true;
             }
 
             List<PathNodeType> paths = new ArrayList<>();
 
-            if (DivineAdditionsConfig.mobsConfig.waterSets.contains(id)) {
+            if (Arrays.asList(DivineAdditionsConfig.mobsConfig.waterSets).contains(id)) {
                 paths.add(PathNodeType.WATER);
             }
 
-            if (DivineAdditionsConfig.mobsConfig.fireSets.contains(id)) {
+            if (Arrays.asList(DivineAdditionsConfig.mobsConfig.fireSets).contains(id)) {
                 paths.add(PathNodeType.LAVA);
                 paths.add(PathNodeType.DAMAGE_FIRE);
             }

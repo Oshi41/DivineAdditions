@@ -1,5 +1,6 @@
 package divineadditions.utils;
 
+import com.google.common.collect.AbstractIterator;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -10,6 +11,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class InventoryHelper {
     private static final String slotsTagName = "Slots";
@@ -77,5 +81,21 @@ public class InventoryHelper {
                 itemStack.setCount(0);
             }
         }
+    }
+
+    public static Iterable<ItemStack> asIterable(IItemHandler inv) {
+        return () -> new AbstractIterator<ItemStack>() {
+            final int size = inv.getSlots();
+            int slot = 0;
+
+            @Override
+            protected ItemStack computeNext() {
+                return this.slot >= this.size ? this.endOfData() : inv.getStackInSlot(this.slot++);
+            }
+        };
+    }
+
+    public static Stream<ItemStack> asStream(IItemHandler inv) {
+        return StreamSupport.stream(asIterable(inv).spliterator(), false);
     }
 }
