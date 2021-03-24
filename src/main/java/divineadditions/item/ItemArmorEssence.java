@@ -4,6 +4,7 @@ import divineadditions.api.IArmorEssence;
 import divinerpg.api.armor.IFullSetInfo;
 import divinerpg.api.armor.registry.IArmorDescription;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -67,4 +68,8 @@ public class ItemArmorEssence extends Item implements IArmorEssence {
         return new ArrayList<>();
     }
 
+    @Override
+    public void onArmorTick(World world, EntityPlayer player, ItemStack itemStack) {
+        super.onArmorTick(world, player, itemStack);
+    }
 }

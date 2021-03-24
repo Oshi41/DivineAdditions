@@ -2,9 +2,9 @@ package divineadditions;
 
 import divineadditions.api.IProxy;
 import divineadditions.gui.GuiHandler;
+import divineadditions.holders.Dimensions;
+import divineadditions.registry.ConfigHandler;
 import divineadditions.registry.TilesRegistryHandler;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -41,14 +41,11 @@ public class DivineAdditions {
 
     public static Logger logger = LogManager.getLogger();
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        logger = event.getModLog();
-        proxy.pre();
-
-        ConfigManager.sync(DivineAdditions.MOD_ID, Config.Type.INSTANCE);
-        NetworkRegistry.INSTANCE.registerGuiHandler(DivineAdditions.instance, new GuiHandler());
-        TilesRegistryHandler.register();
+    @SubscribeEvent
+    public static void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
+        if (event.getModID().equals(MOD_ID)) {
+            ConfigHandler.sync();
+        }
     }
 
     @EventHandler
@@ -57,14 +54,20 @@ public class DivineAdditions {
     }
 
     @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-        proxy.post();
+    public void preInit(FMLPreInitializationEvent event) {
+        logger = event.getModLog();
+        proxy.pre();
+
+        ConfigHandler.sync();
+        NetworkRegistry.INSTANCE.registerGuiHandler(DivineAdditions.instance, new GuiHandler());
+        TilesRegistryHandler.register();
+        Dimensions.register();
     }
 
-    @SubscribeEvent
-    public static void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.getModID().equals(MOD_ID)) {
-            ConfigManager.sync(MOD_ID, Config.Type.INSTANCE);
-        }
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.post();
+
+        // GameRegistry.registerWorldGenerator(new SpecialWorldGen(), 0);
     }
 }

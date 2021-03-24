@@ -1,0 +1,11 @@
+package divineadditions.holders;
+
+import divineadditions.DivineAdditions;
+import net.minecraft.block.Block;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+@GameRegistry.ObjectHolder(DivineAdditions.MOD_ID)
+public class Blocks {
+    public static final Block pedestal = null;
+    public static final Block summoning_altar = null;
+}

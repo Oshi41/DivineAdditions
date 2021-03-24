@@ -8,7 +8,7 @@ public class Tabs {
     public static final CreativeTabs Main = new CreativeTabs(DivineAdditions.MOD_ID) {
         @Override
         public ItemStack getTabIconItem() {
-            return Items.armor_essence.getDefaultInstance();
+            return Items.rifle_mob_core.getDefaultInstance();
         }
     };
 }

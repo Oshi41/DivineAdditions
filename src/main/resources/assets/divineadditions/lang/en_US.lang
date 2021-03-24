@@ -26,6 +26,9 @@ block.summoning_altar.name=Алтарь призыва
 tile.stack_holder.name=Пъедестал
 tile.summoning_altar.name=Алтарь призыва
 
+# biome
+biome.planet.name=planet
+
 # Gui
 gui.rifle=Берём мобов под контроль
 divineadditions.wrong_pedestal_count=Пъедесталов должно быть %s
