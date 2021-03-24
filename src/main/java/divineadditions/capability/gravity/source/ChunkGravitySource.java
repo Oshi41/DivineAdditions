@@ -7,6 +7,9 @@ import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 import javax.annotation.Nonnull;
 
@@ -67,5 +70,27 @@ public class ChunkGravitySource extends GravitySourceBase<Chunk> {
     @Override
     public int hashCode() {
         return hashCode;
+    }
+
+    @SubscribeEvent
+    protected void onWorldTick(TickEvent.WorldTickEvent event) {
+        if (event.phase == TickEvent.Phase.END
+                && checkSubscription()
+                && event.world == getOwner().getWorld()) {
+            applyGravity(getOwner());
+        }
+    }
+
+    @SubscribeEvent
+    protected void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END
+                && event.side == Side.CLIENT
+                && checkSubscription()) {
+            net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getMinecraft();
+
+            if (!minecraft.isGamePaused() && minecraft.player != null && minecraft.world == getOwner().getWorld()) {
+                applyGravity(getOwner());
+            }
+        }
     }
 }

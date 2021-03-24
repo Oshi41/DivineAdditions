@@ -10,6 +10,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.List;
 import java.util.Objects;
 
 public class WorldGravitySource extends GravitySourceBase<World> {
@@ -33,19 +34,18 @@ public class WorldGravitySource extends GravitySourceBase<World> {
 
     @Override
     public boolean applyGravity(ICapabilityProvider provider) {
-        if (!(provider instanceof World))
-            return false;
+        if (provider instanceof World) {
+            List<Entity> loadedEntityList = ((World) provider).loadedEntityList;
 
-        World world = (World) provider;
-
-        for (int i = 0; i < world.loadedEntityList.size(); i++) {
-            Entity entity = world.loadedEntityList.get(i);
-
-            if (canApplyTo(entity))
+            for (int i = 0; i < loadedEntityList.size(); i++) {
+                Entity entity = loadedEntityList.get(i);
                 GravityUtils.applyGravity(entity, this);
+            }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
