@@ -1,6 +1,7 @@
-package divineadditions.capability.gravity;
+package divineadditions.capability.gravity.event;
 
 import divineadditions.DivineAdditions;
+import divineadditions.capability.gravity.GravitySourceCapabilityProvider;
 import divineadditions.capability.gravity.source.WorldGravitySource;
 import divineadditions.config.DivineAdditionsConfig;
 import net.minecraft.util.ResourceLocation;

@@ -1,4 +1,4 @@
-package divineadditions.capability.gravity;
+package divineadditions.capability.gravity.event;
 
 import divineadditions.capability.gravity.source.base.IGravitySource;
 import net.minecraft.entity.Entity;

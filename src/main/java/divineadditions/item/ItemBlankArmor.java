@@ -6,6 +6,7 @@ import divineadditions.capability.item_provider.CapabilityItemProvider;
 import divineadditions.utils.InventoryHelper;
 import divinerpg.enums.ArmorInfo;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -170,5 +171,11 @@ public class ItemBlankArmor extends ItemArmor implements IBlankArmor {
     @Override
     public IItemHandlerModifiable getHandler(ItemStack stack) {
         return (IItemHandlerModifiable) stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+    }
+
+    @Nullable
+    @Override
+    public Entity createEntity(World world, Entity location, ItemStack itemstack) {
+        return ItemBlankSword.createImmortalEntity(world, location, itemstack);
     }
 }

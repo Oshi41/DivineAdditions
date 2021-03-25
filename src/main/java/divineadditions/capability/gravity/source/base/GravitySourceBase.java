@@ -1,6 +1,6 @@
 package divineadditions.capability.gravity.source.base;
 
-import divineadditions.capability.gravity.AffectiveGravityEvent;
+import divineadditions.capability.gravity.event.AffectiveGravityEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
