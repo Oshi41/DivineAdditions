@@ -16,6 +16,10 @@ public class PlanetWorldProvider extends WorldProvider {
     protected void init() {
         hasSkyLight = false;
         this.biomeProvider = new BiomeProviderSingle(Biomes.planet);
+
+        if (world.isRemote) {
+            setSkyRenderer(new divineadditions.render.sky.PlanetsSkyRender());
+        }
     }
 
     @Override

@@ -2,8 +2,8 @@ package divineadditions.world.dimension.planet;
 
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.config.PlanetConfig;
+import divineadditions.world.gen.WorldGenVines;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class PlanetBiome extends Biome {
 
     public PlanetBiome() {
-        super(new BiomeProperties("Planets").setTemperature(0.3f).setRainfall(0.5f));
+        super(new BiomeProperties("Planets").setTemperature(0.8f).setRainfall(0.5f));
     }
 
     private PlanetConfig createRandom(Random random) {
@@ -22,7 +22,7 @@ public class PlanetBiome extends Biome {
                 .planetDimensionConfig
                 .possiblePlanets
                 .stream()
-                .filter(x -> random.nextInt(x.probability) == 0)
+                .filter(x -> random.nextInt(x.getProbability()) == 0)
                 .collect(Collectors.toList());
 
         if (possiblePlanets.isEmpty())
@@ -32,21 +32,35 @@ public class PlanetBiome extends Biome {
     }
 
     @Override
-    public void decorate(World worldIn, Random rand, BlockPos pos) {
-
-        // always at chunk start
-        final BlockPos chunkStart = new ChunkPos(pos).getBlock(16, 0, 16);
-
+    public void decorate(World worldIn, Random rand, BlockPos chunkStart) {
         for (int i = 0; i < DivineAdditionsConfig.planetDimensionConfig.spawnTries; i++) {
-            int radius = rand.nextInt(15 - DivineAdditionsConfig.planetDimensionConfig.minRadius) + DivineAdditionsConfig.planetDimensionConfig.minRadius;
-            int freeZone = (30 - radius * 2) / 2;
-            BlockPos currentPos = chunkStart.add(0, rand.nextInt(200) + 20, 0);
+            new PlanetWorldGen(this::createRandom, true).generate(worldIn, rand, chunkStart);
+        }
 
-            if (freeZone > 1) {
-                currentPos = currentPos.add(rand.nextInt(freeZone) - freeZone, 0, rand.nextInt(freeZone) - freeZone);
-            }
+        decorator.sandPatchesPerChunk = 0;
+        decorator.gravelPatchesPerChunk = 0;
+        decorator.clayPerChunk = 0;
+        decorator.grassPerChunk = 0;
+        decorator.bigMushroomsPerChunk = 1;
+        decorator.cactiPerChunk = 1;
+        decorator.reedsPerChunk = 1;
+        decorator.mushroomsPerChunk = 1;
+        decorator.generateFalls = false;
+        decorator.treesPerChunk = 1;
+        decorator.flowersPerChunk = 8;
+        decorator.deadBushPerChunk = 2;
+        decorator.waterlilyPerChunk = 2;
 
-            new PlanetWorldGen(this::createRandom, radius, true).generate(worldIn, rand, currentPos);
+        this.decorator.decorate(worldIn, rand, this, chunkStart);
+
+        WorldGenVines worldgenvines = new WorldGenVines();
+
+        for (int i = 0; i < 50; i++) {
+            worldgenvines.generate(worldIn, rand, chunkStart.add(
+                    rand.nextInt(16) + 8,
+                    rand.nextInt(50) + 20,
+                    rand.nextInt(16) + 8
+            ));
         }
     }
 }
