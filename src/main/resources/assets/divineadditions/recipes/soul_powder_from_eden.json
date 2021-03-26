@@ -1,0 +1,10 @@
+{
+  "type": "divineadditions:smelting",
+  "ingredient": {
+    "item": "divinerpg:eden_heart"
+  },
+  "result": {
+    "item": "divineadditions:soul_powder"
+  },
+  "experience": 1.0
+}

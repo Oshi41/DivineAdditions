@@ -1,6 +1,6 @@
 package divineadditions.block;
 
-import divineadditions.tile.TileEntityStackHolder;
+import divineadditions.tile.TileEntityPedestal;
 import divineadditions.utils.InventoryHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -29,7 +29,7 @@ public class BlockPedestal extends BlockContainer {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityStackHolder();
+        return new TileEntityPedestal();
     }
 
     @Override
@@ -37,18 +37,15 @@ public class BlockPedestal extends BlockContainer {
         IItemHandler itemHandler = InventoryUtils.tryGetHandler(worldIn, pos, facing);
         if (itemHandler != null) {
             ItemStack heldItem = playerIn.getHeldItem(hand);
-            ItemStack pedestalItem = itemHandler.getStackInSlot(0);
 
-            if (pedestalItem.isEmpty()) {
-                if (itemHandler.isItemValid(0, heldItem)) {
-                    itemHandler.insertItem(0, heldItem.copy(), false);
-                    heldItem.shrink(itemHandler.getStackInSlot(0).getCount());
-                    return true;
-                }
-            } else {
+            ItemStack result = itemHandler.insertItem(0, heldItem, false);
+
+            if (!result.isEmpty()) {
                 onBlockClicked(worldIn, pos, playerIn);
-                return true;
             }
+
+            playerIn.setHeldItem(hand, result);
+            return true;
         }
 
         return false;
@@ -61,13 +58,21 @@ public class BlockPedestal extends BlockContainer {
             ItemStack itemStack = itemHandler.getStackInSlot(0);
             if (!itemStack.isEmpty()) {
 
-                ItemStack copy = itemStack.copy();
-
-                if (!playerIn.inventory.addItemStackToInventory(copy)) {
-                    Block.spawnAsEntity(worldIn, pos, copy);
+                if (!playerIn.isSneaking()) {
+                    int stackSize = itemStack.getMaxStackSize();
+                    if (stackSize < itemStack.getCount()) {
+                        itemStack = itemStack.copy();
+                        itemStack.setCount(stackSize);
+                    }
                 }
 
-                itemStack.shrink(itemStack.getCount());
+                int prevSize = itemStack.getCount();
+
+                if (!playerIn.inventory.addItemStackToInventory(itemStack)) {
+                    Block.spawnAsEntity(worldIn, pos, itemStack);
+                }
+
+                itemHandler.getStackInSlot(0).shrink(prevSize);
             }
         }
     }

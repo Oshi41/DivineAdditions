@@ -7,6 +7,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 public interface IRifleCore {
     /**
      * Creates special bullet
@@ -23,7 +25,14 @@ public interface IRifleCore {
      * @param stack
      * @return
      */
-    boolean acceptableForCatalyst(ItemStack stack, boolean ignoreAmount);
+    default boolean acceptableForCatalyst(ItemStack stack, boolean ignoreAmount) {
+        Integer amount = getCurrentConfig().getCatalysts().get(stack.getItem().getRegistryName().toString());
+        if (amount != null) {
+            return ignoreAmount || stack.getCount() >= amount;
+        }
+
+        return false;
+    }
 
     /**
      * Can accept current bullets
@@ -31,15 +40,32 @@ public interface IRifleCore {
      * @param stack - bullets stack
      * @return
      */
-    boolean acceptableForBullets(ItemStack stack, boolean ignoreAmount);
+    default boolean acceptableForBullets(ItemStack stack, boolean ignoreAmount) {
+        Integer amount = getCurrentConfig().getBullets().get(stack.getItem().getRegistryName().toString());
+        if (amount != null) {
+            return ignoreAmount || stack.getCount() >= amount;
+        }
+
+        return false;
+    }
 
     /**
      * Gets cooldown for current core
      *
      * @return
      */
-    int getCooldown();
+    default int getCooldown() {
+        return getCurrentConfig().getCoolddown();
+    }
 
     @SideOnly(Side.CLIENT)
     void spawnParticle(World world, EntityLivingBase thrower);
+
+    /**
+     * Returns current config for core
+     *
+     * @return
+     */
+    @Nonnull
+    IRifleCoreConfig getCurrentConfig();
 }

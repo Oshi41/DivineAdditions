@@ -1,0 +1,11 @@
+{
+  "type": "divineadditions:smelting",
+  "ingredient": {
+    "item": "divinerpg:skythern_heart"
+  },
+  "result": {
+    "item": "divineadditions:soul_powder",
+    "count": 4
+  },
+  "experience": 4.0
+}

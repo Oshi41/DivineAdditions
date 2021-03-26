@@ -35,7 +35,7 @@ public class BlockRegistryHandler {
     public static void registerBlocks(final RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> registry = event.getRegistry();
         registerObj(registry, new BlockPedestal().setCreativeTab(Tabs.Main).setHardness(2.0F).setResistance(10.0F), "pedestal", true);
-        registerObj(registry, new BlockSummoningAltar().setCreativeTab(Tabs.Main).setHardness(50).setResistance(2000), "summoning_altar", true);
+        registerObj(registry, new BlockSummoningAltar().setCreativeTab(Tabs.Main).setHardness(50).setResistance(2000), "summon_platform", true);
     }
 
     private static void registerObj(IForgeRegistry<Block> registry, Block value, String name, boolean canBeItem) {

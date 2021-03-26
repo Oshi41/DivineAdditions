@@ -1,0 +1,11 @@
+{
+  "type": "divineadditions:smelting",
+  "ingredient": {
+    "item": "divinerpg:mortum_heart"
+  },
+  "result": {
+    "item": "divineadditions:soul_powder",
+    "count": 5
+  },
+  "experience": 5.0
+}

@@ -1,7 +1,7 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
-import divineadditions.tile.TileEntityStackHolder;
+import divineadditions.tile.TileEntityPedestal;
 import divineadditions.tile.TileEntitySummoningAltar;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class TilesRegistryHandler {
 
     public static void register() {
-        registerTile(TileEntityStackHolder.class, "stack_holder");
+        registerTile(TileEntityPedestal.class, "stack_holder");
         registerTile(TileEntitySummoningAltar.class, "summoning_altar");
     }
 

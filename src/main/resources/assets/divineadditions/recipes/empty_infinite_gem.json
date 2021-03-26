@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "divinerpg:divine_stone"
+    },
+    {
+      "item": "divinerpg:ender_stone"
+    },
+    {
+      "item": "divinerpg:molten_stone"
+    },
+    {
+      "item": "divinerpg:shadow_stone"
+    },
+    {
+      "item": "divinerpg:terran_stone"
+    },
+    {
+      "item": "divinerpg:bluefire_stone"
+    },
+    {
+      "item": "divinerpg:healing_stone"
+    },
+    {
+      "item": "divinerpg:jungle_stone"
+    },
+    {
+      "item": "divinerpg:corrupted_stone"
+    }
+  ],
+  "result": {
+    "item": "divineadditions:empty_infinite_gem"
+  }
+}

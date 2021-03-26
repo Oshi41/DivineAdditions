@@ -8,8 +8,8 @@ import java.util.Map;
 
 @Config(modid = DivineAdditions.MOD_ID, type = Config.Type.INSTANCE, name = DivineAdditions.MOD_ID + "/main")
 public class DivineAdditionsConfig {
-    @Config.Comment("Settings for mob rifle")
-    public static RifleMobCore rifleMobCore = new RifleMobCore();
+    @Config.Comment("Settings for rifle")
+    public static RifleConfig rifleConfig = new RifleConfig();
 
     @Config.Comment("Entities configuration")
     public static MobConfig mobsConfig = new MobConfig();

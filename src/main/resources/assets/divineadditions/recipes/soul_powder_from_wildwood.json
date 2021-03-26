@@ -1,0 +1,11 @@
+{
+  "type": "divineadditions:smelting",
+  "ingredient": {
+    "item": "divinerpg:wildwood_heart"
+  },
+  "result": {
+    "item": "divineadditions:soul_powder",
+    "count": 2
+  },
+  "experience": 2.0
+}

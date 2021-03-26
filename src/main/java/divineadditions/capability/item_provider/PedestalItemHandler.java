@@ -1,9 +1,13 @@
 package divineadditions.capability.item_provider;
 
+import divineadditions.utils.InventoryHelper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nonnull;
 
 public class PedestalItemHandler extends ItemStackHandler {
     private BlockPos pos;
@@ -13,8 +17,7 @@ public class PedestalItemHandler extends ItemStackHandler {
 
     }
 
-    public PedestalItemHandler(TileEntity entity, int stackSize) {
-        pos = entity.getPos();
+    public PedestalItemHandler(int stackSize) {
         this.stackSize = stackSize;
     }
 
@@ -29,17 +32,29 @@ public class PedestalItemHandler extends ItemStackHandler {
     }
 
     @Override
+    protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+        if (stack.isStackable()) {
+            return getSlotLimit(slot);
+        }
+
+        return super.getStackLimit(slot, stack);
+    }
+
+    @Override
     public NBTTagCompound serializeNBT() {
-        NBTTagCompound nbt = super.serializeNBT();
-        nbt.setLong("BlockPos", pos.toLong());
+        NBTTagCompound nbt = InventoryHelper.save(this);
         nbt.setInteger("StackSize", stackSize);
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
-        super.deserializeNBT(nbt);
         stackSize = nbt.getInteger("StackSize");
-        pos = BlockPos.fromLong(nbt.getLong("BlockPos"));
+        setSize(nbt.hasKey("Size", Constants.NBT.TAG_INT)
+                ? nbt.getInteger("Size")
+                : stacks.size());
+
+        InventoryHelper.load(this, nbt);
+        onLoad();
     }
 }

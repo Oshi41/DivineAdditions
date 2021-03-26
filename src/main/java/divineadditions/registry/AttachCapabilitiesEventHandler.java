@@ -1,9 +1,9 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
+import divineadditions.api.IPedestal;
 import divineadditions.capability.item_provider.CapabilityItemProvider;
 import divineadditions.capability.item_provider.PedestalItemHandler;
-import divineadditions.tile.TileEntityStackHolder;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -19,8 +19,8 @@ public class AttachCapabilitiesEventHandler {
     public static void attachToTiles(AttachCapabilitiesEvent<TileEntity> event) {
         final TileEntity tileEntity = event.getObject();
 
-        if (tileEntity instanceof TileEntityStackHolder) {
-            event.addCapability(ItemHandlerId, new CapabilityItemProvider(new PedestalItemHandler(tileEntity, 1)));
+        if (tileEntity instanceof IPedestal) {
+            event.addCapability(ItemHandlerId, new CapabilityItemProvider(new PedestalItemHandler(((IPedestal) tileEntity).getStackSize())));
         }
     }
 }

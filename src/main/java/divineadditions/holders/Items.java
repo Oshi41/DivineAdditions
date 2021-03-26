@@ -11,6 +11,8 @@ public class Items {
     public static final Item rifle = null;
     public static final Item caged_mob = null;
     public static final Item rifle_mob_core = null;
+    public static final Item empty_infinite_gem = null;
+    public static final Item soul_powder = null;
 
     public static final Item blank_head = null;
     public static final Item blank_chest = null;

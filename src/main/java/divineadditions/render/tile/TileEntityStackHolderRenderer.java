@@ -1,6 +1,7 @@
 package divineadditions.render.tile;
 
-import divineadditions.tile.TileEntityStackHolder;
+import divineadditions.render.entity.RenderEntityItemEnhanced;
+import divineadditions.tile.TileEntityPedestal;
 import divinerpg.utils.Lazy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,13 +17,13 @@ import net.minecraftforge.items.IItemHandler;
 import openmods.utils.InventoryUtils;
 
 @SideOnly(Side.CLIENT)
-public class TileEntityStackHolderRenderer extends TileEntitySpecialRenderer<TileEntityStackHolder> {
+public class TileEntityStackHolderRenderer extends TileEntitySpecialRenderer<TileEntityPedestal> {
     private final Lazy<EntityItem> inner = new Lazy<>(() -> new EntityItem(Minecraft.getMinecraft().world));
-    private final Lazy<RenderEntityItem> renderer = new Lazy<>(() -> new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()));
+    private final Lazy<RenderEntityItem> renderer = new Lazy<>(() -> new RenderEntityItemEnhanced(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()));
 
 
     @Override
-    public void render(TileEntityStackHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(TileEntityPedestal te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         IItemHandler itemHandler = InventoryUtils.tryGetHandler(te, null);
         if (itemHandler != null) {
             ItemStack itemStack = itemHandler.getStackInSlot(0);

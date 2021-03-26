@@ -49,11 +49,6 @@ public class DivineAdditions {
     }
 
     @EventHandler
-    public void init(FMLInitializationEvent event) {
-        proxy.init();
-    }
-
-    @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
         proxy.pre();
@@ -62,6 +57,12 @@ public class DivineAdditions {
         NetworkRegistry.INSTANCE.registerGuiHandler(DivineAdditions.instance, new GuiHandler());
         TilesRegistryHandler.register();
         Dimensions.register();
+
+    }
+
+    @EventHandler
+    public void init(FMLInitializationEvent event) {
+        proxy.init();
     }
 
     @EventHandler

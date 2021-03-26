@@ -1,20 +1,21 @@
 package divineadditions.config;
 
 import divineadditions.DivineAdditions;
+import divineadditions.api.IRifleCoreConfig;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RifleMobCore {
-    @Config.RangeInt(min = 1, max = 50)
+public class RifleMobCore implements IRifleCoreConfig {
+    @Config.RangeInt(min = 1, max = 250)
     @Config.Comment("rifle mob core durability")
     public Integer durability = 14;
 
     @Config.Comment("Bullets that current core can apply. Number means amount of ammo using per shot")
     public Map<String, Integer> bullets = new HashMap<String, Integer>() {{
-        put(new ResourceLocation(DivineAdditions.MOD_ID, "rifle_bullet").toString(), 1);
+        put(new ResourceLocation(DivineAdditions.MOD_ID, "soul_powder").toString(), 1);
     }};
 
     @Config.RangeInt(min = 15, max = 60)
@@ -26,4 +27,24 @@ public class RifleMobCore {
         put(net.minecraft.init.Items.GUNPOWDER.getRegistryName().toString(), 3);
         put(net.minecraft.init.Blocks.TNT.getRegistryName().toString(), 1);
     }};
+
+    @Override
+    public int getDurability() {
+        return durability;
+    }
+
+    @Override
+    public int getCoolddown() {
+        return cooldown;
+    }
+
+    @Override
+    public Map<String, Integer> getBullets() {
+        return bullets;
+    }
+
+    @Override
+    public Map<String, Integer> getCatalysts() {
+        return catalyst;
+    }
 }

@@ -2,49 +2,39 @@ package divineadditions.tile;
 
 import divineadditions.DivineAdditions;
 import divineadditions.api.IArmorEssence;
-import divineadditions.api.IPedestal;
 import divineadditions.entity.EntityArmorDefender;
 import divineadditions.holders.Items;
 import divineadditions.item.ItemArmorEssence;
 import divineadditions.tile.base.TileSyncBase;
-import divineadditions.utils.InventoryHelper;
 import divinerpg.DivineRPG;
 import divinerpg.api.DivineAPI;
 import divinerpg.api.armor.ArmorEquippedEvent;
 import divinerpg.api.armor.registry.IArmorDescription;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.effect.EntityLightningBolt;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class TileEntitySummoningAltar extends TileSyncBase {
-    private int radius;
-
     public TileEntitySummoningAltar() {
 
-    }
-
-    public TileEntitySummoningAltar(int radius) {
-        this.radius = radius;
     }
 
     public boolean trySummon(World world, EntityPlayer player) {
@@ -54,25 +44,11 @@ public class TileEntitySummoningAltar extends TileSyncBase {
         if (!acceptItem(player))
             return false;
 
-        List<IPedestal> pedestals = findPedestals(radius);
-        int length = EntityEquipmentSlot.values().length;
-        if (pedestals.size() != length) {
-            if (!world.isRemote)
-                player.sendMessage(new TextComponentTranslation("divineadditions.wrong_pedestal_count", length));
+        EntityArmorStand stand = findStand(player);
+        if (stand == null)
             return false;
-        }
 
-        Map<EntityEquipmentSlot, ItemStack> items = Arrays.stream(EntityEquipmentSlot.values())
-                .collect(Collectors.toMap(x -> x, x -> ItemStack.EMPTY));
-
-        List<ItemStack> stacks = pedestals.stream()
-                .map(x -> x.getHandler().getStackInSlot(0))
-                .filter(x -> !x.isEmpty())
-                .collect(Collectors.toList());
-
-        for (ItemStack stack : stacks) {
-            items.put(EntityLiving.getSlotForItemStack(stack), stack.copy());
-        }
+        Map<EntityEquipmentSlot, ItemStack> items = Arrays.stream(EntityEquipmentSlot.values()).collect(Collectors.toMap(x -> x, stand::getItemStackFromSlot));
 
         IArmorDescription armorDescription = detectDescription(items, player);
         if (armorDescription == null) {
@@ -86,7 +62,7 @@ public class TileEntitySummoningAltar extends TileSyncBase {
             return false;
         }
 
-        shrinkItems(player, pedestals);
+        shrinkItems(player, stand);
 
         spawnEffects(world, getPos());
 
@@ -114,17 +90,27 @@ public class TileEntitySummoningAltar extends TileSyncBase {
     }
 
     /**
-     * Searching pedestals (tiles implementing IPedestal interface) in radius on the same height
+     * Finding armor stand above the platform
      *
-     * @param radius
+     * @param player
      * @return
      */
-    private List<IPedestal> findPedestals(int radius) {
-        return StreamSupport.stream(BlockPos.getAllInBox(pos.add(-radius, 0, -radius), pos.add(radius, 0, radius)).spliterator(), false)
-                .map(world::getTileEntity)
-                .filter(x -> x instanceof IPedestal)
-                .map(x -> ((IPedestal) x))
-                .collect(Collectors.toList());
+    @Nullable
+    private EntityArmorStand findStand(ICommandSender player) {
+        BlockPos pos = getPos();
+        AxisAlignedBB axisAlignedBB = new AxisAlignedBB(
+                pos.getX(), pos.getY(), pos.getZ(),
+                pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5
+        );
+
+        List<EntityArmorStand> list = world.getEntitiesWithinAABB(EntityArmorStand.class, axisAlignedBB, EntityLivingBase::isEntityAlive);
+
+        if (list.size() != 1) {
+            player.sendMessage(new TextComponentTranslation("divineadditions.wrong_armor_stand_count"));
+            return null;
+        }
+
+        return list.get(0);
     }
 
     /**
@@ -196,25 +182,16 @@ public class TileEntitySummoningAltar extends TileSyncBase {
         return ItemStack.EMPTY;
     }
 
-    private void shrinkItems(EntityPlayer player, List<IPedestal> pedestals) {
-        if (player == null || pedestals == null || world == null) {
-            DivineAdditions.logger.warn("TileEntitySummoningAltar: player,pedestals or world is null");
+    private void shrinkItems(EntityPlayer player, EntityArmorStand stand) {
+        if (player == null || stand == null || world == null) {
+            DivineAdditions.logger.warn("TileEntitySummoningAltar: player,stand or world is null");
             return;
         }
 
         if (player.isCreative())
             return;
 
-        for (IPedestal pedestal : pedestals) {
-            InventoryHelper.clear(pedestal.getHandler());
-
-            // We need this to tell client that pedestal are empty now
-
-            BlockPos pos = ((TileEntity) pedestal).getPos();
-            IBlockState blockState = world.getBlockState(pos);
-            world.notifyBlockUpdate(pos, blockState, blockState, 3);
-        }
-
+        stand.setDead();
         player.getHeldItemMainhand().shrink(1);
     }
 
@@ -272,18 +249,5 @@ public class TileEntitySummoningAltar extends TileSyncBase {
         armorDefender.setPosition(blockPos.getX(), world.getHeight(blockPos.getX(), blockPos.getZ()), blockPos.getZ());
 
         return world.spawnEntity(armorDefender);
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        NBTTagCompound nbt = super.writeToNBT(compound);
-        nbt.setInteger("Radius", radius);
-        return nbt;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        radius = compound.getInteger("Radius");
     }
 }

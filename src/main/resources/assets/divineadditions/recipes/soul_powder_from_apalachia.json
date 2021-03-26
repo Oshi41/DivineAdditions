@@ -1,0 +1,11 @@
+{
+  "type": "divineadditions:smelting",
+  "ingredient": {
+    "item": "divinerpg:apalachia_heart"
+  },
+  "result": {
+    "item": "divineadditions:soul_powder",
+    "count": 3
+  },
+  "experience": 3.0
+}

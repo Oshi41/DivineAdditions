@@ -1,7 +1,7 @@
 package divineadditions.item.rifle_core;
 
 import divineadditions.api.IRifleCore;
-import divineadditions.config.DivineAdditionsConfig;
+import divineadditions.api.IRifleCoreConfig;
 import divineadditions.entity.EntityCageBullet;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,9 +12,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class ItemRifleMobCore extends Item implements IRifleCore {
-    public ItemRifleMobCore() {
+    private final IRifleCoreConfig config;
+
+    public ItemRifleMobCore(IRifleCoreConfig config) {
+        this.config = config;
         setMaxStackSize(1);
-        setMaxDamage(DivineAdditionsConfig.rifleMobCore.durability);
+        setMaxDamage(config.getDurability());
     }
 
     @Override
@@ -22,9 +25,9 @@ public class ItemRifleMobCore extends Item implements IRifleCore {
         if (world != null && thrower != null && bullets != null && !bullets.isEmpty() && catalyst != null) {
 
             boolean isCreative = thrower instanceof EntityPlayer && ((EntityPlayer) thrower).isCreative();
-            Integer bulletsAmount = DivineAdditionsConfig.rifleMobCore.bullets.get(bullets.getItem().getRegistryName().toString());
+            Integer bulletsAmount = config.getBullets().get(bullets.getItem().getRegistryName().toString());
             if (bulletsAmount != null && bullets.getCount() >= bulletsAmount) {
-                Integer catalystAmount = DivineAdditionsConfig.rifleMobCore.catalyst.get(catalyst.getItem().getRegistryName().toString());
+                Integer catalystAmount = config.getCatalysts().get(catalyst.getItem().getRegistryName().toString());
                 if (catalystAmount != null && catalyst.getCount() >= catalystAmount) {
 
                     EntityCageBullet bullet = new EntityCageBullet(world, thrower);
@@ -54,31 +57,6 @@ public class ItemRifleMobCore extends Item implements IRifleCore {
     }
 
     @Override
-    public boolean acceptableForCatalyst(ItemStack stack, boolean ignoreAmount) {
-        Integer amount = DivineAdditionsConfig.rifleMobCore.catalyst.get(stack.getItem().getRegistryName().toString());
-        if (amount != null) {
-            return ignoreAmount || stack.getCount() >= amount;
-        }
-
-        return false;
-    }
-
-    @Override
-    public boolean acceptableForBullets(ItemStack stack, boolean ignoreAmount) {
-        Integer amount = DivineAdditionsConfig.rifleMobCore.bullets.get(stack.getItem().getRegistryName().toString());
-        if (amount != null) {
-            return ignoreAmount || stack.getCount() >= amount;
-        }
-
-        return false;
-    }
-
-    @Override
-    public int getCooldown() {
-        return DivineAdditionsConfig.rifleMobCore.cooldown;
-    }
-
-    @Override
     public void spawnParticle(World world, EntityLivingBase entity) {
         Vec3d position = entity.getPositionEyes(1).add(entity.getLookVec());
 
@@ -95,5 +73,10 @@ public class ItemRifleMobCore extends Item implements IRifleCore {
                     scale.z
             );
         }
+    }
+
+    @Override
+    public IRifleCoreConfig getCurrentConfig() {
+        return config;
     }
 }
