@@ -6,6 +6,7 @@ import divineadditions.entity.EntityCageBullet;
 import divineadditions.render.entity.RenderEntityPlayerLike;
 import divineadditions.render.stack.RenderModItemStack;
 import divineadditions.render.tile.TileEntityStackHolderRenderer;
+import divineadditions.tile.TileEntityInfusingAltar;
 import divineadditions.tile.TileEntityPedestal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -61,5 +62,6 @@ public class ModelRegistryEventHandler {
 
     private static void registerTileRenders() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new TileEntityStackHolderRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfusingAltar.class, new TileEntityStackHolderRenderer());
     }
 }

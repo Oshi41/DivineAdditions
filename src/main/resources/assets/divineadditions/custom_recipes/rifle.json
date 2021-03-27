@@ -1,0 +1,28 @@
+{
+  "type": "divineadditions:shaped",
+  "pattern": [
+    "MIM",
+    "ITI",
+    "MDM"
+  ],
+  "key": {
+    "M": {
+      "item": "divinerpg:mortum_chunk"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "D": {
+      "item": "divinerpg:divine_shards"
+    },
+    "T": {
+      "item": "divineadditions:rifle_template",
+      "type": "divineadditions:remaining_item",
+      "damage": 2
+    }
+  },
+  "result": {
+    "item": "divineadditions:rifle_bullet",
+    "count": 32
+  }
+}

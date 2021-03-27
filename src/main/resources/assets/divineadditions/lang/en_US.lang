@@ -15,7 +15,10 @@ item.blank_chest.name=Пустой нагрудник
 item.blank_feet.name=Пустые ботинки
 item.empty_infinite_gem.name=Камень бесконечности (пустой)
 item.soul_powder.name=Порошок души
-item.summon_platform.name=Основа призыва
+item.summon_platform.name=Платформа призыва Защитника
+item.infusing_altar.name=Алтарь наполнения
+item.power_gem.name=Камень Силы
+item.rifle_template.name=Заготовка для снарядов
 
 # Entity
 entity.entity_cage_bullet.name=Пуля
@@ -23,15 +26,15 @@ entity.armor_defender.name=Защитник
 
 # Block
 block.pedestal.name=Пъедестал
-block.summoning_altar.name=Алтарь призыва
-block.summon_platform.name=Основа призыва
+block.summon_platform.name=Платформа призыва Защитника
+block.infusing_altar.name=Алтарь напонения
 
 # Tile
-tile.stack_holder.name=Пъедестал
-tile.summoning_altar.name=Алтарь призыва
+tile.summon_platform.name=Платформа призыва Защитника
+tile.infusing_altar.name=Алтарь наполнения
 
 # biome
-biome.planet.name=planet
+biome.planet.name=Астероиды
 
 # Gui
 gui.rifle=Берём мобов под контроль
@@ -41,4 +44,9 @@ divineadditions.armor_multiple_power=Для брони необходимо то
 divineadditions.weapon_is_needed=Для призыва необходимо оружие
 divineadditions.blank_armor_info=Собирает способности других сетов
 divineadditions.blank_armor_uning_caps=Используемые способности:
+divineadditions.infusing_altar.missing_items=Нужно выложить полный рецепт
+divineadditions.infusing_altar.lightning=Чтобы наполнить предмет, нужно дождаться удара молнии в алтарь
 
+
+tile.stack_holder.name=stack_holder
+tile.summoning_altar.name=summoning_altar

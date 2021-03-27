@@ -176,6 +176,11 @@ public class ItemBlankArmor extends ItemArmor implements IBlankArmor {
     @Nullable
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-        return ItemBlankSword.createImmortalEntity(world, location, itemstack);
+        return ImmortalItem.createImmortalEntity(world, location, itemstack);
+    }
+
+    @Override
+    public boolean hasCustomEntity(ItemStack stack) {
+        return true;
     }
 }

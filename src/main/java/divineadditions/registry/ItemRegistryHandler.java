@@ -3,10 +3,7 @@ package divineadditions.registry;
 import divineadditions.DivineAdditions;
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.holders.Tabs;
-import divineadditions.item.ItemArmorEssence;
-import divineadditions.item.ItemBlankArmor;
-import divineadditions.item.ItemCagedMob;
-import divineadditions.item.ItemModRifle;
+import divineadditions.item.*;
 import divineadditions.item.rifle_core.ItemRifleMobCore;
 import divinerpg.enums.ArmorInfo;
 import net.minecraft.creativetab.CreativeTabs;
@@ -45,8 +42,10 @@ public class ItemRegistryHandler {
         registerObj(registry, new ItemModRifle().setCreativeTab(Tabs.Main), "rifle");
         registerObj(registry, new ItemRifleMobCore(DivineAdditionsConfig.rifleConfig.modCoreConfig).setCreativeTab(Tabs.Main), "rifle_mob_core");
         registerObj(registry, new ItemCagedMob(), "caged_mob");
-        registerObj(registry, new Item().setCreativeTab(Tabs.Main), "empty_infinite_gem");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "soul_powder");
+        registerObj(registry, new ImmortalItem().setCreativeTab(Tabs.Main), "empty_infinite_gem");
+        registerObj(registry, new ImmortalItem().setCreativeTab(Tabs.Main), "power_gem");
+        registerObj(registry, new Item().setMaxDamage(64).setMaxStackSize(1).setCreativeTab(Tabs.Main), "rifle_template");
 
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(BlankMaterial, slot, BlankArmorInfo));
     }

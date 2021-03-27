@@ -7,7 +7,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -16,7 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.*;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -38,17 +36,6 @@ public class ItemBlankSword extends ItemSword {
     }
 
     // region Overrides
-
-    public static Entity createImmortalEntity(World world, Entity location, ItemStack itemstack) {
-        BlockPos position = location.getPosition();
-        EntityItem entityItem = new EntityItem(world, position.getX(), position.getY(), position.getZ(), itemstack);
-
-        entityItem.setNoDespawn();
-        entityItem.setDefaultPickupDelay();
-        entityItem.setEntityInvulnerable(true);
-
-        return entityItem;
-    }
 
     @Override
     public int getMaxDamage(ItemStack stack) {
@@ -123,15 +110,20 @@ public class ItemBlankSword extends ItemSword {
         return super.getAttributeModifiers(slot, stack);
     }
 
-    // endregion
-
-    // region Interface methods
-
     @Nullable
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-        return createImmortalEntity(world, location, itemstack);
+        return ImmortalItem.createImmortalEntity(world, location, itemstack);
     }
+
+    @Override
+    public boolean hasCustomEntity(ItemStack stack) {
+        return true;
+    }
+
+    // endregion
+
+    // region Interface methods
 
     /**
      * current attack damage

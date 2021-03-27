@@ -8,4 +8,5 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class Blocks {
     public static final Block pedestal = null;
     public static final Block summon_platform = null;
+    public static final Block infusing_altar = null;
 }

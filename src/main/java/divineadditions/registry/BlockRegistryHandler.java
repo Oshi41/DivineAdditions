@@ -1,6 +1,7 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
+import divineadditions.block.BlockInfusingAltar;
 import divineadditions.block.BlockPedestal;
 import divineadditions.block.BlockSummoningAltar;
 import divineadditions.holders.Tabs;
@@ -36,6 +37,7 @@ public class BlockRegistryHandler {
         IForgeRegistry<Block> registry = event.getRegistry();
         registerObj(registry, new BlockPedestal().setCreativeTab(Tabs.Main).setHardness(2.0F).setResistance(10.0F), "pedestal", true);
         registerObj(registry, new BlockSummoningAltar().setCreativeTab(Tabs.Main).setHardness(50).setResistance(2000), "summon_platform", true);
+        registerObj(registry, new BlockInfusingAltar().setCreativeTab(Tabs.Main).setHardness(50).setResistance(2000), "infusing_altar", true);
     }
 
     private static void registerObj(IForgeRegistry<Block> registry, Block value, String name, boolean canBeItem) {

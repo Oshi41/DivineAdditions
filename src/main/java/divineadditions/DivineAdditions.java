@@ -31,6 +31,7 @@ public class DivineAdditions {
     public static final String MOD_VERSION = "0.1";
     public static final String MOD_NAME = "Divine Additions";
 
+
     // The instance of your mod that Forge uses.  Optional.
     @Mod.Instance(DivineAdditions.MOD_ID)
     public static DivineAdditions instance;

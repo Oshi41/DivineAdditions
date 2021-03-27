@@ -23,7 +23,11 @@ import javax.annotation.Nullable;
 public class BlockPedestal extends BlockContainer {
 
     public BlockPedestal() {
-        super(Material.ROCK, MapColor.WHITE_STAINED_HARDENED_CLAY);
+        this(Material.ROCK, MapColor.WHITE_STAINED_HARDENED_CLAY);
+    }
+
+    protected BlockPedestal(Material materialIn, MapColor color) {
+        super(materialIn, color);
     }
 
     @Nullable
@@ -36,15 +40,21 @@ public class BlockPedestal extends BlockContainer {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         IItemHandler itemHandler = InventoryUtils.tryGetHandler(worldIn, pos, facing);
         if (itemHandler != null) {
+
             ItemStack heldItem = playerIn.getHeldItem(hand);
+            if (heldItem.isEmpty()) {
+                onBlockClicked(worldIn, pos, playerIn);
+                return true;
+            }
 
             ItemStack result = itemHandler.insertItem(0, heldItem, false);
 
-            if (!result.isEmpty()) {
+            if (ItemStack.areItemStacksEqual(result, heldItem)) {
                 onBlockClicked(worldIn, pos, playerIn);
+            } else {
+                playerIn.setHeldItem(hand, result);
             }
 
-            playerIn.setHeldItem(hand, result);
             return true;
         }
 

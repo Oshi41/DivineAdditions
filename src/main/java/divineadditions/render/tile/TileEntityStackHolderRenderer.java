@@ -1,7 +1,6 @@
 package divineadditions.render.tile;
 
 import divineadditions.render.entity.RenderEntityItemEnhanced;
-import divineadditions.tile.TileEntityPedestal;
 import divinerpg.utils.Lazy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -10,6 +9,7 @@ import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -17,13 +17,13 @@ import net.minecraftforge.items.IItemHandler;
 import openmods.utils.InventoryUtils;
 
 @SideOnly(Side.CLIENT)
-public class TileEntityStackHolderRenderer extends TileEntitySpecialRenderer<TileEntityPedestal> {
+public class TileEntityStackHolderRenderer extends TileEntitySpecialRenderer<TileEntity> {
     private final Lazy<EntityItem> inner = new Lazy<>(() -> new EntityItem(Minecraft.getMinecraft().world));
     private final Lazy<RenderEntityItem> renderer = new Lazy<>(() -> new RenderEntityItemEnhanced(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()));
 
 
     @Override
-    public void render(TileEntityPedestal te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+    public void render(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         IItemHandler itemHandler = InventoryUtils.tryGetHandler(te, null);
         if (itemHandler != null) {
             ItemStack itemStack = itemHandler.getStackInSlot(0);

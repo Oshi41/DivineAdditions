@@ -1,0 +1,35 @@
+{
+  "type": "divineadditions:infusing",
+  "ingredients": [
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:iron_block",
+      "withCount": 100
+    },
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:gold_block",
+      "withCount": 100
+    },
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:redstone_block",
+      "withCount": 100
+    },
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "divineadditions:caged_mob",
+      "nbt": {
+        "cage": {
+          "id": "minecraft:villager_golem"
+        }
+      }
+    }
+  ],
+  "catalyst": {
+    "item": "divineadditions:empty_infinite_gem"
+  },
+  "result": {
+    "item": "divineadditions:power_gem"
+  }
+}
