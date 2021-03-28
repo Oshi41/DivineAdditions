@@ -1,11 +1,14 @@
 package divineadditions.registry;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import divineadditions.DivineAdditions;
 import divineadditions.recipe.InfusingRecipe;
 import divineadditions.recipe.SpecialShaped;
 import divineadditions.recipe.ingredient.NbtIngredient;
 import divineadditions.recipe.ingredient.RemainingIngredient;
+import divineadditions.utils.NbtUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
@@ -35,6 +38,7 @@ import java.util.stream.StreamSupport;
 
 @Mod.EventBusSubscriber(modid = DivineAdditions.MOD_ID)
 public class RecipeHandler {
+    private static final Gson GSON = new GsonBuilder().setLenient().disableHtmlEscaping().create();
     private static final Map<ResourceLocation, IRecipeFactory> recipeMap = new HashMap<ResourceLocation, IRecipeFactory>() {{
         put(new ResourceLocation(DivineAdditions.MOD_ID, "smelting"), (context, json) -> {
 
@@ -42,8 +46,8 @@ public class RecipeHandler {
             JsonObject resultJson = JsonUtils.getJsonObject(json, "result");
             int experience = JsonUtils.getInt(json, "experience");
 
-            ItemStack ingredientStack = CraftingHelper.getItemStack(ingredientJson, context);
-            ItemStack resultStack = CraftingHelper.getItemStack(resultJson, context);
+            ItemStack ingredientStack = NbtUtils.parseStack(ingredientJson, context);
+            ItemStack resultStack = NbtUtils.parseStack(resultJson, context);
 
             FurnaceRecipes furnaceRecipes = FurnaceRecipes.instance();
             furnaceRecipes.addSmeltingRecipe(ingredientStack, resultStack, experience);
@@ -54,7 +58,7 @@ public class RecipeHandler {
         put(new ResourceLocation(DivineAdditions.MOD_ID, "infusing"), (context, json) -> {
             String group = JsonUtils.getString(json, "group", "");
             Ingredient catalyst = CraftingHelper.getIngredient(JsonUtils.getJsonObject(json, "catalyst"), context);
-            ItemStack result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
+            ItemStack result = NbtUtils.parseStack(JsonUtils.getJsonObject(json, "result"), context);
 
             Ingredient[] ingredients = StreamSupport.stream(JsonUtils.getJsonArray(json, "ingredients").spliterator(), false)
                     .map(x -> CraftingHelper.getIngredient(x, context))
@@ -69,13 +73,13 @@ public class RecipeHandler {
 
     private static final Map<ResourceLocation, IIngredientFactory> ingredientMap = new HashMap<ResourceLocation, IIngredientFactory>() {{
         put(new ResourceLocation(DivineAdditions.MOD_ID, "remaining_item"), (context, json) -> {
-            ItemStack stack = CraftingHelper.getItemStack(json, context);
+            ItemStack stack = NbtUtils.parseStack(json, context);
             int damage = JsonUtils.getInt(json, "damage", 0);
             return new RemainingIngredient(stack, damage);
         });
 
         put(new ResourceLocation(DivineAdditions.MOD_ID, "item_nbt"), (context, json) -> {
-            ItemStack itemStack = CraftingHelper.getItemStack(json, context);
+            ItemStack itemStack = NbtUtils.parseStack(json, context);
             int withCount = JsonUtils.getInt(json, "withCount", -1);
             if (withCount > 0) {
                 itemStack.setCount(withCount);
@@ -99,7 +103,7 @@ public class RecipeHandler {
 
                 for (File file : recipeFiles) {
                     try {
-                        JsonObject json = CraftingHelper.GSON.fromJson(FileUtils.readFileToString(file, StandardCharsets.UTF_8), JsonObject.class);
+                        JsonObject json = GSON.fromJson(FileUtils.readFileToString(file, StandardCharsets.UTF_8), JsonObject.class);
                         if (!CraftingHelper.processConditions(json, "conditions", ctx))
                             continue;
 

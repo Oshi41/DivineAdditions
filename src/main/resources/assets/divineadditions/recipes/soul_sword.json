@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " MO",
+    " OM",
+    "J  "
+  ],
+  "key": {
+    "J": {
+      "item": "divinerpg:jungle_stone"
+    },
+    "M": {
+      "item": "divinerpg:mortum_fragments"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    }
+  },
+  "result": {
+    "item": "divineadditions:soul_sword"
+  }
+}
+}

@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import divineadditions.recipe.ingredient.RemainingIngredient;
+import divineadditions.utils.NbtUtils;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -40,10 +41,33 @@ public class SpecialShaped extends ShapedRecipes {
         int i = patterns[0].length();
         int j = patterns.length;
         NonNullList<Ingredient> ingredients = deserializeIngredients(patterns, map, i, j);
-        ItemStack result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
+        ItemStack result = NbtUtils.parseStack(JsonUtils.getJsonObject(json, "result"), context);
 
         return new SpecialShaped(group, i, j, ingredients, result);
     }
+
+    @Override
+    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
+        NonNullList<ItemStack> stacks = super.getRemainingItems(inv);
+
+        for (int i = 0; i < inv.getSizeInventory(); i++) {
+            ItemStack itemStack = inv.getStackInSlot(i).copy();
+
+            if (remaining.stream().anyMatch(x -> x.apply(itemStack))) {
+                stacks.set(i, itemStack);
+            }
+        }
+
+        return stacks;
+    }
+
+    @Override
+    public boolean matches(InventoryCrafting inv, World worldIn) {
+        boolean result = super.matches(inv, worldIn);
+        return result;
+    }
+
+    // region Legacy
 
     private static Map<String, Ingredient> deserializeKey(JsonContext context, JsonObject json) {
         Map<String, Ingredient> map = Maps.newHashMap();
@@ -99,8 +123,6 @@ public class SpecialShaped extends ShapedRecipes {
             return astring;
         }
     }
-
-    // region Legacy
 
     private static int firstNonSpace(String str) {
         int i;
@@ -170,27 +192,6 @@ public class SpecialShaped extends ShapedRecipes {
         } else {
             return nonnulllist;
         }
-    }
-
-    @Override
-    public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        NonNullList<ItemStack> stacks = super.getRemainingItems(inv);
-
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack itemStack = inv.getStackInSlot(i).copy();
-
-            if (remaining.stream().anyMatch(x -> x.apply(itemStack))) {
-                stacks.set(i, itemStack);
-            }
-        }
-
-        return stacks;
-    }
-
-    @Override
-    public boolean matches(InventoryCrafting inv, World worldIn) {
-        boolean result = super.matches(inv, worldIn);
-        return result;
     }
 
     // endregion

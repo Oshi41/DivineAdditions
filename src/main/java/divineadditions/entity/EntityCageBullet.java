@@ -29,15 +29,12 @@ public class EntityCageBullet extends EntityThrowable implements IEntityCatcher 
             return;
         }
 
-        if (result.entityHit == null) {
-            setDead();
-            return;
-        }
-
         if (tryCatch(result.entityHit, (IEntityCage) Items.caged_mob)
                 && getEntityWorld().isRemote) {
             spawnParticles(world, result.entityHit.getPosition());
         }
+
+        setDead();
     }
 
     private void spawnParticles(World world, BlockPos position) {

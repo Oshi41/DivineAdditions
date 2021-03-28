@@ -3,18 +3,18 @@ package divineadditions.registry;
 import divineadditions.DivineAdditions;
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.holders.Tabs;
+import divineadditions.holders.ToolMaterials;
 import divineadditions.item.*;
 import divineadditions.item.rifle_core.ItemRifleMobCore;
-import divinerpg.enums.ArmorInfo;
+import divineadditions.item.sword.ItemCustomSword;
+import divineadditions.item.sword.SwordProperties;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -28,8 +28,7 @@ import java.util.function.Function;
 @Mod.EventBusSubscriber(modid = DivineAdditions.MOD_ID)
 public class ItemRegistryHandler {
     // region fields
-    public static ItemArmor.ArmorMaterial BlankMaterial = createArmorMaterial(new ResourceLocation(DivineAdditions.MOD_ID, "blank"), 15, new int[]{2, 5, 6, 2}, 9, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.0F);
-    public static ArmorInfo BlankArmorInfo = new ArmorInfo(new TextComponentTranslation("divineadditions.blank_armor_info"));
+
 
     // endregion
 
@@ -46,8 +45,13 @@ public class ItemRegistryHandler {
         registerObj(registry, new ImmortalItem().setCreativeTab(Tabs.Main), "empty_infinite_gem");
         registerObj(registry, new ImmortalItem().setCreativeTab(Tabs.Main), "power_gem");
         registerObj(registry, new Item().setMaxDamage(64).setMaxStackSize(1).setCreativeTab(Tabs.Main), "rifle_template");
+        registerObj(registry, new ItemCustomSword(ToolMaterials.SoulSwordMaterial,
+                new SwordProperties()
+                        .addAttackEffect(new PotionEffect(MobEffects.POISON, 40, 1))
+                        .setSoulPerKills(200)
+        ).setCreativeTab(Tabs.Main), "soul_sword");
 
-        registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(BlankMaterial, slot, BlankArmorInfo));
+        registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));
     }
 
     private static void registerArmorSet(IForgeRegistry<Item> registry,
@@ -75,9 +79,5 @@ public class ItemRegistryHandler {
                 .setRegistryName(new ResourceLocation(DivineAdditions.MOD_ID, name));
 
         registry.register(value);
-    }
-
-    private static ItemArmor.ArmorMaterial createArmorMaterial(ResourceLocation id, int durability, int[] reductionAmounts, int enchantability, SoundEvent soundOnEquip, float toughness) {
-        return EnumHelper.addArmorMaterial(id.toString(), id.toString(), durability, reductionAmounts, enchantability, soundOnEquip, toughness);
     }
 }

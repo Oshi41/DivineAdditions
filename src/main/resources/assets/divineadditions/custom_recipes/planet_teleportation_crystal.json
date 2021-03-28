@@ -1,0 +1,31 @@
+{
+  "type": "divineadditions:shaped",
+  "pattern": [
+    "EEE",
+    "ECE",
+    "EEE"
+  ],
+  "key": {
+    "E": {
+      "type": "divineadditions:item_nbt",
+      "item": "divineadditions:caged_mob",
+      "nbt": {
+        "cage": {
+          "id": "minecraft:enderman"
+        }
+      }
+    },
+    "C": {
+      "item": "divinerpg:teleportation_star",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "divinerpg:teleportation_star",
+    "data": 63,
+    "nbt": {
+      "Dim": "divineadditions:planets",
+      "BlockPos": 2013265920
+    }
+  }
+}

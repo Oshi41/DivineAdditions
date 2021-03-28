@@ -32,11 +32,17 @@ public class RenderModItemStack extends TileEntityItemStackRenderer {
                     Render render = Minecraft.getMinecraft().getRenderManager().entityRenderMap.get(entity.getClass());
                     if (render != null) {
                         GlStateManager.pushMatrix();
-                        float maxWidth = 1.5F;
-                        if (Math.abs(entity.height - maxWidth) >= Double.MIN_VALUE) {
-                            float scale = maxWidth / entity.height;
+                        float maxWidth = 1.8F;
+
+                        float maxDimension = Math.max(entity.height, entity.width);
+
+                        if (Math.abs(maxDimension - maxWidth) >= Double.MIN_VALUE) {
+                            float scale = maxWidth / maxDimension;
                             GlStateManager.scale(scale, scale, scale);
                         }
+
+                        GlStateManager.translate(0, 0, 0.7);
+
                         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                         render.doRender(entity, 0, 0, 0, 0, partialTicks);
                         GL11.glPopAttrib();

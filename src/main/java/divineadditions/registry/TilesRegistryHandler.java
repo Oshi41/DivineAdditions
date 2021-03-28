@@ -12,7 +12,7 @@ public class TilesRegistryHandler {
 
     public static void register() {
         registerTile(TileEntityPedestal.class, "stack_holder");
-        registerTile(TileEntitySummoningAltar.class, "summoning_altar");
+        registerTile(TileEntitySummoningAltar.class, "summoning_platform");
         registerTile(TileEntityInfusingAltar.class, "infusing_altar");
     }
 

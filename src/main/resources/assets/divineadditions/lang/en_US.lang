@@ -19,6 +19,7 @@ item.summon_platform.name=Платформа призыва Защитника
 item.infusing_altar.name=Алтарь наполнения
 item.power_gem.name=Камень Силы
 item.rifle_template.name=Заготовка для снарядов
+item.soul_sword.name=Запирающий меч
 
 # Entity
 entity.entity_cage_bullet.name=Пуля
@@ -30,8 +31,9 @@ block.summon_platform.name=Платформа призыва Защитника
 block.infusing_altar.name=Алтарь напонения
 
 # Tile
-tile.summon_platform.name=Платформа призыва Защитника
 tile.infusing_altar.name=Алтарь наполнения
+tile.stack_holder.name=Пъедестал
+tile.summoning_platform.name=Платформа призыва Защитника
 
 # biome
 biome.planet.name=Астероиды
@@ -47,6 +49,10 @@ divineadditions.blank_armor_uning_caps=Используемые способно
 divineadditions.infusing_altar.missing_items=Нужно выложить полный рецепт
 divineadditions.infusing_altar.lightning=Чтобы наполнить предмет, нужно дождаться удара молнии в алтарь
 
+# tooltip
+divineadditions.tooltip.immortal_item=Неуничтожимый дроп
+divineadditions.tooltip.instant_kill=One Punch Man!!!
+divineadditions.tooltip.soul_per_kills=Процент выпадения запертых мобов: %s%%
+divineadditions.tooltip.attack_effects=Накладываемые эффекты на жертву:
+divineadditions.tooltip.defend_effects=Накладываемые эффекты на игрока (ПКМ):
 
-tile.stack_holder.name=stack_holder
-tile.summoning_altar.name=summoning_altar
