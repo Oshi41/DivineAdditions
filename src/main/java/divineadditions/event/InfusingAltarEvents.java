@@ -28,9 +28,11 @@ public class InfusingAltarEvents {
                     .findFirst()
                     .orElse(null);
 
-            InfusingRecipe recipe = entity.findByCatalyst();
-            if (recipe != null && recipe.type.equals("lightning")) {
-                entity.tryInfuse(recipe);
+            if (entity != null) {
+                InfusingRecipe recipe = entity.findByCatalyst();
+                if (recipe != null && "lightning".equals(recipe.type)) {
+                    entity.tryInfuse(recipe);
+                }
             }
         }
     }

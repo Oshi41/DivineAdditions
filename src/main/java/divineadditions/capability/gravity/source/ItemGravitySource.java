@@ -3,6 +3,7 @@ package divineadditions.capability.gravity.source;
 import divineadditions.capability.gravity.GravityUtils;
 import divineadditions.capability.gravity.source.base.GravitySourceBase;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -55,8 +56,9 @@ public class ItemGravitySource extends GravitySourceBase<ItemStack> {
             return false;
 
         IItemHandler handler = e.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        if (handler == null)
-            return false;
+        if (handler == null) {
+            return e instanceof EntityItem && ((EntityItem) e).getItem().equals(itemStack);
+        }
 
         for (int i = 0; i < handler.getSlots(); i++) {
             if (handler.getStackInSlot(i).equals(itemStack))
