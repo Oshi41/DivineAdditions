@@ -1,0 +1,11 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "divineadditions:blocks/forge_bottom",
+    "up": "divineadditions:blocks/forge_top",
+    "south": "divineadditions:blocks/forge_side_2",
+    "east": "divineadditions:blocks/forge_side_2",
+    "north": "divineadditions:blocks/forge_side",
+    "west": "divineadditions:blocks/forge_side"
+  }
+}

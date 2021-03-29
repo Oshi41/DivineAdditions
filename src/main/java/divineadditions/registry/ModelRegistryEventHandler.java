@@ -5,9 +5,8 @@ import divineadditions.entity.EntityArmorDefender;
 import divineadditions.entity.EntityCageBullet;
 import divineadditions.render.entity.RenderEntityPlayerLike;
 import divineadditions.render.stack.RenderModItemStack;
-import divineadditions.render.tile.TileEntityStackHolderRenderer;
-import divineadditions.tile.TileEntityInfusingAltar;
-import divineadditions.tile.TileEntityPedestal;
+import divineadditions.render.tile.TileEntityCatalystStandRenderer;
+import divineadditions.tile.TileEntityCatalystStand;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.RenderSnowball;
@@ -61,7 +60,7 @@ public class ModelRegistryEventHandler {
     }
 
     private static void registerTileRenders() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityPedestal.class, new TileEntityStackHolderRenderer());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfusingAltar.class, new TileEntityStackHolderRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCatalystStand.class, new TileEntityCatalystStandRenderer());
+        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfusingAltar.class, new TileEntityCatalystStandRenderer());
     }
 }

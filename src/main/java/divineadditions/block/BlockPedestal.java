@@ -1,6 +1,6 @@
 package divineadditions.block;
 
-import divineadditions.tile.TileEntityPedestal;
+import divineadditions.tile.TileEntityCatalystStand;
 import divineadditions.utils.InventoryHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -33,7 +33,7 @@ public class BlockPedestal extends BlockContainer {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new TileEntityPedestal();
+        return new TileEntityCatalystStand();
     }
 
     @Override

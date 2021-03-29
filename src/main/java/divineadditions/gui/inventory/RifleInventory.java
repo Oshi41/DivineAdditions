@@ -18,7 +18,7 @@ public class RifleInventory extends InventoryBasic {
     private final int[] catalystSlots = IntStream.range(4, 8).toArray();
 
     public RifleInventory() {
-        super(new TextComponentTranslation("gui.rifle"), 9);
+        super(new TextComponentTranslation("gui.rifle").getFormattedText(), false, 9);
     }
 
     @Override

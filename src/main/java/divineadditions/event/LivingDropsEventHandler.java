@@ -52,6 +52,8 @@ public class LivingDropsEventHandler {
      * @return
      */
     public static int getSoulDropChance(int soulPerKills, int looting, ItemStack sword) {
-        return soulPerKills - looting * 4;
+        return looting > 0
+                ? soulPerKills / looting
+                : soulPerKills;
     }
 }

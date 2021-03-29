@@ -20,6 +20,7 @@ item.infusing_altar.name=Алтарь наполнения
 item.power_gem.name=Камень Силы
 item.rifle_template.name=Заготовка для снарядов
 item.soul_sword.name=Запирающий меч
+item.time_beacon.name=Осколок прошлого
 
 # Entity
 entity.entity_cage_bullet.name=Пуля
@@ -29,6 +30,7 @@ entity.armor_defender.name=Защитник
 block.pedestal.name=Пъедестал
 block.summon_platform.name=Платформа призыва Защитника
 block.infusing_altar.name=Алтарь напонения
+block.time_beacon.name=Осколок прошлого
 
 # Tile
 tile.infusing_altar.name=Алтарь наполнения
@@ -55,4 +57,7 @@ divineadditions.tooltip.instant_kill=One Punch Man!!!
 divineadditions.tooltip.soul_per_kills=Процент выпадения запертых мобов: %s%%
 divineadditions.tooltip.attack_effects=Накладываемые эффекты на жертву:
 divineadditions.tooltip.defend_effects=Накладываемые эффекты на игрока (ПКМ):
-
+tile.time_beacon.name=time_beacon
+block.catalyst_stand.name=catalyst_stand
+item.catalyst_stand.name=catalyst_stand
+item.crafting_core.name=crafting_core

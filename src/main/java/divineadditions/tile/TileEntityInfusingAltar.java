@@ -1,6 +1,6 @@
 package divineadditions.tile;
 
-import divineadditions.api.IPedestal;
+import divineadditions.api.IItemCapacity;
 import divineadditions.recipe.InfusingRecipe;
 import divineadditions.tile.base.TileSyncBase;
 import divineadditions.utils.InventoryHelper;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class TileEntityInfusingAltar extends TileSyncBase implements IPedestal {
+public class TileEntityInfusingAltar extends TileSyncBase implements IItemCapacity {
     private final List<InfusingRecipe> infusingRecipes;
     private final int radius = 5;
 
@@ -109,7 +109,7 @@ public class TileEntityInfusingAltar extends TileSyncBase implements IPedestal {
                 getPos().add(radius, 0, radius)
         ).spliterator(), false)
                 .map(x -> world.getTileEntity(x))
-                .filter(x -> x != this && x instanceof IPedestal)
+                .filter(x -> x != this && x instanceof IItemCapacity)
                 .collect(Collectors.toMap(x -> x, x -> x.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)));
     }
 

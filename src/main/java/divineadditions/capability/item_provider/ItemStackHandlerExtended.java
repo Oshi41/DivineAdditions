@@ -1,29 +1,54 @@
 package divineadditions.capability.item_provider;
 
+import divineadditions.api.IItemCapacity;
 import divineadditions.utils.InventoryHelper;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import java.lang.ref.WeakReference;
 
-public class PedestalItemHandler extends ItemStackHandler {
-    private BlockPos pos;
-    private int stackSize;
+public class ItemStackHandlerExtended extends ItemStackHandler {
+    protected WeakReference<TileEntity> entity;
+    protected int stackSize;
 
-    public PedestalItemHandler() {
+    public ItemStackHandlerExtended() {
 
     }
 
-    public PedestalItemHandler(int stackSize) {
+    public ItemStackHandlerExtended(IItemCapacity tile) {
+        this(tile.getStackSize(), tile.getSlotCount());
+
+        if (tile instanceof TileEntity) {
+            entity = new WeakReference<>((TileEntity) tile);
+        }
+    }
+
+    protected ItemStackHandlerExtended(int stackSize, int slotCount) {
+        super(slotCount);
         this.stackSize = stackSize;
     }
 
     @Override
     protected void onContentsChanged(int slot) {
+        if (entity != null) {
+            TileEntity tileEntity = this.entity.get();
+            if (tileEntity != null && tileEntity.getWorld() != null) {
+                World world = tileEntity.getWorld();
+                BlockPos pos = tileEntity.getPos();
+                IBlockState state = world.getBlockState(pos);
 
+                if (state != null) {
+                    world.notifyBlockUpdate(pos, state, state, 3);
+                }
+            }
+        }
     }
 
     @Override

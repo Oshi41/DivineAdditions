@@ -1,9 +1,8 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
-import divineadditions.block.BlockInfusingAltar;
-import divineadditions.block.BlockPedestal;
-import divineadditions.block.BlockSummoningAltar;
+import divineadditions.block.BlockCatalystStand;
+import divineadditions.block.BlockTimeBeacon;
 import divineadditions.holders.Tabs;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -35,9 +34,8 @@ public class BlockRegistryHandler {
     @SubscribeEvent
     public static void registerBlocks(final RegistryEvent.Register<Block> event) {
         IForgeRegistry<Block> registry = event.getRegistry();
-        registerObj(registry, new BlockPedestal().setCreativeTab(Tabs.Main).setHardness(2.0F).setResistance(10.0F), "pedestal", true);
-        registerObj(registry, new BlockSummoningAltar().setCreativeTab(Tabs.Main).setHardness(50).setResistance(2000), "summon_platform", true);
-        registerObj(registry, new BlockInfusingAltar().setCreativeTab(Tabs.Main).setHardness(50).setResistance(2000), "infusing_altar", true);
+        registerObj(registry, new BlockTimeBeacon().setLightLevel(1.0F).setHardness(3F).setBlockUnbreakable().setCreativeTab(Tabs.Main), "time_beacon", true);
+        registerObj(registry, new BlockCatalystStand().setHardness(0.5F).setLightLevel(0.125F).setCreativeTab(Tabs.Main), "catalyst_stand", true);
     }
 
     private static void registerObj(IForgeRegistry<Block> registry, Block value, String name, boolean canBeItem) {

@@ -48,9 +48,10 @@ public class ItemRegistryHandler {
         registerObj(registry, new ItemCustomSword(ToolMaterials.SoulSwordMaterial,
                 new SwordProperties()
                         .addAttackEffect(new PotionEffect(MobEffects.POISON, 40, 1))
-                        .setSoulPerKills(200)
+                        .setSoulPerKills(60)
         ).setCreativeTab(Tabs.Main), "soul_sword");
 
+        registerObj(registry, new Item().setMaxDamage(Integer.MAX_VALUE).setMaxStackSize(1).setCreativeTab(Tabs.Main), "crafting_core");
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));
     }
 

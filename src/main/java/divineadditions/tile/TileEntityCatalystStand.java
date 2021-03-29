@@ -1,14 +1,19 @@
 package divineadditions.tile;
 
-import divineadditions.api.IPedestal;
+import divineadditions.api.IItemCapacity;
 import divineadditions.tile.base.TileSyncBase;
 
 /**
  * Own class is needed for render mappings
  */
-public class TileEntityPedestal extends TileSyncBase implements IPedestal {
+public class TileEntityCatalystStand extends TileSyncBase implements IItemCapacity {
     @Override
     public int getStackSize() {
         return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public int getSlotCount() {
+        return 3;
     }
 }
