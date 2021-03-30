@@ -18,6 +18,10 @@ public class NbtIngredient extends IngredientNBT {
         this.checkSize = checkSize;
     }
 
+    public ItemStack getStack() {
+        return stack;
+    }
+
     @Override
     public boolean apply(@Nullable ItemStack input) {
         if (input == null || !ItemStack.areItemsEqual(input, stack)) {

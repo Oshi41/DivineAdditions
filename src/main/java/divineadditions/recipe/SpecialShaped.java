@@ -145,17 +145,11 @@ public class SpecialShaped extends ShapedRecipes {
     private static String[] patternFromJson(JsonArray array) {
         String[] astring = new String[array.size()];
 
-        if (astring.length > 3) {
-            throw new JsonSyntaxException("Invalid pattern: too many rows, 3 is maximum");
-        } else if (astring.length == 0) {
+        if (astring.length == 0) {
             throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
         } else {
             for (int i = 0; i < astring.length; ++i) {
                 String s = JsonUtils.getString(array.get(i), "pattern[" + i + "]");
-
-                if (s.length() > 3) {
-                    throw new JsonSyntaxException("Invalid pattern: too many columns, 3 is maximum");
-                }
 
                 if (i > 0 && astring[0].length() != s.length()) {
                     throw new JsonSyntaxException("Invalid pattern: each row must be the same width");

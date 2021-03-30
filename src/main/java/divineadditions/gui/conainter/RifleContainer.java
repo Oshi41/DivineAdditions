@@ -35,7 +35,7 @@ public class RifleContainer extends ContainerItemHandler {
     }
 
     @Override
-    protected void drawPlayerSlots(EntityPlayer player, int topSlotHeight, int hotbarHeight) {
-        super.drawPlayerSlots(player, 85, 140);
+    protected void drawPlayerSlots(EntityPlayer player, int topSlotHeight, int hotbarHeight, int xStart) {
+        super.drawPlayerSlots(player, 85, 140, 8);
     }
 }

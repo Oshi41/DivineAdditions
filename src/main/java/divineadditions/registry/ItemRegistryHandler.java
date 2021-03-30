@@ -51,7 +51,7 @@ public class ItemRegistryHandler {
                         .setSoulPerKills(60)
         ).setCreativeTab(Tabs.Main), "soul_sword");
 
-        registerObj(registry, new Item().setMaxDamage(Integer.MAX_VALUE).setMaxStackSize(1).setCreativeTab(Tabs.Main), "crafting_core");
+        registerObj(registry, new ItemKnowledgeBook(1).setCreativeTab(Tabs.Main), "book_of_knowledge_1");
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));
     }
 

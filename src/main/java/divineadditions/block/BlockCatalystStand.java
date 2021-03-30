@@ -1,6 +1,7 @@
 package divineadditions.block;
 
 import divineadditions.tile.TileEntityCatalystStand;
+import divineadditions.utils.InventoryHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.MapColor;
@@ -22,6 +23,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import openmods.utils.InventoryUtils;
 
@@ -61,6 +63,20 @@ public class BlockCatalystStand extends BlockContainer {
         }
 
         return Vec3d.ZERO;
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+
+        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (tileEntity != null) {
+            IItemHandler capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            if (capability != null) {
+                InventoryHelper.dropAll(capability, worldIn, pos);
+            }
+        }
+
+        super.breakBlock(worldIn, pos, state);
     }
 
     @Nullable

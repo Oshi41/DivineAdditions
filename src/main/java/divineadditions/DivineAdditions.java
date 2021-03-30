@@ -3,8 +3,10 @@ package divineadditions;
 import divineadditions.api.IProxy;
 import divineadditions.gui.GuiHandler;
 import divineadditions.holders.Dimensions;
+import divineadditions.holders.Fluids;
 import divineadditions.registry.ConfigHandler;
 import divineadditions.registry.TilesRegistryHandler;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -31,6 +33,9 @@ public class DivineAdditions {
     public static final String MOD_VERSION = "0.1";
     public static final String MOD_NAME = "Divine Additions";
 
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
 
     // The instance of your mod that Forge uses.  Optional.
     @Mod.Instance(DivineAdditions.MOD_ID)
@@ -58,7 +63,7 @@ public class DivineAdditions {
         NetworkRegistry.INSTANCE.registerGuiHandler(DivineAdditions.instance, new GuiHandler());
         TilesRegistryHandler.register();
         Dimensions.register();
-
+        FluidRegistry.registerFluid(Fluids.DNA);
     }
 
     @EventHandler

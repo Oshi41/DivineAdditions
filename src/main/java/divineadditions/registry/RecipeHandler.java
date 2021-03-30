@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import divineadditions.DivineAdditions;
-import divineadditions.recipe.InfusingRecipe;
+import divineadditions.recipe.ForgeRecipes;
 import divineadditions.recipe.SpecialShaped;
 import divineadditions.recipe.ingredient.NbtIngredient;
 import divineadditions.recipe.ingredient.RemainingIngredient;
@@ -12,9 +12,7 @@ import divineadditions.utils.NbtUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientFactory;
@@ -34,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Mod.EventBusSubscriber(modid = DivineAdditions.MOD_ID)
 public class RecipeHandler {
@@ -55,20 +52,21 @@ public class RecipeHandler {
             return null;
         });
 
-        put(new ResourceLocation(DivineAdditions.MOD_ID, "infusing"), (context, json) -> {
-            String group = JsonUtils.getString(json, "group", "");
-            Ingredient catalyst = CraftingHelper.getIngredient(JsonUtils.getJsonObject(json, "catalyst"), context);
-            ItemStack result = NbtUtils.parseStack(JsonUtils.getJsonObject(json, "result"), context);
-
-            Ingredient[] ingredients = StreamSupport.stream(JsonUtils.getJsonArray(json, "ingredients").spliterator(), false)
-                    .map(x -> CraftingHelper.getIngredient(x, context))
-                    .toArray(Ingredient[]::new);
-
-            String type = JsonUtils.getString(json, "infusingType", "lightning");
-            return new InfusingRecipe(group, result, NonNullList.from(Ingredient.EMPTY, ingredients), catalyst, type);
-        });
+//        put(new ResourceLocation(DivineAdditions.MOD_ID, "infusing"), (context, json) -> {
+//            String group = JsonUtils.getString(json, "group", "");
+//            Ingredient catalyst = CraftingHelper.getIngredient(JsonUtils.getJsonObject(json, "catalyst"), context);
+//            ItemStack result = NbtUtils.parseStack(JsonUtils.getJsonObject(json, "result"), context);
+//
+//            Ingredient[] ingredients = StreamSupport.stream(JsonUtils.getJsonArray(json, "ingredients").spliterator(), false)
+//                    .map(x -> CraftingHelper.getIngredient(x, context))
+//                    .toArray(Ingredient[]::new);
+//
+//            String type = JsonUtils.getString(json, "infusingType", "lightning");
+//            return new InfusingRecipe(group, result, NonNullList.from(Ingredient.EMPTY, ingredients), catalyst, type);
+//        });
 
         put(new ResourceLocation(DivineAdditions.MOD_ID, "shaped"), SpecialShaped::deserialize);
+        put(new ResourceLocation(DivineAdditions.MOD_ID, "forge"), ForgeRecipes::deserialize);
     }};
 
     private static final Map<ResourceLocation, IIngredientFactory> ingredientMap = new HashMap<ResourceLocation, IIngredientFactory>() {{
@@ -110,7 +108,10 @@ public class RecipeHandler {
                         if (json.has("type") && recipeMap.containsKey(new ResourceLocation(JsonUtils.getString(json, "type")))) {
                             IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
                             if (recipe != null) {
-                                registry.register(recipe.setRegistryName(new ResourceLocation(DivineAdditions.MOD_ID, file.getName())));
+                                ResourceLocation id = new ResourceLocation(DivineAdditions.MOD_ID, file.getName());
+                                if (!registry.containsKey(id)) {
+                                    registry.register(recipe.setRegistryName(id));
+                                }
                             }
                         }
                     } catch (Exception e) {

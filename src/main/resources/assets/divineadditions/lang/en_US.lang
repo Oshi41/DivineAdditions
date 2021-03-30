@@ -7,35 +7,29 @@ item.rifle_bullet.name=Нарезной патрон
 item.rifle.name=Охотничья винтовка
 item.caged_mob.name=Запертый моб
 item.rifle_mob_core.name=Ядро пойманного моба
-item.pedestal.name=Пъедестал
-item.summoning_altar.name=Алтарь призыва
 item.blank_legs.name=Пустые штаны
 item.blank_head.name=Пустой шлем
 item.blank_chest.name=Пустой нагрудник
 item.blank_feet.name=Пустые ботинки
 item.empty_infinite_gem.name=Камень бесконечности (пустой)
 item.soul_powder.name=Порошок души
-item.summon_platform.name=Платформа призыва Защитника
-item.infusing_altar.name=Алтарь наполнения
 item.power_gem.name=Камень Силы
 item.rifle_template.name=Заготовка для снарядов
 item.soul_sword.name=Запирающий меч
 item.time_beacon.name=Осколок прошлого
+item.book_of_knowledge_1.name=Книга знаний древних технологий
 
 # Entity
 entity.entity_cage_bullet.name=Пуля
 entity.armor_defender.name=Защитник
 
 # Block
-block.pedestal.name=Пъедестал
-block.summon_platform.name=Платформа призыва Защитника
-block.infusing_altar.name=Алтарь напонения
 block.time_beacon.name=Осколок прошлого
 
 # Tile
-tile.infusing_altar.name=Алтарь наполнения
-tile.stack_holder.name=Пъедестал
-tile.summoning_platform.name=Платформа призыва Защитника
+tile.catalyst_stand.name=Стойка катализаторов
+tile.forge.name=Древний механизм
+tile.time_beacon.name=Осколок прошлого
 
 # biome
 biome.planet.name=Астероиды
@@ -48,8 +42,7 @@ divineadditions.armor_multiple_power=Для брони необходимо то
 divineadditions.weapon_is_needed=Для призыва необходимо оружие
 divineadditions.blank_armor_info=Собирает способности других сетов
 divineadditions.blank_armor_uning_caps=Используемые способности:
-divineadditions.infusing_altar.missing_items=Нужно выложить полный рецепт
-divineadditions.infusing_altar.lightning=Чтобы наполнить предмет, нужно дождаться удара молнии в алтарь
+divineadditions.gui.knowlegde_level=Уровень знаний:
 
 # tooltip
 divineadditions.tooltip.immortal_item=Неуничтожимый дроп
@@ -57,7 +50,12 @@ divineadditions.tooltip.instant_kill=One Punch Man!!!
 divineadditions.tooltip.soul_per_kills=Процент выпадения запертых мобов: %s%%
 divineadditions.tooltip.attack_effects=Накладываемые эффекты на жертву:
 divineadditions.tooltip.defend_effects=Накладываемые эффекты на игрока (ПКМ):
-tile.time_beacon.name=time_beacon
+
+divineadditions.tooltip.dna=ДНК: %s/%s
+
+divineadditions.message.current_knowledge_level_changed=Уровень древних знаний повышен: %s
+
 block.catalyst_stand.name=catalyst_stand
+block.forge.name=forge
 item.catalyst_stand.name=catalyst_stand
-item.crafting_core.name=crafting_core
+item.forge.name=forge

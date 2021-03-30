@@ -2,13 +2,10 @@ package divineadditions.gui.conainter.base;
 
 import divineadditions.utils.InventoryHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SPacketOpenWindow;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -35,7 +32,7 @@ public class ContainerItemHandler extends Container {
         drawHandlerSlots(handler);
         inventoryEnd = handler.getSlots();
 
-        drawPlayerSlots(player, 102, 159);
+        drawPlayerSlots(player, 102, 159, 8);
     }
 
     public ContainerItemHandler(EntityPlayer player) {
@@ -56,34 +53,21 @@ public class ContainerItemHandler extends Container {
         }
     }
 
-    protected void drawPlayerSlots(EntityPlayer player, int topSlotHeight, int hotbarHeight) {
+    protected void drawPlayerSlots(EntityPlayer player, int topSlotHeight, int hotbarHeight, int xStart) {
         for (int l = 0; l < 3; ++l) {
             for (int j1 = 0; j1 < 9; ++j1) {
-                this.addSlotToContainer(new Slot(player.inventory, j1 + l * 9 + 9, 8 + j1 * 18, topSlotHeight + l * 18));
+                this.addSlotToContainer(new Slot(player.inventory, j1 + l * 9 + 9, xStart + j1 * 18, topSlotHeight + l * 18));
             }
         }
 
         for (int i1 = 0; i1 < 9; ++i1) {
-            this.addSlotToContainer(new Slot(player.inventory, i1, 8 + i1 * 18, hotbarHeight));
+            this.addSlotToContainer(new Slot(player.inventory, i1, xStart + i1 * 18, hotbarHeight));
         }
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return possibleInventory == null || possibleInventory.isUsableByPlayer(playerIn);
-    }
-
-    public SPacketOpenWindow toPacket(String type, String name) {
-        return new SPacketOpenWindow(this.windowId, type, new TextComponentString(name), this.handler.getSlots());
-    }
-
-    public void open(EntityPlayerMP player, String type, String title) {
-        player.getNextWindowId();
-        this.windowId = player.currentWindowId;
-
-        player.connection.sendPacket(this.toPacket(type, title));
-        player.openContainer = this;
-        this.addListener(player);
     }
 
     @Override

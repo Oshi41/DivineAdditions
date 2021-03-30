@@ -1,0 +1,45 @@
+{
+  "type": "divineadditions:forge",
+  "pattern": [
+    "SSSSS",
+    "SIMIS",
+    "SECKS",
+    "SIAIS",
+    "SSSSS"
+  ],
+  "key": {
+    "C": {
+      "type": "divineadditions:item_nbt",
+      "item": "divineadditions:caged_mob",
+      "nbt": {
+        "cage": {
+          "id": "minecraft:creeper"
+        }
+      }
+    },
+    "S": {
+      "item": "divineadditions:soul_powder"
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "M": {
+      "item": "divinerpg:mortum_soul"
+    },
+    "E": {
+      "item": "divinerpg:eden_soul"
+    },
+    "K": {
+      "item": "divinerpg:skythern_soul"
+    },
+    "A": {
+      "item": "divinerpg:apalachia_soul"
+    }
+  },
+  "dna": 20,
+  "experience": 40,
+  "level": 1,
+  "result": {
+    "item": "divineadditions:rifle_mob_core"
+  }
+}
