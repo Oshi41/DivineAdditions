@@ -85,42 +85,27 @@ public class ForgeRecipes extends SpecialShaped {
      * @return
      */
     public boolean matchesWithoutGrid(IForgeInventory inv, World world) {
-        if (inv.getCurrentDna().getFluidAmount() < dna)
-            return false;
-
-        if (inv.getCurrentLevel() < level)
-            return false;
-
-        if (experience > 0) {
-            EntityPlayer player = inv.getCraftingPlayer();
-            if (player == null || player.experience < experience)
-                return false;
-        }
-
-        return checkCatalysts(inv, world);
+        return checkDna(inv, world)
+                && checkLevel(inv, world)
+                && checkExp(inv, world)
+                && checkCatalysts(inv, world);
     }
 
-    /**
-     * Checks wherever crafting grid contains correct result
-     *
-     * @param inv
-     * @param world
-     * @return
-     */
-    public boolean checkCraftContent(IForgeInventory inv, World world) {
-        for (int i = 0; i <= inv.getWidth() - this.recipeWidth; ++i) {
-            for (int j = 0; j <= inv.getHeight() - this.recipeHeight; ++j) {
-                if (this.checkMatch(inv, i, j, true)) {
-                    return true;
-                }
-
-                if (this.checkMatch(inv, i, j, false)) {
-                    return true;
-                }
-            }
+    public boolean checkExp(IForgeInventory inv, World world) {
+        if (experience > 0) {
+            EntityPlayer player = inv.getCraftingPlayer();
+            return player != null && player.experienceLevel >= experience;
         }
 
-        return false;
+        return true;
+    }
+
+    public boolean checkLevel(IForgeInventory inv, World world) {
+        return inv.getCurrentLevel() >= level;
+    }
+
+    public boolean checkDna(IForgeInventory inv, World world) {
+        return inv.getCurrentDna().getFluidAmount() >= dna;
     }
 
     /**
@@ -209,34 +194,6 @@ public class ForgeRecipes extends SpecialShaped {
 //
 //        return nonnulllist;
     }
-
-    /**
-     * Checks if the region of a crafting inventory is match for the recipe.
-     */
-    private boolean checkMatch(IForgeInventory inventoryCrafting, int widthStart, int heightStart, boolean mirrored) {
-        for (int i = 0; i < inventoryCrafting.getWidth(); ++i) {
-            for (int j = 0; j < inventoryCrafting.getHeight(); ++j) {
-                int k = i - widthStart;
-                int l = j - heightStart;
-                Ingredient ingredient = Ingredient.EMPTY;
-
-                if (k >= 0 && l >= 0 && k < this.recipeWidth && l < this.recipeHeight) {
-                    if (mirrored) {
-                        ingredient = this.recipeItems.get(this.recipeWidth - k - 1 + l * this.recipeWidth);
-                    } else {
-                        ingredient = this.recipeItems.get(k + l * this.recipeWidth);
-                    }
-                }
-
-                if (!ingredient.apply(inventoryCrafting.getStackInRowAndColumn(i, j))) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
 
     public ItemStack getCraftingResult(IForgeInventory inventory) {
         return getRecipeOutput().copy();

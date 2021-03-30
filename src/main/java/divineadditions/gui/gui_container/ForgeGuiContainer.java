@@ -13,7 +13,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
 
 import java.text.DecimalFormat;
@@ -80,7 +82,8 @@ public class ForgeGuiContainer extends GuiContainer {
             ForgeRecipes recipes = ForgeContainer.findFromResult(craftingSlot.getStack());
             if (recipes != null) {
                 if (recipes.getExperience() > 0) {
-
+                    text = new TextComponentString("XP levels: ").appendText(recipes.getExperience() + "");
+                    fontRenderer.drawSplitString(text.getFormattedText(), guiLeft + 129, guiTop + 80, 53, 10526880);
                 }
 
                 if (recipes.getDna() > 0) {
@@ -96,10 +99,21 @@ public class ForgeGuiContainer extends GuiContainer {
         int x = mouseX - this.guiLeft;
         int y = mouseY - this.guiTop;
 
+        ForgeRecipes recipes = null;
+
+        if (craftingSlot.getHasStack()) {
+            recipes = ForgeContainer.findFromResult(craftingSlot.getStack());
+        }
+
         if (dnaRectangle.contains(x, y)) {
             TextComponentTranslation components = new TextComponentTranslation("divineadditions.tooltip.dna",
                     new DecimalFormat().format(inventory.getCurrentDna().getFluidAmount()),
                     new DecimalFormat().format(inventory.getCurrentDna().getCapacity()));
+
+            if (recipes != null) {
+                components.getStyle().setColor(recipes.checkDna(inventory, player.world) ? TextFormatting.GREEN : TextFormatting.RED);
+            }
+
             drawHoveringText(components.getFormattedText(), x, y);
         }
 
@@ -109,6 +123,10 @@ public class ForgeGuiContainer extends GuiContainer {
                 TextComponentTranslation components = new TextComponentTranslation("item.caged_mob.name");
                 drawHoveringText(components.getFormattedText(), x, y);
             }
+        }
+
+        if (craftingSlot == getSlotUnderMouse()) {
+            // check if can craft
         }
     }
 }

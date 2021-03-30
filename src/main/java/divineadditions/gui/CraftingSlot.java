@@ -120,13 +120,14 @@ public class CraftingSlot extends Slot {
         ForgeHooks.setCraftingPlayer(null);
 
         replace(((IItemHandlerModifiable) inventory.getCurrentHandler()), grid);
+
         for (Map.Entry<TileEntity, NonNullList<ItemStack>> entry : catalysts.entrySet()) {
             IItemHandlerModifiable capability = (IItemHandlerModifiable) entry.getKey().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             replace(capability, entry.getValue());
         }
 
         if (recipes.getExperience() > 0) {
-            player.experienceTotal -= recipes.getExperience();
+            player.experienceLevel -= recipes.getExperience();
         }
 
         if (recipes.getDna() > 0) {
