@@ -13,7 +13,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
@@ -72,8 +71,10 @@ public class ForgeGuiContainer extends GuiContainer {
 
         if (currentLevel > 0) {
             text.appendText(" ").appendSibling(new TextComponentTranslation("enchantment.level." + currentLevel));
+            text.getStyle().setColor(TextFormatting.GRAY);
         } else {
             text.appendText(" ?");
+            text.getStyle().setColor(TextFormatting.DARK_RED);
         }
 
         fontRenderer.drawSplitString(text.getFormattedText(), guiLeft + 129, guiTop + 10, 53, 10526880);
@@ -82,8 +83,9 @@ public class ForgeGuiContainer extends GuiContainer {
             ForgeRecipes recipes = ForgeContainer.findFromResult(craftingSlot.getStack());
             if (recipes != null) {
                 if (recipes.getExperience() > 0) {
-                    text = new TextComponentString("XP levels: ").appendText(recipes.getExperience() + "");
-                    fontRenderer.drawSplitString(text.getFormattedText(), guiLeft + 129, guiTop + 80, 53, 10526880);
+                    text = new TextComponentTranslation("divineadditions.gui.xp_level_needed").appendText(" " + recipes.getExperience());
+                    text.getStyle().setColor(recipes.checkExp(inventory, player.world) ? TextFormatting.GREEN : TextFormatting.RED);
+                    fontRenderer.drawSplitString(text.getFormattedText(), guiLeft + 129, guiTop + 80, 53, 0);
                 }
 
                 if (recipes.getDna() > 0) {

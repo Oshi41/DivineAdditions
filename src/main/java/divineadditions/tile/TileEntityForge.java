@@ -47,7 +47,7 @@ public class TileEntityForge extends TileFluidHandler implements IForgeInventory
             }
         };
 
-        itemHandler = new ItemStackHandlerExtended(64, 1, null) {
+        itemHandler = new ItemStackHandlerExtended(64, 1 + getWidth() * getHeight(), null) {
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
                 // caged mobs
@@ -63,6 +63,7 @@ public class TileEntityForge extends TileFluidHandler implements IForgeInventory
                 // caged mobs
                 ItemStack stackInSlot = getStackInSlot(0);
                 TileEntityForge.this.consumeDNA(stackInSlot);
+
                 sendUpdate(TileEntityForge.this);
             }
         };

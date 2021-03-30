@@ -1,10 +1,8 @@
 package divineadditions.api;
 
-import divineadditions.DivineAdditions;
-import divineadditions.utils.NbtUtils;
+import divineadditions.capability.knowledge.IKnowledgeInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.IItemHandler;
@@ -65,9 +63,9 @@ public interface IForgeInventory {
         EntityPlayer player = getCraftingPlayer();
 
         if (player != null) {
-            NBTTagCompound tag = NbtUtils.getOrCreateModPlayerPersistTag(player, DivineAdditions.MOD_ID);
-            if (tag.hasKey(ForgeLevelName)) {
-                return tag.getInteger(ForgeLevelName);
+            IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
+            if (capability != null) {
+                return capability.getLevel();
             }
         }
 

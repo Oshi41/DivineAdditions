@@ -1,11 +1,10 @@
 package divineadditions.entity;
 
-import divineadditions.DivineAdditions;
 import divineadditions.ai.EntityAIAttackMelee;
 import divineadditions.api.IArmorEssence;
+import divineadditions.capability.knowledge.IKnowledgeInfo;
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.utils.EntityAttributeHelper;
-import divineadditions.utils.NbtUtils;
 import divinerpg.objects.entities.ai.AIDivineLookAround;
 import divinerpg.objects.entities.ai.AIDivineRandomFly;
 import divinerpg.objects.entities.ai.GhastLikeMoveHelper;
@@ -39,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 public class EntityArmorDefender extends AbstractSkeleton {
-    private final static String killsCount = "DefenderKills";
     private final EntityAIAttackRangedBow<AbstractSkeleton> aiArrowAttack = new EntityAIAttackRangedBow<AbstractSkeleton>(this, 1.0D, 20, 15.0F);
     private EntityPlayer summoner;
     private final EntityAIAttackMelee aiAttackOnCollide = new EntityAIAttackMelee(this, 1.2D, false);
@@ -50,7 +48,7 @@ public class EntityArmorDefender extends AbstractSkeleton {
     private final EntityAIWander aiEntityAIWander = new EntityAIWander(this, 1);
     private ResourceLocation description;
     private boolean canFly;
-    private int generation;
+    private int generation = 0;
 
 
     public EntityArmorDefender(World worldIn) {
@@ -60,7 +58,10 @@ public class EntityArmorDefender extends AbstractSkeleton {
     public EntityArmorDefender(World worldIn, Map<EntityEquipmentSlot, ItemStack> items, EntityPlayer summoner, ItemStack essence) {
         this(worldIn);
 
-        generation = NbtUtils.getOrCreateModPlayerPersistTag(summoner, DivineAdditions.MOD_ID).getInteger(killsCount);
+        IKnowledgeInfo capability = summoner.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
+        if (capability != null) {
+            generation = capability.armorDefenderSummonCount();
+        }
 
         this.summoner = summoner;
         setEssence(essence);
@@ -227,8 +228,10 @@ public class EntityArmorDefender extends AbstractSkeleton {
         }
 
         if (player != null) {
-            NBTTagCompound tag = NbtUtils.getOrCreateModPlayerPersistTag(player, DivineAdditions.MOD_ID);
-            tag.setInteger(killsCount, 1 + tag.getInteger(killsCount));
+            IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
+            if (capability != null) {
+                capability.setArmorDefenderSummonCount(capability.armorDefenderSummonCount() + 1);
+            }
         }
     }
 

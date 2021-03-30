@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -47,12 +48,20 @@ public class ForgeContainer extends ContainerItemHandler {
         this.craftResult = new InventoryCraftResult();
 
         drawSlots();
+
+        IItemHandlerModifiable itemHandler = ((IItemHandlerModifiable) this.handler.getCurrentHandler());
+        for (int i = 1; i < itemHandler.getSlots(); i++) {
+            ItemStack itemStack = itemHandler.getStackInSlot(i);
+            if (!itemStack.isEmpty())
+                matrix.setInventorySlotContents(i - 1, itemStack);
+        }
+
         handler.openInventory(player);
     }
 
     @Nullable
     public static ForgeRecipes findFromResult(ItemStack result) {
-        return recipes.stream().filter(x -> x.getRecipeOutput().equals(result)).findFirst().orElse(null);
+        return recipes.stream().filter(x -> ItemStack.areItemsEqual(result, x.getRecipeOutput())).findFirst().orElse(null);
     }
 
     protected void drawSlots() {
@@ -116,13 +125,20 @@ public class ForgeContainer extends ContainerItemHandler {
 
     @Override
     public void onCraftMatrixChanged(IInventory inventoryIn) {
+        IItemHandlerModifiable itemHandler = ((IItemHandlerModifiable) this.handler.getCurrentHandler());
+        for (int i = 1; i < itemHandler.getSlots(); i++) {
+            ItemStack itemStack = matrix.getStackInSlot(i - 1);
+
+            if (!itemStack.isEmpty())
+                itemHandler.setStackInSlot(i, itemStack);
+        }
+
         slotChangedCraftingGrid(player.world, player, handler, craftResult);
     }
 
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         handler.closeInventory(player);
-        clearContainer(playerIn, playerIn.getEntityWorld(), matrix);
         super.onContainerClosed(playerIn);
     }
 

@@ -43,6 +43,7 @@ divineadditions.weapon_is_needed=Для призыва необходимо ор
 divineadditions.blank_armor_info=Собирает способности других сетов
 divineadditions.blank_armor_uning_caps=Используемые способности:
 divineadditions.gui.knowlegde_level=Уровень знаний:
+divineadditions.gui.xp_level_needed=Уровень опыта:
 
 # tooltip
 divineadditions.tooltip.immortal_item=Неуничтожимый дроп
