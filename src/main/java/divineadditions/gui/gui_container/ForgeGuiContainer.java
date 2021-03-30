@@ -3,7 +3,9 @@ package divineadditions.gui.gui_container;
 import com.sun.javafx.geom.Rectangle;
 import divineadditions.DivineAdditions;
 import divineadditions.api.IForgeInventory;
+import divineadditions.gui.CraftingSlot;
 import divineadditions.gui.conainter.ForgeContainer;
+import divineadditions.recipe.ForgeRecipes;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +26,7 @@ public class ForgeGuiContainer extends GuiContainer {
     private final ResourceLocation background = new ResourceLocation(DivineAdditions.MOD_ID, "textures/gui/forge.png");
     private IForgeInventory inventory;
     private EntityPlayer player;
+    private CraftingSlot craftingSlot;
 
     public ForgeGuiContainer(ForgeContainer inventorySlotsIn, EntityPlayer player) {
         super(inventorySlotsIn);
@@ -32,6 +35,13 @@ public class ForgeGuiContainer extends GuiContainer {
         this.ySize = 196;
 
         inventory = inventorySlotsIn.getHandler();
+        craftingSlot = inventorySlotsIn
+                .inventorySlots
+                .stream()
+                .filter(x -> x instanceof CraftingSlot)
+                .map(x -> ((CraftingSlot) x))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -65,6 +75,19 @@ public class ForgeGuiContainer extends GuiContainer {
         }
 
         fontRenderer.drawSplitString(text.getFormattedText(), guiLeft + 129, guiTop + 10, 53, 10526880);
+
+        if (craftingSlot.getHasStack()) {
+            ForgeRecipes recipes = ForgeContainer.findFromResult(craftingSlot.getStack());
+            if (recipes != null) {
+                if (recipes.getExperience() > 0) {
+
+                }
+
+                if (recipes.getDna() > 0) {
+
+                }
+            }
+        }
     }
 
     @Override

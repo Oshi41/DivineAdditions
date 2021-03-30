@@ -19,12 +19,13 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ForgeContainer extends ContainerItemHandler {
-    private final Set<ForgeRecipes> recipes = ForgeRegistries
+    private final static Set<ForgeRecipes> recipes = ForgeRegistries
             .RECIPES
             .getValuesCollection()
             .stream()
@@ -47,6 +48,11 @@ public class ForgeContainer extends ContainerItemHandler {
 
         drawSlots();
         handler.openInventory(player);
+    }
+
+    @Nullable
+    public static ForgeRecipes findFromResult(ItemStack result) {
+        return recipes.stream().filter(x -> x.getRecipeOutput().equals(result)).findFirst().orElse(null);
     }
 
     protected void drawSlots() {
@@ -128,7 +134,7 @@ public class ForgeContainer extends ContainerItemHandler {
         if (!world.isRemote) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
             ItemStack itemstack = ItemStack.EMPTY;
-            ForgeRecipes irecipe = this.recipes.stream().filter(x -> x.matches(matrix, world)).findFirst().orElse(null);
+            ForgeRecipes irecipe = recipes.stream().filter(x -> x.matches(matrix, world)).findFirst().orElse(null);
 
             if (irecipe != null && (irecipe.isDynamic() || !world.getGameRules().getBoolean("doLimitedCrafting") || entityplayermp.getRecipeBook().isUnlocked(irecipe))) {
                 inventoryCraftResult.setRecipeUsed(irecipe);
