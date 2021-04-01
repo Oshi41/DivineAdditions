@@ -44,7 +44,7 @@ public interface IEntityCatcher {
         if (!canCatch(entity) || !(item instanceof Item))
             return false;
 
-        ItemStack itemStack = ((Item) item).getDefaultInstance();
+        ItemStack itemStack = new ItemStack(((Item) item), 1);
         itemStack.setTagCompound(new NBTTagCompound());
 
         if (!item.imprison(entity, itemStack.getTagCompound())) {

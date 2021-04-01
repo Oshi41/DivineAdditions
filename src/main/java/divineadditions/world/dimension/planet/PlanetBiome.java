@@ -1,10 +1,14 @@
 package divineadditions.world.dimension.planet;
 
+import divineadditions.DivineAdditions;
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.config.PlanetConfig;
+import divineadditions.utils.StructureUtils;
 import divineadditions.world.gen.WorldGenVines;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 
 import java.util.List;
@@ -12,6 +16,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class PlanetBiome extends Biome {
+    private static final ResourceLocation ancientPortalId = new ResourceLocation(DivineAdditions.MOD_ID, "ancient_portal");
 
     public PlanetBiome() {
         super(new BiomeProperties("Planets").setTemperature(0.8f).setRainfall(0.5f));
@@ -33,8 +38,18 @@ public class PlanetBiome extends Biome {
 
     @Override
     public void decorate(World worldIn, Random rand, BlockPos chunkStart) {
-        for (int i = 0; i < DivineAdditionsConfig.planetDimensionConfig.spawnTries; i++) {
-            new PlanetWorldGen(this::createRandom, true).generate(worldIn, rand, chunkStart);
+        if (worldIn instanceof WorldServer) {
+            StructureUtils.StructureInfo info = StructureUtils.readFromNbt((WorldServer) worldIn, ancientPortalId);
+            if (info != null) {
+                AncientPortalGen gen = new AncientPortalGen(info.getTemplate());
+                int min = 20;
+
+                for (int i = 0; i < 5; i++) {
+                    if (gen.generate(worldIn, rand, chunkStart.up(rand.nextInt(worldIn.getHeight() - min * 2) + min))) {
+                        break;
+                    }
+                }
+            }
         }
 
         decorator.sandPatchesPerChunk = 0;

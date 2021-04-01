@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RifleMobCore implements IRifleCoreConfig {
-    @Config.RangeInt(min = 1, max = 250)
+    @Config.RangeInt
     @Config.Comment("rifle mob core durability")
-    public Integer durability = 14;
+    public Integer durability = 300;
 
     @Config.Comment("Bullets that current core can apply. Number means amount of ammo using per shot")
     public Map<String, Integer> bullets = new HashMap<String, Integer>() {{

@@ -4,7 +4,9 @@ import divineadditions.api.IProxy;
 import divineadditions.gui.GuiHandler;
 import divineadditions.holders.Dimensions;
 import divineadditions.holders.Fluids;
+import divineadditions.registry.CapabilityRegistryHandler;
 import divineadditions.registry.ConfigHandler;
+import divineadditions.registry.NetworkRegistryHandler;
 import divineadditions.registry.TilesRegistryHandler;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -16,6 +18,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,6 +50,8 @@ public class DivineAdditions {
 
     public static Logger logger = LogManager.getLogger();
 
+    public static SimpleNetworkWrapper networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel(MOD_ID);
+
     @SubscribeEvent
     public static void onConfigChangedEvent(ConfigChangedEvent.OnConfigChangedEvent event) {
         if (event.getModID().equals(MOD_ID)) {
@@ -64,6 +69,8 @@ public class DivineAdditions {
         TilesRegistryHandler.register();
         Dimensions.register();
         FluidRegistry.registerFluid(Fluids.DNA);
+        CapabilityRegistryHandler.register();
+        NetworkRegistryHandler.register();
     }
 
     @EventHandler

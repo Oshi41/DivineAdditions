@@ -1,6 +1,9 @@
 package divineadditions.api;
 
-public interface IProxy {
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+
+public interface IProxy extends IMessageHandler<IMessage, IMessage> {
     /**
      * is this a dedicated server?
      *
@@ -13,6 +16,8 @@ public interface IProxy {
     void init();
 
     void post();
+
+    void scheduleTask(Runnable runnable);
 }
 
 

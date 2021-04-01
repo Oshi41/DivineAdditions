@@ -26,10 +26,8 @@ public class ItemKnowledgeBook extends ItemBook {
         if (capability != null && capability.getLevel() < level) {
             capability.setLevel(level);
 
-            ItemStack heldItem = playerIn.getHeldItem(handIn);
+            ItemStack heldItem = playerIn.getHeldItem(handIn).copy();
             heldItem.shrink(1);
-            playerIn.setHeldItem(handIn, heldItem);
-
             if (!playerIn.getEntityWorld().isRemote) {
                 playerIn.sendMessage(new TextComponentTranslation("divineadditions.message.current_knowledge_level_changed", level));
             }

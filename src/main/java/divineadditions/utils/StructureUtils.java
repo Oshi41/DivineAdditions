@@ -79,7 +79,7 @@ public class StructureUtils {
             blocks.put(blockpos, iblockstate);
         }
 
-        structureInfo = new StructureInfo(createBlockPattern(blocks, palette), id, blocks, palette, template.getSize());
+        structureInfo = new StructureInfo(template, createBlockPattern(blocks, palette), id, blocks, palette, template.getSize());
         templates.put(id, structureInfo);
         return structureInfo;
     }
@@ -158,6 +158,7 @@ public class StructureUtils {
     }
 
     public static class StructureInfo {
+        private Template template;
         final BlockPattern pattern;
         final ResourceLocation id;
         final Map<BlockPos, IBlockState> blocks;
@@ -167,7 +168,8 @@ public class StructureUtils {
         private IBlockState rarestBlock;
 
 
-        StructureInfo(BlockPattern pattern, ResourceLocation id, Map<BlockPos, IBlockState> blocks, BiMap<Integer, IBlockState> palette, BlockPos size) {
+        StructureInfo(Template template, BlockPattern pattern, ResourceLocation id, Map<BlockPos, IBlockState> blocks, BiMap<Integer, IBlockState> palette, BlockPos size) {
+            this.template = template;
             this.pattern = pattern;
             this.id = id;
             this.blocks = blocks;
@@ -219,6 +221,10 @@ public class StructureUtils {
             }
 
             return null;
+        }
+
+        public Template getTemplate() {
+            return template;
         }
     }
 }

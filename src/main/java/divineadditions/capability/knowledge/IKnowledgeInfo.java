@@ -1,9 +1,10 @@
 package divineadditions.capability.knowledge;
 
+import divineadditions.api.ICapabilitySyns;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
-public interface IKnowledgeInfo {
+public interface IKnowledgeInfo extends ICapabilitySyns {
     @CapabilityInject(IKnowledgeInfo.class)
     Capability<IKnowledgeInfo> KnowledgeCapability = null;
 

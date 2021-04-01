@@ -27,4 +27,8 @@ public class PlanetDimensionConfig {
 
     @Config.Comment("dimension ID")
     public int id = 14;
+
+    @Config.Comment("Spawn chance for ancient portal. Counting as 1/x for chunk.")
+    @Config.RangeInt(min = 1)
+    public int portalSpawnChance = 50;
 }

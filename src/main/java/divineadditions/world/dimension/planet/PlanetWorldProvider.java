@@ -6,6 +6,10 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class PlanetWorldProvider extends WorldProvider {
 
@@ -16,10 +20,6 @@ public class PlanetWorldProvider extends WorldProvider {
     protected void init() {
         hasSkyLight = false;
         this.biomeProvider = new BiomeProviderSingle(Biomes.planet);
-
-        if (world.isRemote) {
-            setSkyRenderer(new divineadditions.render.sky.PlanetsSkyRender());
-        }
     }
 
     @Override
@@ -34,7 +34,7 @@ public class PlanetWorldProvider extends WorldProvider {
 
     @Override
     public IChunkGenerator createChunkGenerator() {
-        return new EmptyChunkGenerator(world);
+        return new PlanetsChunkGen(world);
     }
 
     /**
@@ -52,5 +52,16 @@ public class PlanetWorldProvider extends WorldProvider {
             float f1 = 1.0F - (float) i / 15.0F; // 1 - 0
             this.lightBrightnessTable[i] = (1.0F - f1) / (f1 * 3.0F + 1.0F) * 0.5F + 0.5F; // 0.5 - 1
         }
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Nullable
+    @Override
+    public net.minecraftforge.client.IRenderHandler getSkyRenderer() {
+        if (super.getSkyRenderer() == null) {
+            setSkyRenderer(new divineadditions.render.sky.PlanetsSkyRender());
+        }
+
+        return super.getSkyRenderer();
     }
 }

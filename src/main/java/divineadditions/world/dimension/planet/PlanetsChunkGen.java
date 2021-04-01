@@ -1,8 +1,12 @@
 package divineadditions.world.dimension.planet;
 
+import divineadditions.config.DivineAdditionsConfig;
+import divineadditions.config.PlanetConfig;
+import divineadditions.utils.FakeWorld;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
@@ -10,18 +14,24 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
-public class EmptyChunkGenerator implements IChunkGenerator {
+public class PlanetsChunkGen implements IChunkGenerator {
     private World world;
+    private FakeWorld fakeWorld;
     private Biome[] biomesForGeneration;
 
-    public EmptyChunkGenerator(World world) {
+    public PlanetsChunkGen(World world) {
         this.world = world;
+        fakeWorld = new FakeWorld(world);
     }
 
     @Override
     public Chunk generateChunk(int x, int z) {
-        Chunk chunk = new Chunk(world, x, z);
+        generatePlanets(x, z);
+
+        Chunk chunk = new Chunk(world, fakeWorld.createFrom(new ChunkPos(x, z)), x, z);
         chunk.generateSkylightMap();
 
         byte[] abyte = chunk.getBiomeArray();
@@ -71,5 +81,37 @@ public class EmptyChunkGenerator implements IChunkGenerator {
     @Override
     public boolean isInsideStructure(World worldIn, String structureName, BlockPos pos) {
         return false;
+    }
+
+    private boolean generatePlanets(int x, int z) {
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                ChunkPos chunkPos = new ChunkPos(x + i, z + j);
+
+                if (!fakeWorld.isBlockLoaded(chunkPos.getBlock(0, 0, 0))) {
+                    BlockPos chunkStart = chunkPos.getBlock(0, 0, 0);
+                    for (int k = 0; k < DivineAdditionsConfig.planetDimensionConfig.spawnTries; k++) {
+                        new PlanetWorldGen(this::createRandom, true).generate(fakeWorld, world.rand, chunkStart);
+                    }
+                }
+            }
+        }
+
+
+        return true;
+    }
+
+    private PlanetConfig createRandom(Random random) {
+        List<PlanetConfig> possiblePlanets = DivineAdditionsConfig
+                .planetDimensionConfig
+                .possiblePlanets
+                .stream()
+                .filter(x -> random.nextInt(x.getProbability()) == 0)
+                .collect(Collectors.toList());
+
+        if (possiblePlanets.isEmpty())
+            return null;
+
+        return possiblePlanets.get(random.nextInt(possiblePlanets.size()));
     }
 }

@@ -20,7 +20,7 @@ public class PlanetWorldGen extends WorldGenerator {
         this.checkIsFree = checkIsFree;
     }
 
-    private static boolean checkIsFree(World worldIn, BlockPos position, int radius) {
+    public static boolean checkIsFree(World worldIn, BlockPos position, int radius) {
         return StreamSupport.stream(BlockPos.getAllInBoxMutable(position.add(-radius, -radius, -radius),
                 position.add(radius, radius, radius)).spliterator(), false)
                 .allMatch(worldIn::isAirBlock);
@@ -54,9 +54,9 @@ public class PlanetWorldGen extends WorldGenerator {
         return radius;
     }
 
-    private static BlockPos chooseRandPos(World worldIn, Random rand, BlockPos position, PlanetConfig config, int radius) {
-        int y = config.getyMin();
-        int yMax = config.getyMax(worldIn);
+    public static BlockPos chooseRandPos(Random rand, BlockPos position, int minY, int maxY, int radius) {
+        int y = minY;
+        int yMax = maxY;
         if (yMax > y) {
             y += rand.nextInt(yMax - y);
         }
@@ -94,7 +94,7 @@ public class PlanetWorldGen extends WorldGenerator {
             return false;
 
         final int radius = getRadius(rand, config);
-        final BlockPos position = chooseRandPos(worldIn, rand, chunkStart, config, radius);
+        final BlockPos position = chooseRandPos(rand, chunkStart, config.getyMin(), config.getyMax(worldIn), radius);
 
         if (checkIsFree && !checkIsFree(worldIn, position, radius))
             return false;

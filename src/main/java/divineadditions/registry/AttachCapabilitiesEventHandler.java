@@ -2,13 +2,16 @@ package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
 import divineadditions.api.IItemCapacity;
-import divineadditions.capability.gravity.GravitySourceCapabilityProvider;
+import divineadditions.capability.DefaultCapabilityProvider;
+import divineadditions.capability.ObservableCapabilityProvider;
 import divineadditions.capability.gravity.source.WorldGravitySource;
+import divineadditions.capability.gravity.source.base.IGravitySource;
 import divineadditions.capability.item_provider.CapabilityItemProvider;
 import divineadditions.capability.item_provider.ItemStackHandlerExtended;
+import divineadditions.capability.knowledge.IKnowledgeInfo;
 import divineadditions.capability.knowledge.KnowledgeInfo;
-import divineadditions.capability.knowledge.KnowledgeProvider;
 import divineadditions.config.DivineAdditionsConfig;
+import divineadditions.msg.KnowledgeMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -39,7 +42,7 @@ public class AttachCapabilitiesEventHandler {
         if (world != null) {
             Double multiplier = DivineAdditionsConfig.gravity.get(world.provider.getDimensionType().getName());
             if (multiplier != null && multiplier != 1) {
-                event.addCapability(GravityCap, new GravitySourceCapabilityProvider(new WorldGravitySource(world)));
+                event.addCapability(GravityCap, new DefaultCapabilityProvider<>(IGravitySource.GravitySourceCap, new WorldGravitySource(world)));
             }
         }
     }
@@ -47,7 +50,11 @@ public class AttachCapabilitiesEventHandler {
     @SubscribeEvent
     public static void attachToEntity(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof EntityPlayer) {
-            event.addCapability(KnowledgeCap, new KnowledgeProvider(new KnowledgeInfo()));
+            event.addCapability(KnowledgeCap, new ObservableCapabilityProvider<>(
+                    IKnowledgeInfo.KnowledgeCapability,
+                    new KnowledgeInfo(),
+                    (EntityPlayer) event.getObject(),
+                    KnowledgeMessage::new));
         }
     }
 }

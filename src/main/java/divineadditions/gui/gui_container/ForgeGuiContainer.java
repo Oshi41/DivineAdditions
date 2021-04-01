@@ -16,9 +16,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.text.DecimalFormat;
 
+@SideOnly(Side.CLIENT)
 public class ForgeGuiContainer extends GuiContainer {
     private static final Rectangle dnaRectangle = new Rectangle(4, 9, 18, 68);
     private static final Rectangle cageMobRect = new Rectangle(4, 83, 18, 18);
