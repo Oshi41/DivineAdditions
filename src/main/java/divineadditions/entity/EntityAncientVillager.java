@@ -23,6 +23,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,6 +37,7 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
     }};
 
     private EntityLivingBase summoner;
+    private EntityAIFollow aiFollow;
 
     public EntityAncientVillager(World worldIn) {
         super(worldIn);
@@ -57,7 +59,8 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
 
     @Override
     protected void initEntityAI() {
-        this.tasks.addTask(4, new EntityAIFollow(this, 1.0D, 3.0F, 7.0F));
+        aiFollow = new EntityAIFollow(this, 1.0D, 3.0F, 7.0F);
+        this.tasks.addTask(4, aiFollow);
         this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.6D));
         this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 3.0F, 1.0F));
         this.tasks.addTask(9, new EntityAIWanderAvoidWater(this, 0.6D));
@@ -100,8 +103,7 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
                 if (!world.isRemote) {
                     summoner.sendMessage(new TextComponentTranslation("divineadditions.message.ancient_villager.need_to_go"));
                 }
-
-                setRevengeTarget(summoner);
+                this.tasks.removeTask(aiFollow);
                 this.tasks.addTask(1, new EntityAIPanic(this, 1.2));
                 break;
 
@@ -130,6 +132,12 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
 
                 break;
         }
+    }
+
+    @Nullable
+    @Override
+    public EntityLivingBase getRevengeTarget() {
+        return summoner;
     }
 
     @Override

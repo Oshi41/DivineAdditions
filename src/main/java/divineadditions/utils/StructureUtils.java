@@ -8,7 +8,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.block.state.pattern.BlockStateMatcher;
 import net.minecraft.block.state.pattern.FactoryBlockPattern;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -290,9 +289,6 @@ public class StructureUtils {
         public void clearBlocks(BlockPattern.PatternHelper currentMatch, World world) {
             final BlockPos frontTopLeft = currentMatch.getFrontTopLeft();
             final BlockPos end = frontTopLeft.add(template.getSize());
-
-            world.setBlockState(frontTopLeft, Blocks.STONE.getDefaultState());
-            world.setBlockState(end, Blocks.STONE.getDefaultState());
 
             for (BlockPos.MutableBlockPos pos : BlockPos.getAllInBoxMutable(frontTopLeft, end)) {
                 IBlockState blockState = world.getBlockState(pos);

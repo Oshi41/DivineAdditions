@@ -73,7 +73,7 @@ public class BlockTimeBeacon extends BlockContainer {
             }
 
             // todo debug
-            if (heldItem.getItem() == Items.ENDER_PEARL) {
+            if (heldItem.getItem() == Items.ENDER_PEARL && playerIn.isCreative()) {
                 StructureUtils.StructureInfo info = StructureUtils.readFromNbt(((WorldServer) worldIn), PlanetBiome.ancientPortalId);
                 if (info != null) {
                     Template template = info.getTemplate();
@@ -91,12 +91,14 @@ public class BlockTimeBeacon extends BlockContainer {
 
     @Override
     public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-        for (int i = 0; i < 10; i++) {
+        int radius = 13;
+
+        for (int i = 0; i < 127; i++) {
             worldIn.spawnParticle(
                     EnumParticleTypes.REDSTONE,
-                    pos.getX() + rand.nextInt(3),
-                    pos.getY() + rand.nextInt(3) + 1,
-                    pos.getZ() + rand.nextInt(3),
+                    pos.getX() + rand.nextInt(radius) - rand.nextInt(radius),
+                    pos.getY() + rand.nextInt(radius) + 1,
+                    pos.getZ() + rand.nextInt(radius) - rand.nextInt(radius),
                     rand.nextFloat() - rand.nextFloat(),
                     rand.nextFloat() - rand.nextFloat(),
                     rand.nextFloat() - rand.nextFloat()
