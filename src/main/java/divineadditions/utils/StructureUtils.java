@@ -13,9 +13,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraft.world.gen.structure.MapGenStructureData;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.template.Template;
 
 import javax.annotation.Nullable;
@@ -29,25 +31,6 @@ import java.util.stream.StreamSupport;
 
 public class StructureUtils {
     private static final Map<ResourceLocation, StructureInfo> templates = new HashMap<>();
-
-    public static boolean placeStructure(World world, BlockPos pos, ResourceLocation id, float integrity) {
-        if (!(world instanceof WorldServer)) {
-            return false;
-        }
-
-        StructureInfo structureInfo = readFromNbt((WorldServer) world, id);
-
-        BlockPattern.PatternHelper match = structureInfo.match(world, pos);
-        if (match != null)
-            return true;
-
-        Template template = ((WorldServer) world).getStructureTemplateManager().getTemplate(world.getMinecraftServer(), id);
-        if (template == null)
-            return false;
-
-        template.addBlocksToWorld(world, pos, new SkippingTemplateProcessor(world.rand, integrity), new PlacementSettings(), 2);
-        return true;
-    }
 
     @Nullable
     public static StructureInfo readFromNbt(WorldServer world, ResourceLocation id) {
@@ -156,6 +139,78 @@ public class StructureUtils {
 
         return factoryBlockPattern.build();
     }
+
+    public static MapGenStructureData setStructure(World worldIn, String structureName, BlockPos pos, StructureBoundingBox box) {
+        MapGenStructureData structureData = (MapGenStructureData) worldIn.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, structureName);
+
+        if (structureData == null) {
+            structureData = new MapGenStructureData(structureName);
+            worldIn.getPerWorldStorage().setData(structureName, structureData);
+        }
+
+        NBTTagCompound compound = new NBTTagCompound();
+        ChunkPos chunkPos = new ChunkPos(pos);
+        compound.setInteger("ChunkX", chunkPos.x);
+        compound.setInteger("ChunkZ", chunkPos.z);
+        compound.setTag("BB", box.toNBTTagIntArray());
+        compound.setLong("Center", pos.toLong());
+        structureData.writeInstance(compound, chunkPos.x, chunkPos.z);
+
+        return structureData;
+    }
+
+    @Nullable
+    public static BlockPos findNearest(World worldIn, String structureName, BlockPos current, int chunkRadius) {
+        MapGenStructureData structureData = (MapGenStructureData) worldIn.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, structureName);
+        if (structureData == null)
+            return null;
+
+        NBTTagCompound tag = structureData.getTagCompound();
+        final ChunkPos original = new ChunkPos(current);
+
+        Double distanceSquared = Double.MAX_VALUE;
+        StructureBoundingBox box = null;
+        BlockPos center = null;
+
+
+        for (int x = -chunkRadius; x <= chunkRadius; x++) {
+            for (int z = -chunkRadius; z <= chunkRadius; z++) {
+                ChunkPos chunkPos = new ChunkPos(original.x + x, original.z + z);
+                NBTTagCompound structureNbt = tag.getCompoundTag(MapGenStructureData.formatChunkCoords(chunkPos.x, chunkPos.z));
+
+                if (structureNbt.getSize() == 0)
+                    continue;
+
+
+                double distanceSq = original.getBlock(0, 0, 0).distanceSq(chunkPos.getBlock(0, 0, 0));
+                if (distanceSq < Math.pow(chunkRadius * 16, 2)) {
+                    if (distanceSquared > distanceSq) {
+                        distanceSquared = distanceSq;
+                        box = structureNbt.hasKey("BB")
+                                ? new StructureBoundingBox(structureNbt.getIntArray("BB"))
+                                : new StructureBoundingBox(chunkPos.getBlock(0, 0, 0), chunkPos.getBlock(15, 255, 15));
+
+                        if (structureNbt.hasKey("Center")) {
+                            center = BlockPos.fromLong(structureNbt.getLong("Center"));
+                        }
+                    }
+                }
+            }
+        }
+
+        if (distanceSquared == Double.MAX_VALUE)
+            return null;
+
+        if (center != null)
+            return center;
+
+        if (box == null)
+            return null;
+
+        BlockPos pos = new BlockPos(box.maxX - box.minX, Math.abs(box.maxY - box.minY), box.maxZ - box.minZ);
+        return pos;
+    }
+
 
     public static class StructureInfo {
         private Template template;

@@ -16,7 +16,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class PlanetBiome extends Biome {
-    private static final ResourceLocation ancientPortalId = new ResourceLocation(DivineAdditions.MOD_ID, "ancient_portal");
+    public static final ResourceLocation ancientPortalId = new ResourceLocation(DivineAdditions.MOD_ID, "ancient_portal");
 
     public PlanetBiome() {
         super(new BiomeProperties("Planets").setTemperature(0.8f).setRainfall(0.5f));
@@ -44,10 +44,11 @@ public class PlanetBiome extends Biome {
                 AncientPortalGen gen = new AncientPortalGen(info.getTemplate());
                 int min = 20;
 
-                for (int i = 0; i < 5; i++) {
-                    if (gen.generate(worldIn, rand, chunkStart.up(rand.nextInt(worldIn.getHeight() - min * 2) + min))) {
-                        break;
-                    }
+                BlockPos portalpos = chunkStart.up(rand.nextInt(worldIn.getHeight() - min * 2) + min);
+                gen.generate(worldIn, rand, portalpos);
+
+                for (int k = 0; k < DivineAdditionsConfig.planetDimensionConfig.spawnTries; k++) {
+                    new PlanetWorldGen(this::createRandom, true).generate(worldIn, worldIn.rand, chunkStart);
                 }
             }
         }

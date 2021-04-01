@@ -3,12 +3,14 @@ package divineadditions.world.dimension.planet;
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.config.PlanetConfig;
 import divineadditions.utils.SkippingTemplateProcessor;
+import divineadditions.utils.StructureUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 
@@ -84,6 +86,11 @@ public class AncientPortalGen extends WorldGenerator {
                 .setIntegrity(integrity);
 
         template.addBlocksToWorld(worldIn, templatePos, new SkippingTemplateProcessor(templatePos, settings), settings, 2);
+
+        StructureUtils.setStructure(worldIn, PlanetBiome.ancientPortalId.toString(), middle, new StructureBoundingBox(
+                middle.add(-radius, -radius, -radius),
+                middle.add(radius, radius, radius)
+        ));
         return true;
     }
 }

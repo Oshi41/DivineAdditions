@@ -20,12 +20,16 @@ import net.minecraft.world.storage.WorldInfo;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FakeWorld extends World {
     private final Cache<ChunkPos, ChunkPrimer> cache = CacheBuilder
             .newBuilder()
             .softValues()
             .build();
+
+    private final Set<ChunkPos> generatedPos = new HashSet<>();
 
     private WeakReference<World> worldRef;
 
@@ -45,11 +49,12 @@ public class FakeWorld extends World {
         if (isOutsideBuildHeight(pos))
             return false;
 
-        if (isOriginalChunkLoaded(new ChunkPos(pos))) {
-            return worldRef.get().setBlockState(pos, newState, flags);
-        }
-
         ChunkPos chunkPos = new ChunkPos(pos);
+
+//        if (isOriginalChunkLoaded(chunkPos)) {
+//            return worldRef.get().setBlockState(pos, newState, flags);
+//        }
+
         ChunkPrimer primer = cache.getIfPresent(chunkPos);
         if (primer == null) {
             cache.put(chunkPos, primer = new ChunkPrimer());
@@ -65,9 +70,9 @@ public class FakeWorld extends World {
             return Blocks.AIR.getDefaultState();
 
         // using origin world blocks
-        if (isOriginalChunkLoaded(new ChunkPos(pos))) {
-            return worldRef.get().getBlockState(pos);
-        }
+//        if (isOriginalChunkLoaded(new ChunkPos(pos))) {
+//            return worldRef.get().getBlockState(pos);
+//        }
 
         ChunkPos chunkPos = new ChunkPos(pos);
         ChunkPrimer primer = cache.getIfPresent(chunkPos);
@@ -102,11 +107,12 @@ public class FakeWorld extends World {
 
     @Override
     protected boolean isChunkLoaded(int x, int z, boolean allowEmpty) {
-        return isOriginalChunkLoaded(x, z, allowEmpty) || cache.getIfPresent(new ChunkPos(x, z)) != null;
+        ChunkPos chunkPos = new ChunkPos(x, z);
+        return isOriginalChunkLoaded(chunkPos) || cache.getIfPresent(chunkPos) != null;
     }
 
     protected boolean isOriginalChunkLoaded(ChunkPos pos) {
-        return isOriginalChunkLoaded(pos.x, pos.z, false);
+        return generatedPos.contains(pos);
     }
 
     protected boolean isOriginalChunkLoaded(int x, int z, boolean allowEmpty) {
