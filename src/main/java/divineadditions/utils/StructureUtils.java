@@ -8,6 +8,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockPattern;
 import net.minecraft.block.state.pattern.BlockStateMatcher;
 import net.minecraft.block.state.pattern.FactoryBlockPattern;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -21,10 +22,7 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.template.Template;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -280,6 +278,37 @@ public class StructureUtils {
 
         public Template getTemplate() {
             return template;
+        }
+
+        /**
+         * A bit sloppy method
+         * Do not check exactly blocks, just remove all containing in the pallete
+         *
+         * @param currentMatch - pattern match
+         * @param world        - current world
+         */
+        public void clearBlocks(BlockPattern.PatternHelper currentMatch, World world) {
+            final BlockPos frontTopLeft = currentMatch.getFrontTopLeft();
+            final BlockPos end = frontTopLeft.add(template.getSize());
+
+            world.setBlockState(frontTopLeft, Blocks.STONE.getDefaultState());
+            world.setBlockState(end, Blocks.STONE.getDefaultState());
+
+            for (BlockPos.MutableBlockPos pos : BlockPos.getAllInBoxMutable(frontTopLeft, end)) {
+                IBlockState blockState = world.getBlockState(pos);
+                if (blockState.getBlock().isAir(blockState, world, pos))
+                    continue;
+
+                if (!paletteInverse.containsKey(blockState))
+                    continue;
+
+                BlockPos relative = pos.subtract(frontTopLeft);
+                IBlockState blockState1 = blocks.get(relative);
+                if (!Objects.equals(blockState, blockState1))
+                    continue;
+
+                world.setBlockToAir(pos);
+            }
         }
     }
 }

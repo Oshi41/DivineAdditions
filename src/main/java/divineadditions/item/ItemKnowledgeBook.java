@@ -5,7 +5,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -26,13 +25,12 @@ public class ItemKnowledgeBook extends ItemBook {
         if (capability != null && capability.getLevel() < level) {
             capability.setLevel(level);
 
-            ItemStack heldItem = playerIn.getHeldItem(handIn).copy();
+            ItemStack heldItem = playerIn.getHeldItem(handIn);
             heldItem.shrink(1);
+
             if (!playerIn.getEntityWorld().isRemote) {
                 playerIn.sendMessage(new TextComponentTranslation("divineadditions.message.current_knowledge_level_changed", level));
             }
-
-            return new ActionResult<>(EnumActionResult.SUCCESS, heldItem);
         }
 
         return super.onItemRightClick(worldIn, playerIn, handIn);

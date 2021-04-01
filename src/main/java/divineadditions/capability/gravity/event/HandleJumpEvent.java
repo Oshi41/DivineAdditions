@@ -1,11 +1,14 @@
 package divineadditions.capability.gravity.event;
 
+import divineadditions.DivineAdditions;
 import divineadditions.capability.gravity.source.base.IGravitySource;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@Mod.EventBusSubscriber(modid = DivineAdditions.MOD_ID)
 public class HandleJumpEvent {
     @SubscribeEvent
     public static void handleJump(LivingFallEvent event) {

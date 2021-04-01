@@ -73,7 +73,7 @@ public class ChunkGravitySource extends GravitySourceBase<Chunk> {
     }
 
     @SubscribeEvent
-    protected void onWorldTick(TickEvent.WorldTickEvent event) {
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
         if (event.phase == TickEvent.Phase.END
                 && checkSubscription()
                 && event.world == getOwner().getWorld()) {
@@ -82,7 +82,7 @@ public class ChunkGravitySource extends GravitySourceBase<Chunk> {
     }
 
     @SubscribeEvent
-    protected void onClientTick(TickEvent.ClientTickEvent event) {
+    public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END
                 && event.side == Side.CLIENT
                 && checkSubscription()) {

@@ -1,6 +1,7 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
+import divineadditions.entity.EntityAncientVillager;
 import divineadditions.entity.EntityArmorDefender;
 import divineadditions.entity.EntityCageBullet;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,7 @@ public class EntityRegistryHandler {
 
         registry.register(buildProjectile(EntityCageBullet.class, EntityCageBullet::new, "entity_cage_bullet"));
         registry.register(buildEntity(EntityArmorDefender.class, EntityArmorDefender::new, "armor_defender"));
+        registry.register(buildEntity(EntityAncientVillager.class, EntityAncientVillager::new, "ancient_villager"));
     }
 
     private static <T extends Entity> EntityEntry buildEntity(Class<T> entityClass, Function<World, T> func, String entityID) {
@@ -37,7 +39,7 @@ public class EntityRegistryHandler {
                 .create()
                 .entity(entityClass)
                 .id(id, networkId++)
-                .name(id.toString().replace(':', '.'))
+                .name(id.toString())
                 .tracker(128, 3, true)
                 .factory(func::apply)
                 .egg(0, Integer.MAX_VALUE)
@@ -51,7 +53,7 @@ public class EntityRegistryHandler {
                 .create()
                 .entity(entityClass)
                 .id(id, networkId++)
-                .name(id.toString().replace(':', '.'))
+                .name(id.toString())
                 .tracker(250, 5, true)
                 .factory(func::apply)
                 .build();

@@ -1,8 +1,10 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
+import divineadditions.entity.EntityAncientVillager;
 import divineadditions.entity.EntityArmorDefender;
 import divineadditions.entity.EntityCageBullet;
+import divineadditions.render.entity.EntityRenderAncientVillager;
 import divineadditions.render.entity.RenderEntityPlayerLike;
 import divineadditions.render.stack.RenderModItemStack;
 import divineadditions.render.tile.TileEntityCatalystStandRenderer;
@@ -53,6 +55,7 @@ public class ModelRegistryEventHandler {
     private static void registerEntityRenders() {
         RenderingRegistry.registerEntityRenderingHandler(EntityCageBullet.class, manager -> new RenderSnowball<>(manager, Items.NETHER_STAR, Minecraft.getMinecraft().getRenderItem()));
         RenderingRegistry.registerEntityRenderingHandler(EntityArmorDefender.class, RenderEntityPlayerLike::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityAncientVillager.class, EntityRenderAncientVillager::new);
     }
 
     private static void registerTESR() {
@@ -61,6 +64,5 @@ public class ModelRegistryEventHandler {
 
     private static void registerTileRenders() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCatalystStand.class, new TileEntityCatalystStandRenderer());
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileEntityInfusingAltar.class, new TileEntityCatalystStandRenderer());
     }
 }

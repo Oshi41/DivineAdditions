@@ -14,6 +14,11 @@ public class AffectiveGravityEvent extends EntityEvent {
         super(entity);
     }
 
+    @Override
+    public boolean isCancelable() {
+        return false;
+    }
+
     public Set<IGravitySource> getCurrentSources() {
         return currentSources;
     }

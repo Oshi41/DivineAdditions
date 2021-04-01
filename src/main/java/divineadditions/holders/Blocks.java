@@ -6,7 +6,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @GameRegistry.ObjectHolder(DivineAdditions.MOD_ID)
 public class Blocks {
-    public static final Block pedestal = null;
-    public static final Block summon_platform = null;
-    public static final Block infusing_altar = null;
+    public static final Block time_beacon = null;
+    public static final Block catalyst_stand = null;
+    public static final Block forge = null;
 }

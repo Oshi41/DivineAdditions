@@ -22,6 +22,7 @@ item.book_of_knowledge_1.name=Книга знаний древних техно�
 # Entity
 entity.entity_cage_bullet.name=Пуля
 entity.armor_defender.name=Защитник
+entity.ancient_villager.name=Древний житель
 
 # Block
 block.time_beacon.name=Осколок прошлого
@@ -51,10 +52,21 @@ divineadditions.tooltip.instant_kill=One Punch Man!!!
 divineadditions.tooltip.soul_per_kills=Процент выпадения запертых мобов: %s%%
 divineadditions.tooltip.attack_effects=Накладываемые эффекты на жертву:
 divineadditions.tooltip.defend_effects=Накладываемые эффекты на игрока (ПКМ):
-
 divineadditions.tooltip.dna=ДНК: %s/%s
 
+#messages
 divineadditions.message.current_knowledge_level_changed=Уровень древних знаний повышен: %s
+divineadditions.message.ancient_villager.save0=Эй, ты вытащил меня оттуда! Спасибо!
+divineadditions.message.ancient_villager.save1=Вот это да, машина времени работает! Спасибо, что достроил её!
+divineadditions.message.ancient_villager.save2=Эти монстры... Они уничтожили нашу цивилизацию...
+
+
+divineadditions.message.ancient_villager.gift0=Я смотрю вы нуждаетесь в высоких технологиях.
+divineadditions.message.ancient_villager.gift1=Это то будущее, что осталось?.. Тебе нужны наши знания
+divineadditions.message.ancient_villager.gift2=Надеюсь, мои знания будут тебе полезны. Почитай на досуге
+
+
+divineadditions.message.ancient_villager.need_to_go=О нет, мне ещё нужно вытащить остальных! Мне надо бежать!
 
 block.catalyst_stand.name=catalyst_stand
 block.forge.name=forge

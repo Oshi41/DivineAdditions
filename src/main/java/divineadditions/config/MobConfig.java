@@ -38,4 +38,14 @@ public class MobConfig {
             new ResourceLocation(DivineRPG.MODID, "netherite").toString(),
             new ResourceLocation(DivineRPG.MODID, "inferno").toString())
             .toArray(new String[0]);
+
+    @Config.Comment("Base attributes for ancient villager")
+    public Map<String, Float> ancient_villager_attrs = new HashMap<String, Float>() {{
+        put(SharedMonsterAttributes.MOVEMENT_SPEED.getName(), 0.5f);
+        put(SharedMonsterAttributes.MAX_HEALTH.getName(), 80f);
+        put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), 1f);
+        put(SharedMonsterAttributes.ATTACK_SPEED.getName(), 4.0F);
+        put(SharedMonsterAttributes.ARMOR.getName(), 2f);
+        put(SharedMonsterAttributes.FOLLOW_RANGE.getName(), 32f);
+    }};
 }

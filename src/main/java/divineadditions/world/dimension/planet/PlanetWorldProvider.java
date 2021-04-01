@@ -54,6 +54,11 @@ public class PlanetWorldProvider extends WorldProvider {
         }
     }
 
+    @Override
+    public boolean canRespawnHere() {
+        return false;
+    }
+
     @SideOnly(Side.CLIENT)
     @Nullable
     @Override

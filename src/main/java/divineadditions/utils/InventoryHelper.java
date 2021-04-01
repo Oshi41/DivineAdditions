@@ -2,6 +2,7 @@ package divineadditions.utils;
 
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
@@ -152,5 +153,45 @@ public class InventoryHelper {
         return player.getHeldItemMainhand().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
     }
 
+    public static boolean insert(Entity e, ItemStack... stacks) {
+        if (e == null || stacks == null)
+            return false;
 
+        if (stacks.length == 0)
+            return true;
+
+        if (e instanceof EntityPlayer) {
+            for (ItemStack stack : stacks) {
+                if (!((EntityPlayer) e).inventory.addItemStackToInventory(stack)) {
+                    net.minecraft.inventory.InventoryHelper.spawnItemStack(e.getEntityWorld(), e.posX, e.posY, e.posZ, stack);
+                }
+            }
+
+            return true;
+        }
+
+        IItemHandler capability = e.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if (capability == null) {
+            for (ItemStack stack : stacks) {
+                net.minecraft.inventory.InventoryHelper.spawnItemStack(e.getEntityWorld(), e.posX, e.posY, e.posZ, stack);
+            }
+
+            return true;
+        }
+
+        for (ItemStack stack : stacks) {
+            boolean wasInserted = false;
+            for (int i = 0; i < capability.getSlots() && !wasInserted; i++) {
+                if (capability.isItemValid(i, stack)) {
+                    wasInserted = !ItemStack.areItemsEqual(capability.insertItem(i, stack, false), stack);
+                }
+            }
+
+            if (!wasInserted) {
+                net.minecraft.inventory.InventoryHelper.spawnItemStack(e.getEntityWorld(), e.posX, e.posY, e.posZ, stack);
+            }
+        }
+
+        return true;
+    }
 }

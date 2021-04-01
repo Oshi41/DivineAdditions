@@ -24,7 +24,7 @@ public abstract class GravitySourceBase<T extends ICapabilityProvider> implement
     }
 
     @SubscribeEvent
-    protected void isAffected(AffectiveGravityEvent event) {
+    public void isAffected(AffectiveGravityEvent event) {
         if (canApplyTo(event.getEntity())) {
             event.addSource(this);
         }

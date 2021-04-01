@@ -6,16 +6,30 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @GameRegistry.ObjectHolder(DivineAdditions.MOD_ID)
 public class Items {
-    public static final Item armor_essence = null;
-    public static final Item rifle_bullet = null;
-    public static final Item rifle = null;
-    public static final Item caged_mob = null;
-    public static final Item rifle_mob_core = null;
-    public static final Item empty_infinite_gem = null;
-    public static final Item soul_powder = null;
+
+    // region Armor
 
     public static final Item blank_head = null;
     public static final Item blank_chest = null;
     public static final Item blank_legs = null;
     public static final Item blank_feet = null;
+
+    // endregion
+
+    // region Weapon
+
+    public static final Item soul_sword = null;
+    public static final Item rifle = null;
+
+    // endregion
+
+    public static final Item armor_essence = null;
+    public static final Item rifle_bullet = null;
+    public static final Item caged_mob = null;
+    public static final Item rifle_mob_core = null;
+    public static final Item empty_infinite_gem = null;
+    public static final Item soul_powder = null;
+    public static final Item power_gem = null;
+    public static final Item rifle_template = null;
+    public static final Item book_of_knowledge_1 = null;
 }

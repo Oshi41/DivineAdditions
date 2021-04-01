@@ -206,4 +206,12 @@ public class ForgeRecipes extends SpecialShaped {
     public int getDna() {
         return dna;
     }
+
+    public int getKnowledgeLevel() {
+        return level;
+    }
+
+    public NonNullList<NbtIngredient> getCatalystIngredients() {
+        return ingredients;
+    }
 }
