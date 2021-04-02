@@ -37,7 +37,7 @@ public class SwordProperties {
     // region attackSpeed
 
     public void saveToNbt(@Nonnull ItemStack stack) {
-        setAttackSpeed(stack, attackSpeed);
+        setAttackDamage(stack, attackDamage);
         setMaxItemDamage(stack, maxItemDamage);
         setAttackSpeed(stack, attackSpeed);
         attackEffects.forEach(x -> addAttackEffect(stack, x));

@@ -41,6 +41,12 @@ public class LivingDropsEventHandler {
         ItemStack drop = Items.caged_mob.getDefaultInstance();
         drop.setTagCompound(new NBTTagCompound());
         ((IEntityCage) drop.getItem()).imprison(victim, drop.getTagCompound());
+
+        if (victim instanceof EntityLivingBase) {
+            drop.getOrCreateSubCompound(IEntityCage.cagedTagName).setFloat("Health", victim.getEntityWorld().rand.nextFloat() * ((EntityLivingBase) victim).getMaxHealth());
+        }
+
+
         return new EntityItem(victim.getEntityWorld(), victim.posX, victim.posY, victim.posZ, drop);
     }
 
@@ -53,7 +59,7 @@ public class LivingDropsEventHandler {
      */
     public static int getSoulDropChance(int soulPerKills, int looting, ItemStack sword) {
         return looting > 0
-                ? soulPerKills / looting
+                ? soulPerKills / (looting + 1)
                 : soulPerKills;
     }
 }

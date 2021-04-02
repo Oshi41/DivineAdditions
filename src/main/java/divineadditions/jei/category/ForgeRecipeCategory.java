@@ -1,4 +1,4 @@
-package divineadditions.jei;
+package divineadditions.jei.category;
 
 import divineadditions.DivineAdditions;
 import divineadditions.gui.conainter.ForgeContainer;
@@ -28,10 +28,12 @@ public class ForgeRecipeCategory implements IRecipeCategory {
     public static final ResourceLocation Background = new ResourceLocation(DivineAdditions.MOD_ID, "textures/gui/forge.png");
     private final IDrawableStatic drawable;
     private final IDrawable drawableIcon;
+    private final String title;
 
     public ForgeRecipeCategory(IGuiHelper helper) {
         drawable = helper.createDrawable(Background, 0, 0, 189, 196);
         drawableIcon = helper.createDrawableIngredient(new ItemStack(Blocks.forge));
+        title = I18n.format(ID.getResourcePath());
     }
 
     @Override
@@ -41,7 +43,7 @@ public class ForgeRecipeCategory implements IRecipeCategory {
 
     @Override
     public String getTitle() {
-        return I18n.format(ID.getResourcePath());
+        return title;
     }
 
     @Override

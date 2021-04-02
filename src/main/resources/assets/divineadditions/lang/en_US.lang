@@ -53,6 +53,8 @@ divineadditions.tooltip.soul_per_kills=Процент выпадения зап�
 divineadditions.tooltip.attack_effects=Накладываемые эффекты на жертву:
 divineadditions.tooltip.defend_effects=Накладываемые эффекты на игрока (ПКМ):
 divineadditions.tooltip.dna=ДНК: %s/%s
+divineadditions.tooltip.dna_capacity=ДНК: %s
+divineadditions.tooltip.time_beacon=Ищите его в одном из астероидов
 
 #messages
 divineadditions.message.current_knowledge_level_changed=Уровень древних знаний повышен: %s
@@ -67,6 +69,12 @@ divineadditions.message.ancient_villager.gift2=Надеюсь, мои знани
 
 
 divineadditions.message.ancient_villager.need_to_go=О нет, мне ещё нужно вытащить остальных! Мне надо бежать!
+
+#Jei
+divineadditions.jei.rifle_core.insert=Поместите данное ядро в винтовку
+divineadditions.jei.rifle_core.catalyst=Катализатор для произведения выстрела
+divineadditions.jei.rifle_core.bullets=Используемые патроны
+divineadditions.jei.rifle_core.caged_mob=Просто выстрели в моба
 
 block.catalyst_stand.name=catalyst_stand
 block.forge.name=forge

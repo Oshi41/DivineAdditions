@@ -91,7 +91,7 @@ public class BlockTimeBeacon extends BlockContainer {
 
     @Override
     public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-        int radius = 13;
+        int radius = 16;
 
         for (int i = 0; i < 127; i++) {
             worldIn.spawnParticle(

@@ -1,8 +1,9 @@
-package divineadditions.jei;
+package divineadditions.jei.recipe_wrapper;
 
 import com.sun.javafx.geom.Rectangle;
 import divineadditions.api.IEntityCage;
 import divineadditions.holders.Items;
+import divineadditions.jei.category.ForgeRecipeCategory;
 import divineadditions.recipe.ForgeRecipes;
 import divineadditions.recipe.ingredient.NbtIngredient;
 import mezz.jei.api.IGuiHelper;
@@ -11,7 +12,9 @@ import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.INpc;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
@@ -29,6 +32,8 @@ import java.util.stream.Collectors;
 public class ForgeRecipeWrapper implements IRecipeWrapper {
     private static final Rectangle dnaFillingRectOut = new Rectangle(190, 16, 12, 53);
     private static final Rectangle dnaFillingRect = new Rectangle(7, 16, 12, 53);
+
+    private static List<ItemStack> cagedMobs;
 
     private final ItemStack output;
     private final NonNullList<Ingredient> ingredients;
@@ -48,47 +53,34 @@ public class ForgeRecipeWrapper implements IRecipeWrapper {
         catalystIngredients = recipes.getCatalystIngredients();
 
         dnaAnimable = helper.drawableBuilder(ForgeRecipeCategory.Background, dnaFillingRectOut.x, dnaFillingRectOut.y, dnaFillingRectOut.width, dnaFillingRectOut.height)
-                .buildAnimated(100, IDrawableAnimated.StartDirection.TOP, false);
+                .buildAnimated(100, IDrawableAnimated.StartDirection.BOTTOM, false);
     }
 
-    @Override
-    public void getIngredients(IIngredients iIngredients) {
-        iIngredients.setOutput(VanillaTypes.ITEM, output);
+    public static List<ItemStack> createCageMobStacks() {
 
-        List<List<ItemStack>> lists = new ArrayList<>();
+        if (cagedMobs != null)
+            return cagedMobs;
 
-        for (int i = 0; i < ingredients.size(); i++) {
-            Ingredient ingredient = ingredients.get(i);
-            lists.add(i, Arrays.asList(ingredient.getMatchingStacks()));
+        ArrayList<ItemStack> stacks = new ArrayList<>();
+        List<Class> list = java.util.Arrays.asList(IAnimals.class, IMob.class, INpc.class);
+
+        List<String> allEntityNames = ForgeRegistries
+                .ENTITIES
+                .getValuesCollection()
+                .stream()
+                .filter(x -> list.stream().anyMatch(y -> y.isAssignableFrom(x.getEntityClass())))
+                .map(x -> x.getRegistryName().toString())
+                .collect(Collectors.toList());
+
+        for (String entityName : allEntityNames) {
+            ItemStack stack = new ItemStack(Items.caged_mob);
+            stack.getOrCreateSubCompound(IEntityCage.cagedTagName).setString("id", entityName);
+            stacks.add(stack);
         }
 
-        // caged mod
-        {
-            ArrayList<ItemStack> stacks = new ArrayList<>();
-            List<String> allEntityNames = ForgeRegistries
-                    .ENTITIES
-                    .getValuesCollection()
-                    .stream()
-                    .filter(x -> EntityMob.class.isAssignableFrom(x.getEntityClass()))
-                    .limit(20)
-                    .map(x -> x.getRegistryName().toString())
-                    .collect(Collectors.toList());
+        cagedMobs = stacks;
 
-            for (String entityName : allEntityNames) {
-                ItemStack stack = new ItemStack(Items.caged_mob);
-                stack.getOrCreateSubCompound(IEntityCage.cagedTagName).setString("id", entityName);
-                stacks.add(stack);
-            }
-
-            lists.add(stacks);
-        }
-
-        for (int i = 0; i < catalystIngredients.size(); i++) {
-            NbtIngredient ingredient = catalystIngredients.get(i);
-            lists.add(ingredients.size() + i + 1, Collections.singletonList(ingredient.getStack()));
-        }
-
-        iIngredients.setInputLists(VanillaTypes.ITEM, lists);
+        return cagedMobs;
     }
 
     /**
@@ -123,5 +115,26 @@ public class ForgeRecipeWrapper implements IRecipeWrapper {
         }
 
         return list;
+    }
+
+    @Override
+    public void getIngredients(IIngredients iIngredients) {
+        iIngredients.setOutput(VanillaTypes.ITEM, output);
+
+        List<List<ItemStack>> lists = new ArrayList<>();
+
+        for (int i = 0; i < ingredients.size(); i++) {
+            Ingredient ingredient = ingredients.get(i);
+            lists.add(i, Arrays.asList(ingredient.getMatchingStacks()));
+        }
+
+        lists.add(createCageMobStacks());
+
+        for (int i = 0; i < catalystIngredients.size(); i++) {
+            NbtIngredient ingredient = catalystIngredients.get(i);
+            lists.add(ingredients.size() + i + 1, Collections.singletonList(ingredient.getStack()));
+        }
+
+        iIngredients.setInputLists(VanillaTypes.ITEM, lists);
     }
 }

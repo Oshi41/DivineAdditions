@@ -91,7 +91,9 @@ public class ItemCustomSword extends ItemSword {
         Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
 
         if (slot == EntityEquipmentSlot.MAINHAND) {
-            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", getSwordProps().getAttackDamage(stack), 0));
+            float attackDamage = Math.max(getSwordProps().getAttackDamage(stack), getAttackDamage());
+
+            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", attackDamage, 0));
             multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", getSwordProps().getAttackSpeed(stack), 0));
         }
 
