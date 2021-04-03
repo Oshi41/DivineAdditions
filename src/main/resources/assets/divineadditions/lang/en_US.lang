@@ -55,6 +55,7 @@ divineadditions.tooltip.defend_effects=Накладываемые эффекты
 divineadditions.tooltip.dna=ДНК: %s/%s
 divineadditions.tooltip.dna_capacity=ДНК: %s
 divineadditions.tooltip.time_beacon=Ищите его в одном из астероидов
+divineadditions.tooltip.not_using_in_craft=Не используется в крафте
 
 #messages
 divineadditions.message.current_knowledge_level_changed=Уровень древних знаний повышен: %s
@@ -66,6 +67,8 @@ divineadditions.message.ancient_villager.save2=Эти монстры... Они �
 divineadditions.message.ancient_villager.gift0=Я смотрю вы нуждаетесь в высоких технологиях.
 divineadditions.message.ancient_villager.gift1=Это то будущее, что осталось?.. Тебе нужны наши знания
 divineadditions.message.ancient_villager.gift2=Надеюсь, мои знания будут тебе полезны. Почитай на досуге
+
+divineadditions.message.ancient_villager.gift.end_chest=Проверь свой эндер сундук
 
 
 divineadditions.message.ancient_villager.need_to_go=О нет, мне ещё нужно вытащить остальных! Мне надо бежать!
@@ -80,3 +83,4 @@ block.catalyst_stand.name=catalyst_stand
 block.forge.name=forge
 item.catalyst_stand.name=catalyst_stand
 item.forge.name=forge
+item.time_drop.name=time_drop

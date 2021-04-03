@@ -150,7 +150,7 @@ public class ForgeContainer extends ContainerItemHandler {
         if (!world.isRemote) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
             ItemStack itemstack = ItemStack.EMPTY;
-            ForgeRecipes irecipe = recipes.stream().filter(x -> x.matches(matrix, world)).findFirst().orElse(null);
+            ForgeRecipes irecipe = recipes.stream().filter(x -> x.matchCraftingGrid(matrix, world)).findFirst().orElse(null);
 
             if (irecipe != null && (irecipe.isDynamic() || !world.getGameRules().getBoolean("doLimitedCrafting") || entityplayermp.getRecipeBook().isUnlocked(irecipe))) {
                 inventoryCraftResult.setRecipeUsed(irecipe);

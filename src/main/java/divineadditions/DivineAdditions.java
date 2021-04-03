@@ -4,10 +4,7 @@ import divineadditions.api.IProxy;
 import divineadditions.gui.GuiHandler;
 import divineadditions.holders.Dimensions;
 import divineadditions.holders.Fluids;
-import divineadditions.registry.CapabilityRegistryHandler;
-import divineadditions.registry.ConfigHandler;
-import divineadditions.registry.NetworkRegistryHandler;
-import divineadditions.registry.TilesRegistryHandler;
+import divineadditions.registry.*;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -71,6 +68,7 @@ public class DivineAdditions {
         FluidRegistry.registerFluid(Fluids.DNA);
         CapabilityRegistryHandler.register();
         NetworkRegistryHandler.register();
+        LootTableLoadEventHandler.registerLootTables();
     }
 
     @EventHandler

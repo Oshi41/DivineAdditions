@@ -42,9 +42,13 @@ public class ItemRegistryHandler {
         registerObj(registry, new ItemRifleMobCore(DivineAdditionsConfig.rifleConfig.modCoreConfig).setCreativeTab(Tabs.Main), "rifle_mob_core");
         registerObj(registry, new ItemCagedMob(), "caged_mob");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "soul_powder");
+
         registerObj(registry, new ImmortalItem().setCreativeTab(Tabs.Main), "empty_infinite_gem");
         registerObj(registry, new ImmortalItem().setCreativeTab(Tabs.Main), "power_gem");
-        registerObj(registry, new Item().setMaxDamage(64).setMaxStackSize(1).setCreativeTab(Tabs.Main), "rifle_template");
+        registerObj(registry, new DescribeItem("divineadditions.tooltip.not_using_in_craft")
+                .setMaxDamage(64)
+                .setMaxStackSize(1)
+                .setCreativeTab(Tabs.Main), "rifle_template");
         registerObj(registry, new ItemCustomSword(ToolMaterials.SoulSwordMaterial,
                 new SwordProperties()
                         .addAttackEffect(new PotionEffect(MobEffects.POISON, 40, 1))
@@ -52,6 +56,9 @@ public class ItemRegistryHandler {
         ).setCreativeTab(Tabs.Main), "soul_sword");
 
         registerObj(registry, new ItemKnowledgeBook(1).setCreativeTab(Tabs.Main), "book_of_knowledge_1");
+        registerObj(registry, new Item().setCreativeTab(Tabs.Main), "time_drop");
+
+
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));
     }
 

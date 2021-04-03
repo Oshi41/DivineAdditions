@@ -1,0 +1,36 @@
+{
+  "type": "divineadditions:forge",
+  "pattern": [
+    "LPPPL",
+    "PCPCP",
+    "1PBP1",
+    "PCPCP",
+    "LPTPL"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:book"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    },
+    "1": {
+      "item": "minecraft:stone_button"
+    },
+    "L": {
+      "item": "minecraft:lever"
+    },
+    "T": {
+      "item": "divineadditions:time_drop"
+    }
+  },
+  "dna": 200,
+  "experience": 20,
+  "level": 1,
+  "result": {
+    "item": "divineadditions:book_of_knowledge_1"
+  }
+}

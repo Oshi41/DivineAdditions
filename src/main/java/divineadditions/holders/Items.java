@@ -32,4 +32,5 @@ public class Items {
     public static final Item power_gem = null;
     public static final Item rifle_template = null;
     public static final Item book_of_knowledge_1 = null;
+    public static final Item time_drop = null;
 }

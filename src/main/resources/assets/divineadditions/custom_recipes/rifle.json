@@ -1,0 +1,36 @@
+{
+  "type": "divineadditions:forge",
+  "pattern": [
+    "IO GG",
+    "OIOSG",
+    " CIO ",
+    " ICII",
+    "I  IT"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "C": {
+      "item": "minecraft:chest"
+    },
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "S": {
+      "item": "divineadditions:soul_powder"
+    },
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "t": {
+      "item": "divineadditions:time_drop"
+    }
+  },
+  "dna": 50,
+  "experience": 10,
+  "level": 1,
+  "result": {
+    "item": "divineadditions:rifle_mob_core"
+  }
+}

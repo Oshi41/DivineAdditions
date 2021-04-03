@@ -7,13 +7,7 @@
   ],
   "key": {
     "E": {
-      "type": "divineadditions:item_nbt",
-      "item": "divineadditions:caged_mob",
-      "nbt": {
-        "cage": {
-          "id": "minecraft:enderman"
-        }
-      }
+      "item": "divineadditions:time_drop"
     },
     "C": {
       "item": "divinerpg:teleportation_star",
@@ -25,7 +19,7 @@
     "data": 63,
     "nbt": {
       "Dim": "divineadditions:planets",
-      "BlockPos": 2013265920
+      "BlockPos": "13421772800l"
     }
   }
 }

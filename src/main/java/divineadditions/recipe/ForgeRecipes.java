@@ -72,8 +72,19 @@ public class ForgeRecipes extends SpecialShaped {
         return new ForgeRecipes(source, level, experience, dna, ingredients);
     }
 
+    /**
+     * OVerride to false to prevent it from usual crafting table
+     *
+     * @param inv
+     * @param worldIn
+     * @return
+     */
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
+        return false;
+    }
+
+    public boolean matchCraftingGrid(InventoryCrafting inv, World worldIn) {
         return super.matches(inv, worldIn);
     }
 

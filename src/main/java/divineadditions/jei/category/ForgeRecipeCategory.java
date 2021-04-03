@@ -74,9 +74,13 @@ public class ForgeRecipeCategory implements IRecipeCategory {
         IGuiItemStackGroup itemStacks = iRecipeLayout.getItemStacks();
         int i = 0;
 
-        while (i < 25) {
-            int x = i % 5;
-            int y = i / 5;
+        List<List<ItemStack>> lists = iIngredients.getInputs(VanillaTypes.ITEM);
+
+        int craftGridSize = (int) Math.sqrt(lists.size());
+
+        while (i < craftGridSize * craftGridSize) {
+            int x = i % craftGridSize;
+            int y = i / craftGridSize;
 
             itemStacks.init(i++, true, 30 + x * 18, 12 + y * 18);
         }
@@ -87,12 +91,14 @@ public class ForgeRecipeCategory implements IRecipeCategory {
         // output
         itemStacks.init(i++, false, 156, 52);
 
-        List<List<ItemStack>> lists = iIngredients.getInputs(VanillaTypes.ITEM);
+        boolean wideRecipe = false;
 
         // catalyts
-        for (int j = 26; j < lists.size(); j++) {
+        for (int j = craftGridSize * craftGridSize + 1; j < lists.size(); j++) {
             itemStacks.init(i++, true, 195, 3 + (j - 26) * 18);
+            wideRecipe = true;
         }
+
 
         itemStacks.set(iIngredients);
     }

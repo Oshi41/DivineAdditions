@@ -2,13 +2,16 @@ package divineadditions.item;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
-public class ImmortalItem extends Item {
+public class ImmortalItem extends DescribeItem {
+    public ImmortalItem() {
+        super("divineadditions.tooltip.immortal_item");
+    }
+
     public static Entity createImmortalEntity(World world, Entity location, ItemStack itemstack) {
         if (location instanceof EntityItem) {
             EntityItem entityItem = (EntityItem) location;

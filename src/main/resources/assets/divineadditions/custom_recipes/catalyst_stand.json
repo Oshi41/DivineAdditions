@@ -1,0 +1,33 @@
+{
+  "type": "divineadditions:forge",
+  "pattern": [
+    "  W  ",
+    "  W  ",
+    "  W  ",
+    "SLSLS",
+    "LLLLL"
+  ],
+  "key": {
+    "S": {
+      "type": "divineadditions:item_nbt",
+      "item": "divineadditions:caged_mob",
+      "nbt": {
+        "cage": {
+          "id": "minecraft:shulker"
+        }
+      }
+    },
+    "W": {
+      "item": "divinerpg:aqua_lamp"
+    },
+    "L": {
+      "item": "divinerpg:lapis_lazuli_lamp"
+    }
+  },
+  "dna": 100,
+  "experience": 50,
+  "level": 1,
+  "result": {
+    "item": "divineadditions:catalyst_stand"
+  }
+}

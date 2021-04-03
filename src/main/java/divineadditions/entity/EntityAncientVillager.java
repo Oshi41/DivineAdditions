@@ -7,12 +7,13 @@ import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.holders.Blocks;
 import divineadditions.holders.Items;
 import divineadditions.utils.EntityAttributeHelper;
-import divineadditions.utils.InventoryHelper;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.InventoryEnderChest;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -20,6 +21,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
@@ -74,42 +76,35 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
     }
 
     @Override
-    public void onUpdate() {
-        super.onUpdate();
+    public void onLivingUpdate() {
+        super.onLivingUpdate();
 
-        if (summoner == null)
-            return;
+        final int step = 10;
 
         switch (ticksExisted) {
             case 1:
-
-                if (!world.isRemote)
-                    summoner.sendMessage(new TextComponentTranslation("divineadditions.message.ancient_villager.save" + world.rand.nextInt(3)));
+                sendMsg(new TextComponentTranslation("divineadditions.message.ancient_villager.save" + world.getTotalWorldTime() % 2));
                 break;
 
-            case 20 * 30:
-                if (!world.isRemote) {
+            case 20 * step:
+                if (!world.isRemote && summoner != null) {
                     IKnowledgeInfo iKnowledgeInfo = summoner.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
                     if (iKnowledgeInfo != null && iKnowledgeInfo.getLevel() < 1) {
-                        summoner.sendMessage(new TextComponentTranslation("divineadditions.message.ancient_villager.gift" + world.rand.nextInt(3)));
-                        List<ItemStack> stacks = Arrays.asList(new ItemStack(Items.book_of_knowledge_1), new ItemStack(Blocks.forge));
-                        InventoryHelper.insert(summoner, stacks.toArray(new ItemStack[0]));
+                        sendMsg(new TextComponentTranslation("divineadditions.message.ancient_villager.gift" + world.getTotalWorldTime() % 2));
+                        sendMsg(insertStacks(summoner, Arrays.asList(new ItemStack(Items.book_of_knowledge_1), new ItemStack(Blocks.forge))));
                     }
                 }
                 break;
 
 
-            case 20 * 60:
-                if (!world.isRemote) {
-                    summoner.sendMessage(new TextComponentTranslation("divineadditions.message.ancient_villager.need_to_go"));
-                }
+            case 20 * step * 2:
+                sendMsg(new TextComponentTranslation("divineadditions.message.ancient_villager.need_to_go"));
                 this.tasks.removeTask(aiFollow);
                 this.tasks.addTask(1, new EntityAIPanic(this, 1.2));
                 break;
 
 
-            case 20 * 80:
-
+            case 20 * step * 3:
                 if (!world.isRemote) {
                     attemptTeleport(posX, 0, posY);
                     setDead();
@@ -129,7 +124,6 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
                         );
                     }
                 }
-
                 break;
         }
     }
@@ -166,5 +160,35 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
     @Override
     public void setSkin(ResourceLocation id) {
         dataManager.set(SKIN, id.toString());
+    }
+
+    private void sendMsg(ITextComponent text) {
+        if (world.isRemote || summoner == null || text == null)
+            return;
+
+        summoner.sendMessage(text);
+    }
+
+    private ITextComponent insertStacks(EntityLivingBase entity, List<ItemStack> stacks) {
+        stacks = new ArrayList<>(stacks);
+
+        if (entity instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) entity;
+            InventoryEnderChest chest = player.getInventoryEnderChest();
+
+            while (!stacks.isEmpty()) {
+                ItemStack first = stacks.get(0);
+
+                if (chest.addItem(first) != ItemStack.EMPTY && !player.inventory.addItemStackToInventory(first)) {
+                    InventoryHelper.spawnItemStack(world, entity.posX, entity.posY, entity.posZ, first);
+                }
+
+                stacks.remove(0);
+            }
+
+            return new TextComponentTranslation("divineadditions.message.ancient_villager.gift.end_chest");
+        }
+
+        return null;
     }
 }

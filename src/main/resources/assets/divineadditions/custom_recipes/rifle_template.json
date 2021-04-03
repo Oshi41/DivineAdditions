@@ -1,0 +1,50 @@
+{
+  "type": "divineadditions:forge",
+  "pattern": [
+    "iiiii",
+    "iii i",
+    "ii  i",
+    "i iii",
+    "iiiii"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "catalysts": [
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "divineadditions:caged_mob",
+      "nbt": {
+        "cage": {
+          "id": "minecraft:blaze"
+        }
+      }
+    },
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "divineadditions:caged_mob",
+      "nbt": {
+        "cage": {
+          "id": "minecraft:blaze"
+        }
+      }
+    },
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "divineadditions:caged_mob",
+      "nbt": {
+        "cage": {
+          "id": "minecraft:blaze"
+        }
+      }
+    }
+  ],
+  "dna": 80,
+  "experience": 5,
+  "level": 1,
+  "result": {
+    "item": "divineadditions:rifle_template"
+  }
+}
