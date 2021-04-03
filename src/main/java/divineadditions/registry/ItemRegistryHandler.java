@@ -1,10 +1,10 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
-import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.holders.Tabs;
 import divineadditions.holders.ToolMaterials;
 import divineadditions.item.*;
+import divineadditions.item.rifle_core.ItemRifleCoreBullet;
 import divineadditions.item.rifle_core.ItemRifleMobCore;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.item.sword.SwordProperties;
@@ -39,7 +39,7 @@ public class ItemRegistryHandler {
         registerObj(registry, new ItemArmorEssence().setCreativeTab(Tabs.Main), "armor_essence");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "rifle_bullet");
         registerObj(registry, new ItemModRifle().setCreativeTab(Tabs.Main), "rifle");
-        registerObj(registry, new ItemRifleMobCore(DivineAdditionsConfig.rifleConfig.modCoreConfig).setCreativeTab(Tabs.Main), "rifle_mob_core");
+        registerObj(registry, new ItemRifleMobCore().setCreativeTab(Tabs.Main), "rifle_mob_core");
         registerObj(registry, new ItemCagedMob(), "caged_mob");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "soul_powder");
 
@@ -57,6 +57,7 @@ public class ItemRegistryHandler {
 
         registerObj(registry, new ItemKnowledgeBook(1).setCreativeTab(Tabs.Main), "book_of_knowledge_1");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "time_drop");
+        registerObj(registry, new ItemRifleCoreBullet().setCreativeTab(Tabs.Main), "rifle_bullet_core");
 
 
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));

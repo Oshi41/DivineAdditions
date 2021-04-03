@@ -1,0 +1,52 @@
+{
+  "type": "divineadditions:forge",
+  "pattern": [
+    "IIIII",
+    "IGSGI",
+    "ISBSI",
+    "IGSGI",
+    "IIIII"
+  ],
+  "key": {
+    "S": {
+      "type": "divineadditions:item_nbt",
+      "item": "divineadditions:caged_mob",
+      "nbt": {
+        "cage": {
+          "id": "minecraft:skeleton"
+        }
+      }
+    },
+    "I": {
+      "item": "minecraft:iron_block"
+    },
+    "G": {
+      "item": "divinerpg:glowstone_dust"
+    },
+    "B": {
+      "item": "divineadditions:rifle_bullet"
+    }
+  },
+  "catalysts": [
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:nether_star"
+    },
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:fire_charge",
+      "count": 256
+    },
+    {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:arrow",
+      "count": 256
+    }
+  ],
+  "dna": 1000,
+  "experience": 40,
+  "level": 1,
+  "result": {
+    "item": "divineadditions:rifle_bullet_core"
+  }
+}

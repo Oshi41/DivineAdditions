@@ -62,16 +62,12 @@ public class ItemModRifle extends Item {
             List<ItemStack> bullets = rifleInventory.getBullets();
             List<ItemStack> catalysts = rifleInventory.getCatalysts();
 
-            if (!core.isEmpty() && !bullets.isEmpty()) {
+            if (!core.isEmpty()) {
                 IRifleCore coreItem = (IRifleCore) core.getItem();
-
                 ItemStack usingBullets = bullets.stream().filter(stack -> coreItem.acceptableForBullets(stack, false)).findFirst().orElse(ItemStack.EMPTY);
-                if (!usingBullets.isEmpty()) {
-                    ItemStack usingCatalyst = catalysts.stream().filter(stack -> coreItem.acceptableForCatalyst(stack, false)).findFirst().orElse(ItemStack.EMPTY);
-                    if (!usingCatalyst.isEmpty()) {
-                        coreItem.shoot(worldIn, playerIn, usingBullets, usingCatalyst);
-                        core.damageItem(1, playerIn);
-                    }
+                ItemStack usingCatalyst = catalysts.stream().filter(stack -> coreItem.acceptableForCatalyst(stack, false)).findFirst().orElse(ItemStack.EMPTY);
+                if (coreItem.shoot(worldIn, playerIn, core, usingBullets, usingCatalyst)) {
+                    core.damageItem(1, playerIn);
                 }
             }
         }

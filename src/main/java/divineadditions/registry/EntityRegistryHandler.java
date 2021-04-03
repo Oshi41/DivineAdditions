@@ -3,6 +3,7 @@ package divineadditions.registry;
 import divineadditions.DivineAdditions;
 import divineadditions.entity.EntityAncientVillager;
 import divineadditions.entity.EntityArmorDefender;
+import divineadditions.entity.EntityBullet;
 import divineadditions.entity.EntityCageBullet;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -28,6 +29,8 @@ public class EntityRegistryHandler {
         IForgeRegistry<EntityEntry> registry = event.getRegistry();
 
         registry.register(buildProjectile(EntityCageBullet.class, EntityCageBullet::new, "entity_cage_bullet"));
+        registry.register(buildProjectile(EntityBullet.class, EntityBullet::new, "rifle_bullet"));
+
         registry.register(buildEntity(EntityArmorDefender.class, EntityArmorDefender::new, "armor_defender"));
         registry.register(buildEntity(EntityAncientVillager.class, EntityAncientVillager::new, "ancient_villager"));
     }

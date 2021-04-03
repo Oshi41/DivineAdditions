@@ -10,7 +10,6 @@ import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawableAnimated;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.monster.IMob;
@@ -29,9 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ForgeRecipeWrapper implements IRecipeWrapper {
+public class ForgeRecipeWrapper implements IForgeRecipeWrapper {
     private static final Rectangle dnaFillingRectOut = new Rectangle(190, 16, 12, 53);
-    private static final Rectangle dnaFillingRect = new Rectangle(7, 16, 12, 53);
+    private static final Rectangle dnaFillingRect = new Rectangle(7, 16 + 24, 12, 53);
 
     private static List<ItemStack> cagedMobs;
 
@@ -43,6 +42,7 @@ public class ForgeRecipeWrapper implements IRecipeWrapper {
     private final int knowledgeLevel;
 
     private final IDrawableAnimated dnaAnimable;
+    private int craftGridSize;
 
     public ForgeRecipeWrapper(ForgeRecipes recipes, IGuiHelper helper) {
         output = recipes.getRecipeOutput();
@@ -51,6 +51,7 @@ public class ForgeRecipeWrapper implements IRecipeWrapper {
         experience = recipes.getExperience();
         knowledgeLevel = recipes.getKnowledgeLevel();
         catalystIngredients = recipes.getCatalystIngredients();
+        craftGridSize = Math.max(recipes.getHeight(), recipes.getWidth());
 
         dnaAnimable = helper.drawableBuilder(ForgeRecipeCategory.Background, dnaFillingRectOut.x, dnaFillingRectOut.y, dnaFillingRectOut.width, dnaFillingRectOut.height)
                 .buildAnimated(100, IDrawableAnimated.StartDirection.BOTTOM, false);
@@ -94,16 +95,16 @@ public class ForgeRecipeWrapper implements IRecipeWrapper {
      */
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        dnaAnimable.draw(minecraft, dnaFillingRect.x, dnaFillingRect.y);
+        dnaAnimable.draw(minecraft, dnaFillingRect.x, dnaFillingRect.y + 24);
         ITextComponent text = null;
 
         if (experience > 0) {
             text = new TextComponentTranslation("divineadditions.gui.xp_level_needed").appendText(" " + experience);
-            minecraft.fontRenderer.drawSplitString(text.getFormattedText(), 129, 80, 53, Color.GREEN.getRGB());
+            minecraft.fontRenderer.drawSplitString(text.getFormattedText(), 129, 80 + 24, 53, Color.GREEN.getRGB());
         }
 
         text = new TextComponentTranslation("divineadditions.gui.knowlegde_level").appendText(" ").appendSibling(new TextComponentTranslation("enchantment.level." + knowledgeLevel));
-        minecraft.fontRenderer.drawSplitString(text.getFormattedText(), 129, 10, 53, 10526880);
+        minecraft.fontRenderer.drawSplitString(text.getFormattedText(), 129, 10 + 24, 53, 10526880);
     }
 
     @Override
@@ -111,7 +112,7 @@ public class ForgeRecipeWrapper implements IRecipeWrapper {
         ArrayList<String> list = new ArrayList<>();
 
         if (dnaFillingRect.contains(mouseX, mouseY)) {
-            list.add("DNA amount: " + dna);
+            list.add(new TextComponentTranslation("divineadditions.tooltip.dna_capacity", dna).getFormattedText());
         }
 
         return list;
@@ -136,5 +137,20 @@ public class ForgeRecipeWrapper implements IRecipeWrapper {
         }
 
         iIngredients.setInputLists(VanillaTypes.ITEM, lists);
+    }
+
+    @Override
+    public int getCraftGridSize() {
+        return craftGridSize;
+    }
+
+    @Override
+    public void onTooltip(int slotIndex, boolean input, ItemStack ingredient, List<String> tooltip) {
+        if (!catalystIngredients.isEmpty()) {
+            // total ingredient size + output and caged mob slot
+            if (slotIndex >= ingredients.size() + 2) {
+                tooltip.add(new TextComponentTranslation("divineadditions.jei.forge.catalyst").getFormattedText());
+            }
+        }
     }
 }

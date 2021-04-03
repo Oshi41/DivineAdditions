@@ -13,9 +13,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
-public class EntityRenderAncientVillager<T extends EntityLiving & ISkinProvider> extends RenderLiving<T> {
+public class RenderEntityAncientVillager<T extends EntityLiving & ISkinProvider> extends RenderLiving<T> {
 
-    public EntityRenderAncientVillager(RenderManager rendermanagerIn) {
+    public RenderEntityAncientVillager(RenderManager rendermanagerIn) {
         super(rendermanagerIn, new ModelVillager(0.0F), 0.5F);
         this.addLayer(new LayerCustomHead(this.getMainModel().villagerHead));
     }

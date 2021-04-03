@@ -21,7 +21,7 @@ public class RifleMobRecipeWrapper extends RifleRecipeWrapper {
     private final IDrawableStatic arrowWithSlot;
 
     public RifleMobRecipeWrapper(IGuiHelper helper) {
-        super(helper, Items.rifle_mob_core, DivineAdditionsConfig.rifleConfig.modCoreConfig);
+        super(helper, Items.rifle_mob_core, DivineAdditionsConfig.rifleConfig.mobCoreConfig);
         cageMobStacks = ForgeRecipeWrapper.createCageMobStacks();
         arrowWithSlot = helper.createDrawable(new ResourceLocation("jei", "textures/gui/gui_vanilla.png"), 67, 168, 58, 18);
     }

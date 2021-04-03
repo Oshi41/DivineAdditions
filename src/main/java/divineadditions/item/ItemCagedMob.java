@@ -25,7 +25,7 @@ public class ItemCagedMob extends Item implements IEntityCage {
         super.addInformation(stack, worldIn, tooltip, flagIn);
 
         NBTTagCompound cageNbt = stack.getSubCompound(IEntityCage.cagedTagName);
-        if (cageNbt.getSize() == 0)
+        if (cageNbt == null || cageNbt.getSize() == 0)
             return;
 
         ResourceLocation id = new ResourceLocation(cageNbt.getString("id"));

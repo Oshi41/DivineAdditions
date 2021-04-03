@@ -18,6 +18,7 @@ item.rifle_template.name=Заготовка для снарядов
 item.soul_sword.name=Запирающий меч
 item.time_beacon.name=Осколок прошлого
 item.book_of_knowledge_1.name=Книга знаний древних технологий
+item.rifle_bullet_core.name=Ядро винтовки
 
 # Entity
 entity.entity_cage_bullet.name=Пуля
@@ -54,7 +55,11 @@ divineadditions.tooltip.attack_effects=Накладываемые эффекты
 divineadditions.tooltip.defend_effects=Накладываемые эффекты на игрока (ПКМ):
 divineadditions.tooltip.dna=ДНК: %s/%s
 divineadditions.tooltip.dna_capacity=ДНК: %s
-divineadditions.tooltip.time_beacon=Ищите его в одном из астероидов
+divineadditions.tooltip.rifle_mob_core=Ловит мобов на выстрел
+divineadditions.tooltip.rifle.using_bullets=Используемые патроны:
+divineadditions.tooltip.rifle.using_catalysts=Катализатор для выстрела:
+divineadditions.tooltip.rifle.repair=Для починки используй:
+divineadditions.tooltip.rifle_bullet_core=Наносит тяжелый стрековый урон. Работает с некоторыми зачарованиями
 divineadditions.tooltip.not_using_in_craft=Не используется в крафте
 
 #messages
@@ -78,9 +83,13 @@ divineadditions.jei.rifle_core.insert=Поместите данное ядро �
 divineadditions.jei.rifle_core.catalyst=Катализатор для произведения выстрела
 divineadditions.jei.rifle_core.bullets=Используемые патроны
 divineadditions.jei.rifle_core.caged_mob=Просто выстрели в моба
+divineadditions.jei.time_beacon=Генерируется в мире астероидов. Часть мультиструктуры. Возьми с собой лампы из DivineRPG, чтобы восстановить её полностью.
+divineadditions.jei.time_drop=Редкий дроп с древних существ. Одни из них: Эндеры. Но кто знает, возможно есть ещё более древний источник...
+divineadditions.jei.forge.catalyst=Необходимый катализатор для крафта, размещается на стойке, стоящей вполтную к механизму. Используется при крафте.
 
 block.catalyst_stand.name=catalyst_stand
 block.forge.name=forge
 item.catalyst_stand.name=catalyst_stand
 item.forge.name=forge
 item.time_drop.name=time_drop
+entity.rifle_bullet.name=rifle_bullet

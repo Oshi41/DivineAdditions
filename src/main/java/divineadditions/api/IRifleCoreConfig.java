@@ -28,4 +28,11 @@ public interface IRifleCoreConfig {
      * @return
      */
     Map<String, Integer> getCatalysts();
+
+    /**
+     * Returns repair items
+     *
+     * @return
+     */
+    String[] getRepairItems();
 }
