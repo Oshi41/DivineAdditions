@@ -1,6 +1,7 @@
 package divineadditions.entity;
 
 import com.google.common.base.Optional;
+import divineadditions.holders.Items;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,6 +26,7 @@ public class EntityDefenderStand extends EntityLivingBase {
     private static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(EntityDefenderStand.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     private final NonNullList<ItemStack> armorItems;
     private final NonNullList<ItemStack> handItems;
+    private int cooldown;
 
     private EntityLivingBase owner;
 
@@ -74,6 +76,14 @@ public class EntityDefenderStand extends EntityLivingBase {
 
 
         return false;
+    }
+
+    @Override
+    public void onLivingUpdate() {
+        super.onLivingUpdate();
+
+        if (cooldown >= 0)
+            cooldown--;
     }
 
     @Override
@@ -172,23 +182,31 @@ public class EntityDefenderStand extends EntityLivingBase {
 
     @Override
     public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
-        ItemStack itemstack = player.getHeldItem(hand);
+        ItemStack heldItem = player.getHeldItem(hand);
 
-        if (!world.isRemote) {
-            EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(itemstack);
+        if (heldItem.getItem() == Items.defender_stand_activation) {
+            return super.applyPlayerInteraction(player, vec, hand);
+        }
 
-            if (itemstack.isEmpty()) {
+        if (!world.isRemote && cooldown < 0) {
+            cooldown = 5;
+            world.setEntityState(this, (byte) 32);
+
+            EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(heldItem);
+
+            if (heldItem.isEmpty()) {
                 EntityEquipmentSlot clickedSlot = this.getClickedSlot(vec);
 
                 if (hasItemInSlot(clickedSlot)) {
-                    this.swapItem(player, clickedSlot, itemstack, hand);
+                    this.swapItem(player, clickedSlot, heldItem, hand);
                 }
             } else {
-                this.swapItem(player, entityequipmentslot, itemstack, hand);
+                this.swapItem(player, entityequipmentslot, heldItem, hand);
             }
+
         }
 
-        return super.applyPlayerInteraction(player, vec, hand);
+        return EnumActionResult.SUCCESS;
     }
 
     /**
@@ -215,23 +233,19 @@ public class EntityDefenderStand extends EntityLivingBase {
         return entityequipmentslot;
     }
 
-    private void swapItem(EntityPlayer player, EntityEquipmentSlot slot, ItemStack stack, EnumHand hand) {
-        ItemStack itemstack = this.getItemStackFromSlot(slot);
+    private void swapItem(EntityPlayer player, EntityEquipmentSlot slot, ItemStack playerStack, EnumHand hand) {
+        ItemStack stack = getItemStackFromSlot(slot);
 
-        if (player.capabilities.isCreativeMode && itemstack.isEmpty() && !stack.isEmpty()) {
-            ItemStack itemstack2 = stack.copy();
-            itemstack2.setCount(1);
-            this.setItemStackToSlot(slot, itemstack2);
-        } else if (!stack.isEmpty() && stack.getCount() > 1) {
-            if (itemstack.isEmpty()) {
-                ItemStack itemstack1 = stack.copy();
+        if (!playerStack.isEmpty() && playerStack.getCount() > 1) {
+            if (stack.isEmpty()) {
+                ItemStack itemstack1 = playerStack.copy();
                 itemstack1.setCount(1);
                 this.setItemStackToSlot(slot, itemstack1);
-                stack.shrink(1);
+                playerStack.shrink(1);
             }
         } else {
-            this.setItemStackToSlot(slot, stack);
-            player.setHeldItem(hand, itemstack);
+            this.setItemStackToSlot(slot, playerStack);
+            player.setHeldItem(hand, stack);
         }
     }
 
@@ -244,6 +258,18 @@ public class EntityDefenderStand extends EntityLivingBase {
                 this.entityDropItem(stack, 0.0F);
             }
         }
+    }
+
+    @Override
+    public void handleStatusUpdate(byte id) {
+
+        if (id == 32) {
+            if (world.isRemote) {
+                cooldown = 5;
+            }
+        }
+
+        super.handleStatusUpdate(id);
     }
 
     @Nullable

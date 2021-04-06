@@ -17,6 +17,7 @@ import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.monster.AbstractSkeleton;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemBow;
@@ -87,6 +88,7 @@ public class EntityArmorDefender extends AbstractSkeleton {
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
         this.targetTasks.addTask(3, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
 
+        this.tasks.addTask(5, new EntityAIWanderAvoidWater(this, 1.0D));
         this.tasks.addTask(8, new EntityAILookIdle(this));
         this.tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
     }
@@ -121,7 +123,7 @@ public class EntityArmorDefender extends AbstractSkeleton {
                 i = 40;
             }
 
-            i -= generation / 10.;
+            i -= generation / 3.;
 
             this.aiArrowAttack.setAttackCooldown(i);
             this.tasks.addTask(4, this.aiArrowAttack);
@@ -214,25 +216,10 @@ public class EntityArmorDefender extends AbstractSkeleton {
     }
 
     @Override
-    public void onDeath(DamageSource cause) {
-        super.onDeath(cause);
-
-        EntityPlayer player = null;
-
-        if (getAttackTarget() instanceof EntityPlayer) {
-            player = (EntityPlayer) getAttackTarget();
-        }
-
-        if (player == null && getRevengeTarget() instanceof EntityPlayer) {
-            player = (EntityPlayer) getRevengeTarget();
-        }
-
-        if (player != null) {
-            IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
-            if (capability != null) {
-                capability.setArmorDefenderSummonCount(capability.armorDefenderSummonCount() + 1);
-            }
-        }
+    protected EntityArrow getArrow(float p_190726_1_) {
+        EntityArrow arrow = super.getArrow(p_190726_1_);
+        arrow.setDamage(getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+        return arrow;
     }
 
     // region Private methods

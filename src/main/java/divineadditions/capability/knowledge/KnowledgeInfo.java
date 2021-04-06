@@ -39,7 +39,6 @@ public class KnowledgeInfo implements IKnowledgeInfo {
                     return IKnowledgeInfo.KnowledgeCapability;
                 }
             }, ((EntityPlayerMP) player));
-        } else {
         }
     }
 }
