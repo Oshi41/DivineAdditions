@@ -9,11 +9,9 @@ import divineadditions.item.rifle_core.ItemRifleMobCore;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.item.sword.SwordProperties;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,11 +25,6 @@ import java.util.function.Function;
 
 @Mod.EventBusSubscriber(modid = DivineAdditions.MOD_ID)
 public class ItemRegistryHandler {
-    // region fields
-
-
-    // endregion
-
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void registerItems(final RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
@@ -51,13 +44,14 @@ public class ItemRegistryHandler {
                 .setCreativeTab(Tabs.Main), "rifle_template");
         registerObj(registry, new ItemCustomSword(ToolMaterials.SoulSwordMaterial,
                 new SwordProperties()
-                        .addAttackEffect(new PotionEffect(MobEffects.POISON, 40, 1))
                         .setSoulPerKills(60)
         ).setCreativeTab(Tabs.Main), "soul_sword");
 
         registerObj(registry, new ItemKnowledgeBook(1).setCreativeTab(Tabs.Main), "book_of_knowledge_1");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "time_drop");
         registerObj(registry, new ItemRifleCoreBullet().setCreativeTab(Tabs.Main), "rifle_bullet_core");
+        registerObj(registry, new ItemDefenderStand(false).setCreativeTab(Tabs.Main), "defender_stand");
+        registerObj(registry, new ItemDefenderStand(true).setCreativeTab(Tabs.Main), "defender_stand_activation");
 
 
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));
@@ -78,7 +72,9 @@ public class ItemRegistryHandler {
 
         for (ItemArmor itemArmor : armorList) {
             String prefix = resourceLocation.toString() + "_" + itemArmor.armorType.getName();
-            itemArmor.setUnlocalizedName(prefix).setRegistryName(prefix).setCreativeTab(tabs);
+            itemArmor.setUnlocalizedName(prefix)
+                    .setRegistryName(prefix)
+                    .setCreativeTab(tabs);
             registry.register(itemArmor);
         }
     }

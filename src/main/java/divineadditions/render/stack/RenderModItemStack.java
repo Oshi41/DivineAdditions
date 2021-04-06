@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,22 +30,20 @@ public class RenderModItemStack extends TileEntityItemStackRenderer {
                 if (entity != null) {
                     Render render = Minecraft.getMinecraft().getRenderManager().entityRenderMap.get(entity.getClass());
                     if (render != null) {
-                        GlStateManager.pushMatrix();
-                        float maxWidth = 1.8F;
+                        float maxSize = Math.max(entity.width, entity.height);
+                        if (maxSize > 2) {
+                            float scale = 2 / (maxSize);
+                            GlStateManager.scale(scale, scale, scale);
+                            GlStateManager.translate(scale, 0, scale);
+                        }
 
-                        float maxDimension = Math.max(entity.height, entity.width);
-
-                        if (Math.abs(maxDimension - maxWidth) >= Double.MIN_VALUE) {
-                            float scale = maxWidth / maxDimension;
+                        if (maxSize < 1.5f) {
+                            float scale = 1.5f / maxSize;
                             GlStateManager.scale(scale, scale, scale);
                         }
 
                         GlStateManager.translate(0, 0, 0.7);
-
-                        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
                         render.doRender(entity, 0, 0, 0, 0, partialTicks);
-                        GL11.glPopAttrib();
-                        GlStateManager.popMatrix();
                         return;
                     }
                 }

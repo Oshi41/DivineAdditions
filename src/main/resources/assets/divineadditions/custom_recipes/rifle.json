@@ -23,7 +23,7 @@
     "G": {
       "item": "minecraft:glass"
     },
-    "t": {
+    "T": {
       "item": "divineadditions:time_drop"
     }
   },
@@ -31,6 +31,6 @@
   "experience": 10,
   "level": 1,
   "result": {
-    "item": "divineadditions:rifle_mob_core"
+    "item": "divineadditions:rifle"
   }
 }

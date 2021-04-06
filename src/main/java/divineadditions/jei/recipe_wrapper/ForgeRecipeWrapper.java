@@ -95,7 +95,7 @@ public class ForgeRecipeWrapper implements IForgeRecipeWrapper {
      */
     @Override
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        dnaAnimable.draw(minecraft, dnaFillingRect.x, dnaFillingRect.y + 24);
+        dnaAnimable.draw(minecraft, dnaFillingRect.x, dnaFillingRect.y);
         ITextComponent text = null;
 
         if (experience > 0) {

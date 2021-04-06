@@ -1,13 +1,12 @@
 package divineadditions.entity;
 
-import divineadditions.api.EntityDamageSourceIndirectLooting;
+import divineadditions.api.EntityDamageSourceIndirectEnch;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
@@ -74,6 +73,6 @@ public class EntityBullet extends EntityThrowable {
             damageAmount += EnchantmentHelper.getModifierForCreature(heldItem, ((EntityLivingBase) entity).getCreatureAttribute());
         }
 
-        entity.attackEntityFrom(EntityDamageSourceIndirectLooting.createThrowable(this, EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, heldItem)), damageAmount);
+        entity.attackEntityFrom(EntityDamageSourceIndirectEnch.createThrowable(this, EnchantmentHelper.getEnchantments(heldItem)), damageAmount);
     }
 }

@@ -33,4 +33,6 @@ public class Items {
     public static final Item rifle_template = null;
     public static final Item book_of_knowledge_1 = null;
     public static final Item time_drop = null;
+    public static final Item defender_stand = null;
+    public static final Item defender_stand_activation = null;
 }

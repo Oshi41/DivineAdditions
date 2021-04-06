@@ -2,7 +2,9 @@ package divineadditions.jei;
 
 import com.google.common.collect.Lists;
 import divineadditions.DivineAdditions;
+import divineadditions.api.IEntityCage;
 import divineadditions.holders.Blocks;
+import divineadditions.holders.Dimensions;
 import divineadditions.holders.Items;
 import divineadditions.jei.category.ForgeRecipeCategory;
 import divineadditions.jei.category.RifleCoreCategory;
@@ -11,6 +13,7 @@ import divineadditions.jei.recipe_wrapper.ForgeRecipeWrapper;
 import divineadditions.jei.recipe_wrapper.SoulSwordRecipeWrapper;
 import divineadditions.jei.recipe_wrapper.rifle.RifleMobRecipeWrapper;
 import divineadditions.recipe.ForgeRecipes;
+import divinerpg.registry.ItemRegistry;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.VanillaTypes;
@@ -22,6 +25,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.*;
@@ -29,17 +34,6 @@ import java.util.stream.Collectors;
 
 @JEIPlugin
 public class JeiModule implements IModPlugin {
-    @Override
-    public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
-        subtypeRegistry.useNbtForSubtypes(Items.caged_mob, Items.soul_sword, Items.rifle_mob_core);
-    }
-
-    @Override
-    public void registerCategories(IRecipeCategoryRegistration registry) {
-        IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
-        registry.addRecipeCategories(new ForgeRecipeCategory(guiHelper), new SoulSwordCategory(guiHelper), new RifleCoreCategory(guiHelper));
-    }
-
     /**
      * Registering special item info
      *
@@ -51,6 +45,28 @@ public class JeiModule implements IModPlugin {
 
         registry.addIngredientInfo(new ItemStack(Items.time_drop), VanillaTypes.ITEM,
                 "divineadditions.jei.time_drop");
+
+        ItemStack starSack = new ItemStack(ItemRegistry.teleportationStar);
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("Dim", Dimensions.planetDimension.getName());
+        tag.setLong("BlockPos", new BlockPos(0, 200, 0).toLong());
+        starSack.setItemDamage(starSack.getMaxDamage() - 1);
+        starSack.setTagCompound(tag);
+
+        registry.addIngredientInfo(starSack, VanillaTypes.ITEM,
+                "divineadditions.jei.teleportation_star");
+    }
+
+    @Override
+    public void registerCategories(IRecipeCategoryRegistration registry) {
+        IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
+        registry.addRecipeCategories(new ForgeRecipeCategory(guiHelper), new SoulSwordCategory(guiHelper), new RifleCoreCategory(guiHelper));
+    }
+
+    @Override
+    public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
+        subtypeRegistry.registerSubtypeInterpreter(Items.caged_mob, itemStack -> itemStack.getOrCreateSubCompound(IEntityCage.cagedTagName).getString(IEntityCage.entityIdName));
+        subtypeRegistry.useNbtForSubtypes(Items.soul_sword, Items.rifle_mob_core, ItemRegistry.teleportationStar);
     }
 
     /**

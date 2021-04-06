@@ -1,12 +1,10 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
-import divineadditions.entity.EntityAncientVillager;
-import divineadditions.entity.EntityArmorDefender;
-import divineadditions.entity.EntityBullet;
-import divineadditions.entity.EntityCageBullet;
+import divineadditions.entity.*;
 import divineadditions.render.entity.RenderEntityAncientVillager;
 import divineadditions.render.entity.RenderEntityBullet;
+import divineadditions.render.entity.RenderEntityDefenderStand;
 import divineadditions.render.entity.RenderEntityPlayerLike;
 import divineadditions.render.stack.RenderModItemStack;
 import divineadditions.render.tile.TileEntityCatalystStandRenderer;
@@ -59,6 +57,7 @@ public class ModelRegistryEventHandler {
         RenderingRegistry.registerEntityRenderingHandler(EntityArmorDefender.class, RenderEntityPlayerLike::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityAncientVillager.class, RenderEntityAncientVillager::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityBullet.class, RenderEntityBullet::new);
+        RenderingRegistry.registerEntityRenderingHandler(EntityDefenderStand.class, RenderEntityDefenderStand::new);
     }
 
     private static void registerTESR() {

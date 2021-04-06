@@ -1,6 +1,7 @@
 package divineadditions.item;
 
 import divineadditions.capability.knowledge.IKnowledgeInfo;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBook;
 import net.minecraft.item.ItemStack;
@@ -8,6 +9,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemKnowledgeBook extends ItemBook {
     private final int level;
@@ -34,5 +38,10 @@ public class ItemKnowledgeBook extends ItemBook {
         }
 
         return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        tooltip.add(new TextComponentTranslation("divineadditions.tooltip.knowledge_level", level).getFormattedText());
     }
 }

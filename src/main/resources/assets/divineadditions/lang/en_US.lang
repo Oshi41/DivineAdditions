@@ -7,10 +7,10 @@ item.rifle_bullet.name=Нарезной патрон
 item.rifle.name=Охотничья винтовка
 item.caged_mob.name=Запертый моб
 item.rifle_mob_core.name=Ядро пойманного моба
-item.blank_legs.name=Пустые штаны
-item.blank_head.name=Пустой шлем
-item.blank_chest.name=Пустой нагрудник
-item.blank_feet.name=Пустые ботинки
+item.divineadditions:blank_legs.name=Пустые штаны
+item.divineadditions:blank_head.name=Пустой шлем
+item.divineadditions:blank_chest.name=Пустой нагрудник
+item.divineadditions:blank_feet.name=Пустые ботинки
 item.empty_infinite_gem.name=Камень бесконечности (пустой)
 item.soul_powder.name=Порошок души
 item.power_gem.name=Камень Силы
@@ -19,11 +19,15 @@ item.soul_sword.name=Запирающий меч
 item.time_beacon.name=Осколок прошлого
 item.book_of_knowledge_1.name=Книга знаний древних технологий
 item.rifle_bullet_core.name=Ядро винтовки
+item.time_drop.name=Временной осколок
+item.defender_stand.name=Модуль Защитника
+item.defender_stand_activation.name=Активатор Защитника
 
 # Entity
-entity.entity_cage_bullet.name=Пуля
-entity.armor_defender.name=Защитник
-entity.ancient_villager.name=Древний житель
+entity.divineadditions:entity_cage_bullet.name=Пуля
+entity.divineadditions:armor_defender.name=Защитник
+entity.divineadditions:ancient_villager.name=Древний житель
+entity.divineadditions:defender_stand.name=Модуль Защитника
 
 # Block
 block.time_beacon.name=Осколок прошлого
@@ -61,6 +65,7 @@ divineadditions.tooltip.rifle.using_catalysts=Катализатор для вы
 divineadditions.tooltip.rifle.repair=Для починки используй:
 divineadditions.tooltip.rifle_bullet_core=Наносит тяжелый стрековый урон. Работает с некоторыми зачарованиями
 divineadditions.tooltip.not_using_in_craft=Не используется в крафте
+divineadditions.tooltip.knowledge_level=Даёт %s уровень древних знаний
 
 #messages
 divineadditions.message.current_knowledge_level_changed=Уровень древних знаний повышен: %s
@@ -86,10 +91,4 @@ divineadditions.jei.rifle_core.caged_mob=Просто выстрели в моб
 divineadditions.jei.time_beacon=Генерируется в мире астероидов. Часть мультиструктуры. Возьми с собой лампы из DivineRPG, чтобы восстановить её полностью.
 divineadditions.jei.time_drop=Редкий дроп с древних существ. Одни из них: Эндеры. Но кто знает, возможно есть ещё более древний источник...
 divineadditions.jei.forge.catalyst=Необходимый катализатор для крафта, размещается на стойке, стоящей вполтную к механизму. Используется при крафте.
-
-block.catalyst_stand.name=catalyst_stand
-block.forge.name=forge
-item.catalyst_stand.name=catalyst_stand
-item.forge.name=forge
-item.time_drop.name=time_drop
-entity.rifle_bullet.name=rifle_bullet
+divineadditions.jei.teleportation_star=Путь к новому измерению. Захвати лампы из DivineRPG и приготовься к низкой гравитации

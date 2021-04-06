@@ -5,7 +5,6 @@ import divineadditions.render.entity.RenderEntityItemEnhanced;
 import divineadditions.tile.TileEntityCatalystStand;
 import divinerpg.utils.Lazy;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -45,16 +44,11 @@ public class TileEntityCatalystStandRenderer extends TileEntitySpecialRenderer<T
                         entityItem.setCustomNameTag(itemStack.getCount() + "");
                     }
 
-                    GlStateManager.pushMatrix();
-                    GlStateManager.disableLighting();
                     long totalWorldTime = getWorld().getTotalWorldTime();
 
                     entityItem.turn(totalWorldTime, 0);
 
                     renderer.getValue().doRender(entityItem, xPos, yPos, zPos, 0, (float) Math.sin(totalWorldTime / 360.0) * 360);
-
-                    GlStateManager.enableLighting();
-                    GlStateManager.popMatrix();
                 }
             }
         }

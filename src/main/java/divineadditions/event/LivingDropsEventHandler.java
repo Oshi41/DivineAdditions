@@ -14,6 +14,8 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import java.util.Random;
+
 @Mod.EventBusSubscriber(modid = DivineAdditions.MOD_ID)
 public class LivingDropsEventHandler {
     @SubscribeEvent
@@ -34,8 +36,12 @@ public class LivingDropsEventHandler {
         if (soulPerKills < 0)
             return null;
 
+        Random rand = victim.getEntityWorld().rand;
+
+        rand.setSeed(rand.nextLong());
+
         soulPerKills = getSoulDropChance(soulPerKills, lootingLevel, stack);
-        if (victim.getEntityWorld().rand.nextInt(soulPerKills) != 0)
+        if (rand.nextInt(soulPerKills) != 0)
             return null;
 
         ItemStack drop = Items.caged_mob.getDefaultInstance();
@@ -43,7 +49,7 @@ public class LivingDropsEventHandler {
         ((IEntityCage) drop.getItem()).imprison(victim, drop.getTagCompound());
 
         if (victim instanceof EntityLivingBase) {
-            drop.getOrCreateSubCompound(IEntityCage.cagedTagName).setFloat("Health", victim.getEntityWorld().rand.nextFloat() * ((EntityLivingBase) victim).getMaxHealth());
+            drop.getOrCreateSubCompound(IEntityCage.cagedTagName).setFloat("Health", rand.nextFloat() * ((EntityLivingBase) victim).getMaxHealth());
         }
 
 

@@ -1,10 +1,7 @@
 package divineadditions.registry;
 
 import divineadditions.DivineAdditions;
-import divineadditions.entity.EntityAncientVillager;
-import divineadditions.entity.EntityArmorDefender;
-import divineadditions.entity.EntityBullet;
-import divineadditions.entity.EntityCageBullet;
+import divineadditions.entity.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -33,6 +30,8 @@ public class EntityRegistryHandler {
 
         registry.register(buildEntity(EntityArmorDefender.class, EntityArmorDefender::new, "armor_defender"));
         registry.register(buildEntity(EntityAncientVillager.class, EntityAncientVillager::new, "ancient_villager"));
+
+        registry.register(buildEntityNoEgg(EntityDefenderStand.class, EntityDefenderStand::new, "defender_stand"));
     }
 
     private static <T extends Entity> EntityEntry buildEntity(Class<T> entityClass, Function<World, T> func, String entityID) {
@@ -46,6 +45,19 @@ public class EntityRegistryHandler {
                 .tracker(128, 3, true)
                 .factory(func::apply)
                 .egg(0, Integer.MAX_VALUE)
+                .build();
+    }
+
+    private static <T extends Entity> EntityEntry buildEntityNoEgg(Class<T> entityClass, Function<World, T> func, String entityID) {
+        ResourceLocation id = new ResourceLocation(DivineAdditions.MOD_ID, entityID);
+
+        return EntityEntryBuilder
+                .create()
+                .entity(entityClass)
+                .id(id, networkId++)
+                .name(id.toString())
+                .tracker(128, 3, true)
+                .factory(func::apply)
                 .build();
     }
 

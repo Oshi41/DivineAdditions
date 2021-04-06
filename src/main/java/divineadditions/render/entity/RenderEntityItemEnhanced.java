@@ -59,6 +59,7 @@ public class RenderEntityItemEnhanced extends Render<EntityItem> {
                 float f6 = (this.random.nextFloat() * 2.0F - 1.0F) * 0.15F;
                 GlStateManager.translate(f7, f9, f6);
             }
+
             IBakedModel ibakedmodel = itemRenderer.getItemModelWithOverrides(itemStack, entity.world, null);
             IBakedModel transformedModel = ForgeHooksClient.handleCameraTransforms(ibakedmodel, ItemCameraTransforms.TransformType.GROUND, false);
 

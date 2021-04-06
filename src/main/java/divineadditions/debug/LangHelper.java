@@ -82,7 +82,7 @@ public class LangHelper {
                 if (!id.getResourceDomain().equals(modId))
                     continue;
 
-                String key = String.format("%s.%s.name", prefix, id.getResourcePath());
+                String key = String.format("%s.%s.name", prefix, id.toString());
 
                 if (entry.getValue().stream().anyMatch(x -> x.contains(key))) {
                     continue;

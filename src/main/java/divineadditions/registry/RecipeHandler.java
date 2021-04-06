@@ -52,19 +52,6 @@ public class RecipeHandler {
             return null;
         });
 
-//        put(new ResourceLocation(DivineAdditions.MOD_ID, "infusing"), (context, json) -> {
-//            String group = JsonUtils.getString(json, "group", "");
-//            Ingredient catalyst = CraftingHelper.getIngredient(JsonUtils.getJsonObject(json, "catalyst"), context);
-//            ItemStack result = NbtUtils.parseStack(JsonUtils.getJsonObject(json, "result"), context);
-//
-//            Ingredient[] ingredients = StreamSupport.stream(JsonUtils.getJsonArray(json, "ingredients").spliterator(), false)
-//                    .map(x -> CraftingHelper.getIngredient(x, context))
-//                    .toArray(Ingredient[]::new);
-//
-//            String type = JsonUtils.getString(json, "infusingType", "lightning");
-//            return new InfusingRecipe(group, result, NonNullList.from(Ingredient.EMPTY, ingredients), catalyst, type);
-//        });
-
         put(new ResourceLocation(DivineAdditions.MOD_ID, "shaped"), SpecialShaped::deserialize);
         put(new ResourceLocation(DivineAdditions.MOD_ID, "forge"), ForgeRecipes::deserialize);
     }};
