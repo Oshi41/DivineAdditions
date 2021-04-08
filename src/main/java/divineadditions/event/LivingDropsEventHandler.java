@@ -44,7 +44,7 @@ public class LivingDropsEventHandler {
         if (rand.nextInt(soulPerKills) != 0)
             return null;
 
-        ItemStack drop = Items.caged_mob.getDefaultInstance();
+        ItemStack drop = new ItemStack(Items.caged_mob);
         drop.setTagCompound(new NBTTagCompound());
         ((IEntityCage) drop.getItem()).imprison(victim, drop.getTagCompound());
 

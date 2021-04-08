@@ -43,7 +43,9 @@ public class RenderModItemStack extends TileEntityItemStackRenderer {
                         }
 
                         GlStateManager.translate(0, 0, 0.7);
+                        GlStateManager.disableLighting();
                         render.doRender(entity, 0, 0, 0, 0, partialTicks);
+                        GlStateManager.enableLighting();
                         return;
                     }
                 }

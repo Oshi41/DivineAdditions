@@ -126,12 +126,15 @@ public class ForgeRecipeWrapper implements IForgeRecipeWrapper {
 
         for (int i = 0; i < ingredients.size(); i++) {
             Ingredient ingredient = ingredients.get(i);
-            lists.add(i, Arrays.asList(ingredient.getMatchingStacks()));
+            lists.add(Arrays.asList(ingredient.getMatchingStacks()));
         }
+
+        // caged mob
+        lists.add(ForgeRecipeWrapper.createCageMobStacks());
 
         for (int i = 0; i < catalystIngredients.size(); i++) {
             NbtIngredient ingredient = catalystIngredients.get(i);
-            lists.add(ingredients.size() + i + 1, Collections.singletonList(ingredient.getStack()));
+            lists.add(Collections.singletonList(ingredient.getStack()));
         }
 
         iIngredients.setInputLists(VanillaTypes.ITEM, lists);

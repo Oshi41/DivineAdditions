@@ -57,11 +57,14 @@ public class EntityBullet extends EntityThrowable {
 
             case ENTITY:
 
-                if (result.entityHit != null) {
-                    attackEntityWith(result.entityHit, heldItem);
+                if (result.entityHit != getThrower()) {
+                    if (result.entityHit != null) {
+                        attackEntityWith(result.entityHit, heldItem);
+                    }
+
+                    setDead();
                 }
 
-                setDead();
                 return;
         }
     }

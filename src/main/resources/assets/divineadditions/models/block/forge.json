@@ -1,6 +1,7 @@
 {
   "parent": "block/cube",
   "textures": {
+    "particle": "divineadditions:blocks/forge_side",
     "down": "divineadditions:blocks/forge_bottom",
     "up": "divineadditions:blocks/forge_top",
     "south": "divineadditions:blocks/forge_side_2",
