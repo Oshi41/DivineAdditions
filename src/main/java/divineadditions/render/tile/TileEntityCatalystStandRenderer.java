@@ -1,7 +1,6 @@
 package divineadditions.render.tile;
 
 import divineadditions.block.BlockCatalystStand;
-import divineadditions.render.entity.RenderEntityItemEnhanced;
 import divineadditions.tile.TileEntityCatalystStand;
 import divinerpg.utils.Lazy;
 import net.minecraft.client.Minecraft;
@@ -17,7 +16,6 @@ import openmods.utils.InventoryUtils;
 @SideOnly(Side.CLIENT)
 public class TileEntityCatalystStandRenderer extends TileEntitySpecialRenderer<TileEntityCatalystStand> {
     private final Lazy<EntityItem> inner = new Lazy<>(() -> new EntityItem(Minecraft.getMinecraft().world));
-    private final Lazy<RenderEntityItemEnhanced> renderer = new Lazy<>(() -> new RenderEntityItemEnhanced(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem(), 0.5f));
 
 
     @Override
@@ -32,23 +30,22 @@ public class TileEntityCatalystStandRenderer extends TileEntitySpecialRenderer<T
 
                     Vec3d position = BlockCatalystStand.getItemPosition(i);
 
-                    double xPos = x + position.x;
-                    double yPos = y + position.y;
-                    double zPos = z + position.z;
+                    double xPos = position.x + x;
+                    double yPos = y + (i * 0.2);
+                    double zPos = position.z + z;
 
                     EntityItem entityItem = inner.getValue();
                     entityItem.setItem(itemStack);
+                    entityItem.setPosition(xPos, yPos, zPos);
 
                     if (itemStack.getCount() > 1) {
                         entityItem.setAlwaysRenderNameTag(true);
                         entityItem.setCustomNameTag(itemStack.getCount() + "");
                     }
 
-                    long totalWorldTime = getWorld().getTotalWorldTime();
+                    long yaw = getWorld().getTotalWorldTime() % 360;
 
-                    entityItem.turn(totalWorldTime, 0);
-
-                    renderer.getValue().doRender(entityItem, xPos, yPos, zPos, 0, (float) Math.sin(totalWorldTime / 360.0) * 360);
+                    Minecraft.getMinecraft().getRenderManager().renderEntity(entityItem, xPos, yPos, zPos, 0, yaw, false);
                 }
             }
         }

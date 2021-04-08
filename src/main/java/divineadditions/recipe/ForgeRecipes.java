@@ -146,9 +146,17 @@ public class ForgeRecipes extends SpecialShaped {
         NonNullList<ItemStack> nonnulllist = NonNullList.withSize(inv.getHeight() * inv.getWidth(), ItemStack.EMPTY);
 
         for (int i = 0; i < nonnulllist.size(); ++i) {
-            ItemStack itemstack = handler.getStackInSlot(i);
-            boolean isRemaining = remaining.stream().anyMatch(x -> x.apply(itemstack));
-            nonnulllist.set(i, isRemaining ? net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack) : itemstack.copy());
+            final ItemStack originalStack = handler.getStackInSlot(i);
+            ItemStack itemstack = handler.getStackInSlot(i).copy();
+            if (remaining.stream().noneMatch(x -> x.apply(originalStack))) {
+                itemstack.shrink(1);
+
+                if (itemstack.isEmpty()) {
+                    itemstack = net.minecraftforge.common.ForgeHooks.getContainerItem(originalStack);
+                }
+            }
+
+            nonnulllist.set(i, itemstack);
         }
 
         return nonnulllist;

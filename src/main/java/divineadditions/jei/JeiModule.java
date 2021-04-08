@@ -3,6 +3,7 @@ package divineadditions.jei;
 import com.google.common.collect.Lists;
 import divineadditions.DivineAdditions;
 import divineadditions.api.IEntityCage;
+import divineadditions.gui.gui_container.ForgeGuiContainer;
 import divineadditions.holders.Blocks;
 import divineadditions.holders.Dimensions;
 import divineadditions.holders.Items;
@@ -143,5 +144,9 @@ public class JeiModule implements IModPlugin {
 
         registry.addRecipes(recipesList.stream().map(x -> new ForgeRecipeWrapper(x, guiHelper))
                 .collect(Collectors.toList()), ForgeRecipeCategory.ID.toString());
+
+
+        registry.addGhostIngredientHandler(ForgeGuiContainer.class, new ForgeGhostIngredientHandler(registry.getIngredientRegistry()));
+        // registry.getRecipeTransferRegistry().addRecipeTransferHandler(ForgeContainer.class, ForgeRecipeCategory.ID.toString(), 0, 25, 27, 9 * 4);
     }
 }

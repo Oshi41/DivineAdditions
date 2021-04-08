@@ -9,6 +9,7 @@ import divineadditions.item.rifle_core.ItemRifleMobCore;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.item.sword.SwordProperties;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -36,15 +37,17 @@ public class ItemRegistryHandler {
         registerObj(registry, new ItemCagedMob(), "caged_mob");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "soul_powder");
 
-        registerObj(registry, new ImmortalItem().setCreativeTab(Tabs.Main), "empty_infinite_gem");
-        registerObj(registry, new ImmortalItem().setCreativeTab(Tabs.Main), "power_gem");
-        registerObj(registry, new DescribeItem("divineadditions.tooltip.not_using_in_craft")
+        registerObj(registry, new ItemMod().immortal().setCreativeTab(Tabs.Main), "empty_infinite_gem");
+        registerObj(registry, new ItemMod().immortal().setCreativeTab(Tabs.Main), "power_gem");
+        registerObj(registry, new ItemMod()
+                .withInfo("divineadditions.tooltip.not_using_in_craft")
+                .repair(Items.IRON_INGOT)
                 .setMaxDamage(64)
                 .setMaxStackSize(1)
                 .setCreativeTab(Tabs.Main), "rifle_template");
+
         registerObj(registry, new ItemCustomSword(ToolMaterials.SoulSwordMaterial,
-                new SwordProperties()
-                        .setSoulPerKills(60)
+                new SwordProperties().setSoulPerKills(60)
         ).setCreativeTab(Tabs.Main), "soul_sword");
 
         registerObj(registry, new ItemKnowledgeBook(1).setCreativeTab(Tabs.Main), "book_of_knowledge_1");

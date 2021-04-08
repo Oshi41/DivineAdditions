@@ -5,6 +5,7 @@ import divineadditions.api.IRifleCore;
 import divineadditions.capability.item_provider.CapabilityItemProvider;
 import divineadditions.gui.GuiHandler;
 import divineadditions.gui.inventory.RifleInventory;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -73,5 +74,10 @@ public class ItemModRifle extends Item {
         }
 
         return new ActionResult<>(EnumActionResult.FAIL, itemStack);
+    }
+
+    @Override
+    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+        super.onUsingTick(stack, player, count);
     }
 }

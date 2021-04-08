@@ -46,6 +46,7 @@ divineadditions.wrong_armor_stand_count=На платформе должна б�
 divineadditions.armor_is_not_powered=У этой брони нет особых умений
 divineadditions.armor_multiple_power=Для брони необходимо только одно особое умение, эта содержит больше
 divineadditions.weapon_is_needed=Для призыва необходимо оружие
+divineadditions.incorrect_activator=Данный активатор привязан к другому Модулю
 divineadditions.blank_armor_info=Собирает способности других сетов
 divineadditions.blank_armor_uning_caps=Используемые способности:
 divineadditions.gui.knowlegde_level=Уровень знаний:
@@ -66,6 +67,8 @@ divineadditions.tooltip.rifle.repair=Для починки используй:
 divineadditions.tooltip.rifle_bullet_core=Наносит тяжелый стрековый урон. Работает с некоторыми зачарованиями
 divineadditions.tooltip.not_using_in_craft=Не используется в крафте
 divineadditions.tooltip.knowledge_level=Даёт %s уровень древних знаний
+divineadditions.tooltip.defender_stand=При использовании создаст Модуль Защитника. Экиперовав его в броню с умениями и дав ему меч, можно получить требуемую эссенцию брони.
+divineadditions.tooltip.defender_stand_activation=Полностью экиперованный Модуль Защитника требует только своего модуля активации. С каждым разом он будет всё сильнее. Осторожнее!
 
 #messages
 divineadditions.message.current_knowledge_level_changed=Уровень древних знаний повышен: %s
@@ -93,3 +96,16 @@ divineadditions.jei.time_drop=Редкий дроп с древних сущес
 divineadditions.jei.forge.catalyst=Необходимый катализатор для крафта, размещается на стойке, стоящей вполтную к механизму. Используется при крафте.
 divineadditions.jei.teleportation_star=Путь к новому измерению. Захвати лампы из DivineRPG и приготовься к низкой гравитации
 
+item.blank_legs.name=blank_legs
+entity.armor_defender.name=armor_defender
+item.blank_head.name=blank_head
+block.catalyst_stand.name=catalyst_stand
+block.forge.name=forge
+entity.entity_cage_bullet.name=entity_cage_bullet
+entity.ancient_villager.name=ancient_villager
+item.blank_chest.name=blank_chest
+entity.defender_stand.name=defender_stand
+entity.rifle_bullet.name=rifle_bullet
+item.catalyst_stand.name=catalyst_stand
+item.forge.name=forge
+item.blank_feet.name=blank_feet

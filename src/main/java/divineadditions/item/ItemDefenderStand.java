@@ -9,6 +9,7 @@ import divineadditions.holders.Items;
 import divinerpg.api.DivineAPI;
 import divinerpg.api.armor.ArmorEquippedEvent;
 import divinerpg.api.armor.registry.IArmorDescription;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -19,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -28,17 +30,32 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ItemDefenderStand extends Item {
     private final boolean activation;
+    private final String guidName = "GUID";
 
     public ItemDefenderStand(boolean activation) {
         this.activation = activation;
         setMaxStackSize(1);
     }
 
+    /**
+     * Placing defender here (if not in activation mode)
+     *
+     * @param player  - current player using item
+     * @param worldIn - player world
+     * @param pos     - current pos
+     * @param hand    - with current hand
+     * @param facing  - player facing
+     * @param hitX    - hit vector (<1)
+     * @param hitY    - hit vector (<1)
+     * @param hitZ    - hit vector (<1)
+     * @return
+     */
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!activation) {
@@ -73,9 +90,13 @@ public class ItemDefenderStand extends Item {
                                 Entity armorStand = new EntityDefenderStand(worldIn, player, new BlockPos(d0 + 0.5D, d1, d2 + 0.5D));
                                 worldIn.spawnEntity(armorStand);
                                 worldIn.playSound(null, armorStand.posX, armorStand.posY, armorStand.posZ, SoundEvents.ENTITY_ARMORSTAND_PLACE, SoundCategory.BLOCKS, 0.75F, 0.8F);
-                            }
 
-                            player.setHeldItem(hand, new ItemStack(Items.defender_stand_activation));
+                                ItemStack activatorStack = new ItemStack(Items.defender_stand_activation);
+                                NBTTagCompound compound = new NBTTagCompound();
+                                compound.setUniqueId(guidName, armorStand.getUniqueID());
+                                activatorStack.setTagCompound(compound);
+                                player.setHeldItem(hand, activatorStack);
+                            }
                             return EnumActionResult.SUCCESS;
                         }
                     }
@@ -105,82 +126,88 @@ public class ItemDefenderStand extends Item {
             World worldIn = defenderStand.getEntityWorld();
             BlockPos pos = defenderStand.getPosition();
 
-            // collecting armor set from defender module
-            Map<EntityEquipmentSlot, ItemStack> items = Arrays.stream(EntityEquipmentSlot.values()).collect(Collectors.toMap(x -> x, defenderStand::getItemStackFromSlot));
-            ItemStack weapon = items.get(EntityEquipmentSlot.MAINHAND);
+            NBTTagCompound nbt = stack.getTagCompound();
 
-            // check for weapon here
-            if (weapon.getItem() instanceof ItemSword || weapon.getItem() instanceof ItemBow) {
+            if (nbt != null && Objects.equals(nbt.getUniqueId(guidName), defenderStand.getUniqueID())) {
+                // collecting armor set from defender module
+                Map<EntityEquipmentSlot, ItemStack> items = Arrays.stream(EntityEquipmentSlot.values()).collect(Collectors.toMap(x -> x, defenderStand::getItemStackFromSlot));
+                ItemStack weapon = items.get(EntityEquipmentSlot.MAINHAND);
 
-                // posting event to detect wearing super sets
-                ArmorEquippedEvent equippedEvent = new ArmorEquippedEvent(items);
-                MinecraftForge.EVENT_BUS.post(equippedEvent);
+                // check for weapon here
+                if (weapon.getItem() instanceof ItemSword || weapon.getItem() instanceof ItemBow) {
 
-                Set<ResourceLocation> confirmed = equippedEvent.getConfirmed();
+                    // posting event to detect wearing super sets
+                    ArmorEquippedEvent equippedEvent = new ArmorEquippedEvent(items);
+                    MinecraftForge.EVENT_BUS.post(equippedEvent);
 
-                // set must contain only one ability
-                if (confirmed.size() == 1) {
-                    ResourceLocation id = confirmed.stream().findFirst().orElse(null);
-                    // find armor description from ID
-                    IArmorDescription armorDescription = DivineAPI.getArmorDescriptionRegistry().getValue(id);
-                    if (armorDescription != null) {
-                        ItemStack essence = new ItemStack(Items.armor_essence);
-                        if (essence.getItem() instanceof IArmorEssence) {
-                            // creating armor essence from current set
-                            ((IArmorEssence) essence.getItem()).absorb(essence, items, armorDescription);
-                            // removing defender stand because Armor Defender will spawn
-                            defenderStand.setDead();
-                            // spawn some effects
-                            spawnEffects(worldIn, pos);
-                            // removing activation module
-                            stack.shrink(1);
+                    Set<ResourceLocation> confirmed = equippedEvent.getConfirmed();
 
-                            IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
-                            if (capability != null) {
-                                // increasing summon Armor Defender stats
-                                capability.setArmorDefenderSummonCount(capability.armorDefenderSummonCount() + 1);
-                                // send updates to client
-                                capability.update(player);
+                    // set must contain only one ability
+                    if (confirmed.size() == 1) {
+                        ResourceLocation id = confirmed.stream().findFirst().orElse(null);
+                        // find armor description from ID
+                        IArmorDescription armorDescription = DivineAPI.getArmorDescriptionRegistry().getValue(id);
+                        if (armorDescription != null) {
+                            ItemStack essence = new ItemStack(Items.armor_essence);
+                            if (essence.getItem() instanceof IArmorEssence) {
+                                // creating armor essence from current set
+                                ((IArmorEssence) essence.getItem()).absorb(essence, items, armorDescription);
+                                // removing defender stand because Armor Defender will spawn
+                                defenderStand.setDead();
+                                // spawn some effects
+                                spawnEffects(worldIn, pos);
+                                // removing activation module
+                                stack.shrink(1);
 
-                                Random rand = worldIn.rand;
+                                IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
+                                if (capability != null) {
+                                    // increasing summon Armor Defender stats
+                                    capability.setArmorDefenderSummonCount(capability.armorDefenderSummonCount() + 1);
+                                    // send updates to client
+                                    capability.update(player);
 
-                                EntityArmorDefender defender = new EntityArmorDefender(worldIn, items, player, essence);
+                                    Random rand = worldIn.rand;
 
-                                BlockPos defenderPos = pos.add(
-                                        rand.nextInt(4) - rand.nextInt(4),
-                                        rand.nextInt(4),
-                                        rand.nextInt(4) - rand.nextInt(4)
-                                );
+                                    EntityArmorDefender defender = new EntityArmorDefender(worldIn, items, player, essence);
 
-                                defender.setPosition(
-                                        defenderPos.getX(),
-                                        worldIn.getHeight(defenderPos.getX(), defenderPos.getZ()),
-                                        defenderPos.getZ()
-                                );
+                                    BlockPos defenderPos = pos.add(
+                                            rand.nextInt(4) - rand.nextInt(4),
+                                            rand.nextInt(4),
+                                            rand.nextInt(4) - rand.nextInt(4)
+                                    );
 
-                                if (!worldIn.isRemote) {
-                                    worldIn.spawnEntity(defender);
+                                    defender.setPosition(
+                                            defenderPos.getX(),
+                                            worldIn.getHeight(defenderPos.getX(), defenderPos.getZ()),
+                                            defenderPos.getZ()
+                                    );
+
+                                    if (!worldIn.isRemote) {
+                                        worldIn.spawnEntity(defender);
+                                    }
+
+                                    return true;
+                                } else {
+                                    DivineAdditions.logger.warn("IKnowledgeInfo capability was not attached");
                                 }
-
-                                return true;
                             } else {
-                                DivineAdditions.logger.warn("IKnowledgeInfo capability was not attached");
+                                DivineAdditions.logger.warn("Items.armor_essence is not derived from IArmorEssence");
                             }
                         } else {
-                            DivineAdditions.logger.warn("Items.armor_essence is not derived from IArmorEssence");
+                            DivineAdditions.logger.warn("Cannot locate armor description of " + id.toString());
                         }
-                    } else {
-                        DivineAdditions.logger.warn("Cannot locate armor description of " + id.toString());
-                    }
 
-                    text = new TextComponentString("Error during summoning entity");
+                        text = new TextComponentString("Error during summoning entity");
+                    } else {
+                        text = confirmed.size() == 0
+                                ? new TextComponentTranslation("divineadditions.armor_is_not_powered")
+                                : new TextComponentTranslation("divineadditions.armor_multiple_power");
+                    }
                 } else {
-                    text = confirmed.size() == 0
-                            ? new TextComponentTranslation("divineadditions.armor_is_not_powered")
-                            : new TextComponentTranslation("divineadditions.armor_multiple_power");
+                    text = new TextComponentTranslation("divineadditions.weapon_is_needed");
                 }
             } else {
-                text = new TextComponentTranslation("divineadditions.weapon_is_needed");
+                text = new TextComponentTranslation("divineadditions.incorrect_activator");
             }
 
             if (text != null && !worldIn.isRemote) {
@@ -189,25 +216,6 @@ public class ItemDefenderStand extends Item {
         }
 
         return target instanceof EntityDefenderStand;
-    }
-
-    /**
-     * Placing defender here
-     *
-     * @param player  - current player using item
-     * @param worldIn - player world
-     * @param pos     - current pos
-     * @param hand    - with current hand
-     * @param facing  - player facing
-     * @param hitX    - hit vector (<1)
-     * @param hitY    - hit vector (<1)
-     * @param hitZ    - hit vector (<1)
-     * @return
-     */
-    private EnumActionResult placeDefender(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-
-
-        return EnumActionResult.FAIL;
     }
 
     private void spawnEffects(World world, BlockPos pos) {
@@ -238,7 +246,24 @@ public class ItemDefenderStand extends Item {
 
                 world.addWeatherEffect(lightningBolt);
             }
+        }
+    }
 
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+
+        if (activation) {
+            tooltip.add(new TextComponentTranslation("divineadditions.tooltip.defender_stand_activation").getFormattedText());
+
+            if (net.minecraft.client.gui.GuiScreen.isShiftKeyDown()) {
+                NBTTagCompound nbt = stack.getTagCompound();
+                if (nbt != null && nbt.hasKey(guidName)) {
+                    tooltip.add("Binded to " + nbt.getUniqueId(guidName));
+                }
+            }
+        } else {
+            tooltip.add(new TextComponentTranslation("divineadditions.tooltip.defender_stand").getFormattedText());
         }
     }
 }

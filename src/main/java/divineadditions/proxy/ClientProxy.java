@@ -3,11 +3,15 @@ package divineadditions.proxy;
 import divineadditions.DivineAdditions;
 import divineadditions.api.IProxy;
 import divineadditions.debug.LangHelper;
+import divineadditions.gui.conainter.ForgeContainer;
+import divineadditions.msg.ChangeRecipeMsg;
 import divineadditions.msg.PlayerCapabilityChangedMessageBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.IThreadListener;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,25 +45,36 @@ public class ClientProxy implements IProxy {
     }
 
     @Override
-    public IMessage onMessage(IMessage message, MessageContext ctx) {
+    public IMessage onMessage(final IMessage message, MessageContext ctx) {
         if (message == null || ctx == null)
             return null;
 
-        EntityPlayerSP player = Minecraft.getMinecraft().player;
+        final EntityPlayerSP player = Minecraft.getMinecraft().player;
+        IThreadListener worldThread = FMLCommonHandler.instance().getWorldThread(ctx.netHandler);
 
         if (message instanceof PlayerCapabilityChangedMessageBase) {
-            return handleCapChangedMessage(((PlayerCapabilityChangedMessageBase) message), player);
+            worldThread.addScheduledTask(() -> handleCapChangedMessage(((PlayerCapabilityChangedMessageBase) message), player));
+            return null;
+        }
+
+        if (message instanceof ChangeRecipeMsg) {
+            worldThread.addScheduledTask(() -> handleChangeRecipeMessage(((ChangeRecipeMsg) message), player));
+            return null;
         }
 
         return null;
     }
 
-    private IMessage handleCapChangedMessage(PlayerCapabilityChangedMessageBase msg, EntityPlayer player) {
+    private void handleCapChangedMessage(PlayerCapabilityChangedMessageBase msg, EntityPlayer player) {
         Object capability = player.getCapability(msg.getCap(), null);
         if (capability != null) {
             msg.getCap().getStorage().readNBT(msg.getCap(), capability, null, msg.getNbt());
         }
+    }
 
-        return null;
+    private void handleChangeRecipeMessage(ChangeRecipeMsg msg, EntityPlayer player) {
+        if (player.openContainer instanceof ForgeContainer) {
+            ((ForgeContainer) player.openContainer).getCraftingSlot().setCurrentRecipe(msg.getRecipe());
+        }
     }
 }

@@ -1,8 +1,10 @@
 package divineadditions.gui.conainter;
 
+import divineadditions.api.IContainerSync;
 import divineadditions.api.IForgeInventory;
 import divineadditions.gui.CraftingSlot;
 import divineadditions.gui.conainter.base.ContainerItemHandler;
+import divineadditions.gui.inventory.InventoryCraftingHandler;
 import divineadditions.recipe.ForgeRecipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,7 +15,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -25,7 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ForgeContainer extends ContainerItemHandler {
+public class ForgeContainer extends ContainerItemHandler implements IContainerSync {
     private final static Set<ForgeRecipes> recipes = ForgeRegistries
             .RECIPES
             .getValuesCollection()
@@ -38,25 +40,19 @@ public class ForgeContainer extends ContainerItemHandler {
     public InventoryCrafting matrix;
     private IForgeInventory handler;
     private EntityPlayer player;
-    private CraftingSlot craftingSlot;
 
     public ForgeContainer(IForgeInventory handler, EntityPlayer player) {
         super(handler.getCurrentHandler(), player);
         this.handler = handler;
         this.player = player;
-        this.matrix = new InventoryCrafting(this, handler.getWidth(), handler.getHeight());
+        this.matrix = new InventoryCraftingHandler(this, ((IItemHandlerModifiable) handler.getCurrentHandler()), handler.getWidth(), handler.getHeight());
         this.craftResult = new InventoryCraftResult();
 
         drawSlots();
-
-        IItemHandlerModifiable itemHandler = ((IItemHandlerModifiable) this.handler.getCurrentHandler());
-        for (int i = 1; i < itemHandler.getSlots(); i++) {
-            ItemStack itemStack = itemHandler.getStackInSlot(i);
-            if (!itemStack.isEmpty())
-                matrix.setInventorySlotContents(i - 1, itemStack);
-        }
-
         handler.openInventory(player);
+
+        // initial craft check
+        onCraftMatrixChanged(matrix);
     }
 
     @Nullable
@@ -76,11 +72,14 @@ public class ForgeContainer extends ContainerItemHandler {
         }
 
         // cage mobs
-        this.addSlotToContainer(new SlotItemHandler(handler.getCurrentHandler(), 0, 5, 84));
+        this.addSlotToContainer(new SlotItemHandler(handler.getCurrentHandler(), i++, 5, 84));
 
         // output
-        craftingSlot = new CraftingSlot(player, craftResult, handler, 0, 156, 52);
-        this.addSlotToContainer(craftingSlot);
+        this.addSlotToContainer(new CraftingSlot(player, craftResult, handler, 0, 156, 52));
+
+        this.inventoryEnd = this.inventorySlots.size();
+
+        super.drawPlayerSlots(player, 113, 172, 14);
 
         Map<TileEntity, IItemHandler> handlerCatalystStands = handler.findCatalystStands();
         int amount = 0;
@@ -102,10 +101,6 @@ public class ForgeContainer extends ContainerItemHandler {
                 amount++;
             }
         }
-
-        this.inventoryEnd = this.inventorySlots.size();
-
-        super.drawPlayerSlots(player, 113, 172, 14);
     }
 
     @Override
@@ -125,15 +120,22 @@ public class ForgeContainer extends ContainerItemHandler {
 
     @Override
     public void onCraftMatrixChanged(IInventory inventoryIn) {
-        IItemHandlerModifiable itemHandler = ((IItemHandlerModifiable) this.handler.getCurrentHandler());
-        for (int i = 1; i < itemHandler.getSlots(); i++) {
-            ItemStack itemStack = matrix.getStackInSlot(i - 1);
+        if (!player.getEntityWorld().isRemote) {
+            EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
+            ItemStack itemstack = ItemStack.EMPTY;
+            ForgeRecipes irecipe = recipes.stream().filter(x -> x.matchCraftingGrid(matrix, player.getEntityWorld())).findFirst().orElse(null);
 
-            if (!itemStack.isEmpty())
-                itemHandler.setStackInSlot(i, itemStack);
+            if (irecipe != null && (irecipe.isDynamic() || !player.getEntityWorld().getGameRules().getBoolean("doLimitedCrafting") || entityplayermp.getRecipeBook().isUnlocked(irecipe))) {
+                craftResult.setRecipeUsed(irecipe);
+                itemstack = irecipe.getCraftingResult(getHandler());
+            }
+
+            CraftingSlot craftingSlot = getCraftingSlot();
+
+            craftingSlot.setCurrentRecipe(irecipe);
+            craftResult.setInventorySlotContents(0, itemstack);
+            entityplayermp.connection.sendPacket(new SPacketSetSlot(this.windowId, craftingSlot.slotNumber, itemstack));
         }
-
-        slotChangedCraftingGrid(player.world, player, handler, craftResult);
     }
 
     @Override
@@ -146,20 +148,14 @@ public class ForgeContainer extends ContainerItemHandler {
         return handler;
     }
 
-    protected void slotChangedCraftingGrid(World world, EntityPlayer player, IForgeInventory inventory, InventoryCraftResult inventoryCraftResult) {
-        if (!world.isRemote) {
-            EntityPlayerMP entityplayermp = (EntityPlayerMP) player;
-            ItemStack itemstack = ItemStack.EMPTY;
-            ForgeRecipes irecipe = recipes.stream().filter(x -> x.matchCraftingGrid(matrix, world)).findFirst().orElse(null);
+    public CraftingSlot getCraftingSlot() {
+        Slot slot = inventorySlots.get(matrix.getSizeInventory() + 1);
+        return ((CraftingSlot) slot);
+    }
 
-            if (irecipe != null && (irecipe.isDynamic() || !world.getGameRules().getBoolean("doLimitedCrafting") || entityplayermp.getRecipeBook().isUnlocked(irecipe))) {
-                inventoryCraftResult.setRecipeUsed(irecipe);
-                itemstack = irecipe.getCraftingResult(inventory);
-            }
-
-            craftingSlot.setCurrentRecipe(irecipe);
-            inventoryCraftResult.setInventorySlotContents(0, itemstack);
-            entityplayermp.connection.sendPacket(new SPacketSetSlot(this.windowId, craftingSlot.slotNumber, itemstack));
-        }
+    @Nullable
+    @Override
+    public IMessage createMessage() {
+        return getCraftingSlot().createMessage();
     }
 }

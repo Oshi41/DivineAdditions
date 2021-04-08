@@ -20,10 +20,6 @@ import java.util.stream.Collectors;
 
 public class ItemArmorEssence extends Item implements IArmorEssence {
 
-    public ItemArmorEssence() {
-
-    }
-
     @Override
     public int getMaxDamage(ItemStack stack) {
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey(durabilityName)) {

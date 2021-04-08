@@ -3,7 +3,7 @@ package divineadditions.item.sword;
 import com.google.common.collect.Multimap;
 import divineadditions.api.InfiniteAttackEvent;
 import divineadditions.event.LivingDropsEventHandler;
-import divineadditions.item.ImmortalItem;
+import divineadditions.item.ItemMod;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -103,7 +103,7 @@ public class ItemCustomSword extends ItemSword {
     @Nullable
     @Override
     public Entity createEntity(World world, Entity location, ItemStack itemstack) {
-        return ImmortalItem.createImmortalEntity(world, location, itemstack);
+        return ItemMod.createImmortalEntity(world, location, itemstack);
     }
 
     @Override

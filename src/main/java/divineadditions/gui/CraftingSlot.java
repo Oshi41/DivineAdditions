@@ -1,9 +1,13 @@
 package divineadditions.gui;
 
 import com.google.common.collect.Lists;
+import divineadditions.DivineAdditions;
+import divineadditions.api.IContainerSync;
 import divineadditions.api.IForgeInventory;
+import divineadditions.msg.ChangeRecipeMsg;
 import divineadditions.recipe.ForgeRecipes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -11,12 +15,15 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Objects;
 
-public class CraftingSlot extends Slot {
+public class CraftingSlot extends Slot implements IContainerSync {
 
     private final EntityPlayer player;
     private final IForgeInventory handler;
@@ -87,8 +94,15 @@ public class CraftingSlot extends Slot {
         }
     }
 
-    public void setCurrentRecipe(ForgeRecipes currentRecipe) {
-        this.currentRecipe = currentRecipe;
+    public void setCurrentRecipe(ForgeRecipes recipe) {
+        if (!Objects.equals(recipe, this.currentRecipe)) {
+            this.currentRecipe = recipe;
+
+
+            if (player instanceof EntityPlayerMP) {
+                DivineAdditions.networkWrapper.sendTo(createMessage(), ((EntityPlayerMP) player));
+            }
+        }
     }
 
     @Override
@@ -96,13 +110,14 @@ public class CraftingSlot extends Slot {
         if (currentRecipe == null)
             return false;
 
-        return currentRecipe.matchesWithoutGrid(handler, playerIn.getEntityWorld());
+        boolean canTake = currentRecipe.matchesWithoutGrid(handler, playerIn.getEntityWorld());
+        return canTake;
     }
 
     @Override
     public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack) {
-        this.onCrafting(stack);
         IRecipe recipe = ((InventoryCraftResult) this.inventory).getRecipeUsed();
+        this.onCrafting(stack);
 
         if (recipe instanceof ForgeRecipes) {
             return handleRecipe(((ForgeRecipes) recipe), thePlayer, stack, handler);
@@ -127,36 +142,28 @@ public class CraftingSlot extends Slot {
         }
 
         if (recipes.getExperience() > 0) {
-            player.experienceLevel -= recipes.getExperience();
+            player.addExperienceLevel(-recipes.getExperience());
         }
 
         if (recipes.getDna() > 0) {
             inventory.getCurrentDna().drain(recipes.getDna(), true);
         }
 
+        // recalculate craft result
+        player.openContainer.onCraftMatrixChanged(this.inventory);
+
         return result;
     }
 
     private void replace(IItemHandlerModifiable handler, NonNullList<ItemStack> remaining) {
         for (int i = 0; i < remaining.size(); ++i) {
-            ItemStack itemstack = handler.getStackInSlot(i);
-            ItemStack itemstack1 = remaining.get(i);
-
-            if (!itemstack.isEmpty()) {
-                handler.getStackInSlot(i).shrink(1);
-                itemstack = handler.getStackInSlot(i);
-            }
-
-            if (!itemstack1.isEmpty()) {
-                if (itemstack.isEmpty()) {
-                    handler.setStackInSlot(i, itemstack1);
-                } else if (ItemStack.areItemsEqual(itemstack, itemstack1) && ItemStack.areItemStackTagsEqual(itemstack, itemstack1)) {
-                    itemstack1.grow(itemstack.getCount());
-                    handler.setStackInSlot(i, itemstack1);
-                } else if (!this.player.inventory.addItemStackToInventory(itemstack1)) {
-                    this.player.dropItem(itemstack1, false);
-                }
-            }
+            handler.setStackInSlot(i, remaining.get(i));
         }
+    }
+
+    @Nullable
+    @Override
+    public IMessage createMessage() {
+        return new ChangeRecipeMsg(currentRecipe);
     }
 }

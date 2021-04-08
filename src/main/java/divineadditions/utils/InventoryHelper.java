@@ -1,6 +1,7 @@
 package divineadditions.utils;
 
 import com.google.common.collect.AbstractIterator;
+import divineadditions.DivineAdditions;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +38,14 @@ public class InventoryHelper {
         NBTTagList tagList = new NBTTagList();
 
         for (int i = 0; i < stacks.size(); i++) {
-            tagList.appendTag(divineadditions.utils.ItemStackHelper.save(stacks.get(i)));
+            ItemStack stack = stacks.get(i);
+            if (stack.isEmpty()) {
+                DivineAdditions.logger.debug("empty stack to save");
+            } else {
+                DivineAdditions.logger.debug("not empty here");
+            }
+
+            tagList.appendTag(divineadditions.utils.ItemStackHelper.save(stack));
         }
 
         compound.setTag(itemsTagName, tagList);
