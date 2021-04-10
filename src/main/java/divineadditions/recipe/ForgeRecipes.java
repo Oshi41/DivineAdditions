@@ -33,7 +33,7 @@ public class ForgeRecipes extends SpecialShaped {
     private final NonNullList<NbtIngredient> ingredients;
 
     public ForgeRecipes(SpecialShaped source, int level, int experience, int dna, NonNullList<NbtIngredient> ingredients) {
-        super(source.getGroup(), source.getWidth(), source.getHeight(), source.getIngredients(), source.getRecipeOutput());
+        super(source.getGroup(), source.getWidth(), source.getHeight(), source.getIngredients(), source.getRecipeOutput(), level);
         this.level = level;
         this.experience = experience;
         this.dna = dna;

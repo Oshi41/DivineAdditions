@@ -32,7 +32,7 @@ public class ItemRegistryHandler {
 
         registerObj(registry, new ItemArmorEssence().setCreativeTab(Tabs.Main), "armor_essence");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "rifle_bullet");
-        registerObj(registry, new ItemModRifle().setCreativeTab(Tabs.Main), "rifle");
+        registerObj(registry, new ItemRifle().setCreativeTab(Tabs.Main), "rifle");
         registerObj(registry, new ItemRifleMobCore().setCreativeTab(Tabs.Main), "rifle_mob_core");
         registerObj(registry, new ItemCagedMob(), "caged_mob");
         registerObj(registry, new Item().setCreativeTab(Tabs.Main), "soul_powder");

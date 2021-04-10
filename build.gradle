@@ -82,3 +82,9 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+jar {
+    manifest {
+        attributes "FMLAT": "divine_additions_at.cfg"
+    }
+}

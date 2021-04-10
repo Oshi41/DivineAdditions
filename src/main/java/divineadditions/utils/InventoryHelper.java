@@ -5,18 +5,22 @@ import divineadditions.DivineAdditions;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -27,6 +31,20 @@ import java.util.stream.StreamSupport;
 public class InventoryHelper {
     private static final String slotsTagName = "Slots";
     private static final String itemsTagName = "Items";
+    private static final Field getContainerFromInvCraft;
+
+    static {
+        Field eventHandler = null;
+        try {
+            eventHandler = ObfuscationReflectionHelper.findField(InventoryCrafting.class, "eventHandler");
+            eventHandler.setAccessible(true);
+        } catch (Exception e) {
+            DivineAdditions.logger.warn("Can't obtain 'eventHandler' field from 'InventoryCrafting' class");
+            DivineAdditions.logger.warn(e);
+        }
+
+        getContainerFromInvCraft = eventHandler;
+    }
 
     private static NBTTagCompound save(Stream<ItemStack> stream) {
         NBTTagCompound compound = new NBTTagCompound();
@@ -201,5 +219,20 @@ public class InventoryHelper {
         }
 
         return true;
+    }
+
+    @Nullable
+    public static EntityPlayer getFrom(@Nonnull InventoryCrafting inv) {
+        Container container = inv.eventHandler;
+
+        if (container instanceof ContainerWorkbench) {
+            return ((ContainerWorkbench) container).player;
+        }
+
+        if (container instanceof ContainerPlayer) {
+            return ((ContainerPlayer) container).player;
+        }
+
+        return container.listeners.stream().filter(x -> x instanceof EntityPlayer).map(x -> ((EntityPlayer) x)).findFirst().orElse(null);
     }
 }

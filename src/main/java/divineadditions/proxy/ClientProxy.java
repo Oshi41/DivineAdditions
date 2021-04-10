@@ -4,13 +4,14 @@ import divineadditions.DivineAdditions;
 import divineadditions.api.IProxy;
 import divineadditions.debug.LangHelper;
 import divineadditions.gui.conainter.ForgeContainer;
+import divineadditions.msg.CapChangedMessageBase;
 import divineadditions.msg.ChangeRecipeMsg;
-import divineadditions.msg.PlayerCapabilityChangedMessageBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -52,8 +53,8 @@ public class ClientProxy implements IProxy {
         final EntityPlayerSP player = Minecraft.getMinecraft().player;
         IThreadListener worldThread = FMLCommonHandler.instance().getWorldThread(ctx.netHandler);
 
-        if (message instanceof PlayerCapabilityChangedMessageBase) {
-            worldThread.addScheduledTask(() -> handleCapChangedMessage(((PlayerCapabilityChangedMessageBase) message), player));
+        if (message instanceof CapChangedMessageBase) {
+            worldThread.addScheduledTask(() -> handleCapMsg(((CapChangedMessageBase) message), player));
             return null;
         }
 
@@ -65,10 +66,17 @@ public class ClientProxy implements IProxy {
         return null;
     }
 
-    private void handleCapChangedMessage(PlayerCapabilityChangedMessageBase msg, EntityPlayer player) {
-        Object capability = player.getCapability(msg.getCap(), null);
-        if (capability != null) {
-            msg.getCap().getStorage().readNBT(msg.getCap(), capability, null, msg.getNbt());
+    private void handleCapMsg(CapChangedMessageBase msg, EntityPlayer player) {
+        ICapabilityProvider provider = msg.getFromPlayer(player);
+        if (provider != null) {
+            Object capability = provider.getCapability(msg.getCap(), null);
+            if (capability != null) {
+                msg.getCap().getStorage().readNBT(msg.getCap(), capability, null, msg.getCompound());
+            } else {
+                DivineAdditions.logger.warn("ClientProxy.handleCapMsg: Capability was not found");
+            }
+        } else {
+            DivineAdditions.logger.warn("ClientProxy.handleCapMsg: Capability provider was not found from player");
         }
     }
 

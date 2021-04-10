@@ -1,15 +1,24 @@
 package divineadditions.msg;
 
 import divineadditions.capability.knowledge.IKnowledgeInfo;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-public class KnowledgeMessage extends PlayerCapabilityChangedMessageBase<IKnowledgeInfo> {
+import javax.annotation.Nonnull;
+
+public class KnowledgeMessage extends CapChangedMessageBase<IKnowledgeInfo> {
 
     public KnowledgeMessage() {
     }
 
     public KnowledgeMessage(IKnowledgeInfo info) {
         super(info);
+    }
+
+    @Override
+    public ICapabilityProvider getFromPlayer(@Nonnull EntityPlayer player) {
+        return player;
     }
 
     @Override

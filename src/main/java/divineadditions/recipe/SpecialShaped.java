@@ -6,8 +6,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import divineadditions.capability.knowledge.IKnowledgeInfo;
 import divineadditions.recipe.ingredient.RemainingIngredient;
+import divineadditions.utils.InventoryHelper;
 import divineadditions.utils.NbtUtils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -23,11 +26,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SpecialShaped extends ShapedRecipes {
-    public final List<RemainingIngredient> remaining;
+public class SpecialShaped extends ShapedRecipes implements ISpecialRecipe {
+    private final List<RemainingIngredient> remaining;
+    private final int level;
 
-    public SpecialShaped(String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result) {
+    public SpecialShaped(String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, int level) {
         super(group, width, height, ingredients, result);
+        this.level = level;
 
         remaining = getIngredients().stream().filter(x -> x instanceof RemainingIngredient)
                 .map(x -> ((RemainingIngredient) x))
@@ -42,8 +47,9 @@ public class SpecialShaped extends ShapedRecipes {
         int j = patterns.length;
         NonNullList<Ingredient> ingredients = deserializeIngredients(patterns, map, i, j);
         ItemStack result = NbtUtils.parseStack(JsonUtils.getJsonObject(json, "result"), context);
+        int level = JsonUtils.getInt(json, "level", 0);
 
-        return new SpecialShaped(group, i, j, ingredients, result);
+        return new SpecialShaped(group, i, j, ingredients, result, level);
     }
 
     @Override
@@ -53,7 +59,7 @@ public class SpecialShaped extends ShapedRecipes {
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack itemStack = inv.getStackInSlot(i).copy();
 
-            if (remaining.stream().anyMatch(x -> x.apply(itemStack))) {
+            if (getRemaining().stream().anyMatch(x -> x.apply(itemStack))) {
                 stacks.set(i, itemStack);
             }
         }
@@ -63,8 +69,22 @@ public class SpecialShaped extends ShapedRecipes {
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        boolean result = super.matches(inv, worldIn);
-        return result;
+        if (level > 0) {
+            EntityPlayer player = InventoryHelper.getFrom(inv);
+            if (player == null)
+                return false;
+
+            IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
+            if (capability == null || capability.getLevel() < level)
+                return false;
+        }
+
+        return super.matches(inv, worldIn);
+    }
+
+    @Override
+    public List<RemainingIngredient> getRemaining() {
+        return remaining;
     }
 
     // region Legacy
@@ -188,6 +208,6 @@ public class SpecialShaped extends ShapedRecipes {
         }
     }
 
-    // endregion
 
+    // endregion
 }

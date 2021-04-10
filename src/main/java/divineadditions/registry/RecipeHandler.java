@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import divineadditions.DivineAdditions;
 import divineadditions.recipe.ForgeRecipes;
 import divineadditions.recipe.SpecialShaped;
+import divineadditions.recipe.SpecialShapeless;
 import divineadditions.recipe.ingredient.NbtIngredient;
 import divineadditions.recipe.ingredient.RemainingIngredient;
 import divineadditions.utils.NbtUtils;
@@ -54,6 +55,9 @@ public class RecipeHandler {
 
         put(new ResourceLocation(DivineAdditions.MOD_ID, "shaped"), SpecialShaped::deserialize);
         put(new ResourceLocation(DivineAdditions.MOD_ID, "forge"), ForgeRecipes::deserialize);
+
+        put(new ResourceLocation(DivineAdditions.MOD_ID, "shaped_level"), LeveledRecipeShaped::deserialize);
+        put(new ResourceLocation(DivineAdditions.MOD_ID, "shapeless_level"), SpecialShapeless::deserialize);
     }};
 
     private static final Map<ResourceLocation, IIngredientFactory> ingredientMap = new HashMap<ResourceLocation, IIngredientFactory>() {{

@@ -1,8 +1,10 @@
 package divineadditions.proxy;
 
+import divineadditions.DivineAdditions;
 import divineadditions.api.IProxy;
-import divineadditions.msg.PlayerCapabilityChangedMessageBase;
+import divineadditions.msg.CapChangedMessageBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.server.FMLServerHandler;
@@ -40,22 +42,27 @@ public class ServerProxy implements IProxy {
 
         EntityPlayerMP player = ctx.getServerHandler().player;
 
-        if (message instanceof PlayerCapabilityChangedMessageBase) {
-            return handleCapMsg(((PlayerCapabilityChangedMessageBase) message), player);
+        if (message instanceof CapChangedMessageBase) {
+            return handleCapMsg(((CapChangedMessageBase) message), player);
         }
 
         return null;
     }
 
-    private IMessage handleCapMsg(PlayerCapabilityChangedMessageBase msg, EntityPlayerMP playerMP) {
-        if (msg == null || playerMP == null)
-            return null;
+    private IMessage handleCapMsg(CapChangedMessageBase msg, EntityPlayerMP playerMP) {
+        ICapabilityProvider provider = msg.getFromPlayer(playerMP);
+        if (provider != null) {
+            Object capability = provider.getCapability(msg.getCap(), null);
+            if (capability != null) {
+                msg.write(capability);
+                return msg;
+            } else {
+                DivineAdditions.logger.warn("ServerProxy.handleCapMsg: Capability was not found");
+            }
+        } else {
+            DivineAdditions.logger.warn("ServerProxy.handleCapMsg: Capability provider was not found from player");
+        }
 
-        Object capability = playerMP.getCapability(msg.getCap(), null);
-        if (capability == null)
-            return null;
-
-        msg.write(capability);
-        return msg;
+        return null;
     }
 }

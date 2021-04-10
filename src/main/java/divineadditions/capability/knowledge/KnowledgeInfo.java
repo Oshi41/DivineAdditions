@@ -1,10 +1,9 @@
 package divineadditions.capability.knowledge;
 
 import divineadditions.DivineAdditions;
-import divineadditions.msg.PlayerCapabilityChangedMessageBase;
+import divineadditions.msg.KnowledgeMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraftforge.common.capabilities.Capability;
 
 public class KnowledgeInfo implements IKnowledgeInfo {
     private int level = 0;
@@ -33,12 +32,8 @@ public class KnowledgeInfo implements IKnowledgeInfo {
     @Override
     public void update(EntityPlayer player) {
         if (player instanceof EntityPlayerMP) {
-            DivineAdditions.networkWrapper.sendTo(new PlayerCapabilityChangedMessageBase<IKnowledgeInfo>(this) {
-                @Override
-                public Capability<IKnowledgeInfo> getCap() {
-                    return IKnowledgeInfo.KnowledgeCapability;
-                }
-            }, ((EntityPlayerMP) player));
+            KnowledgeMessage msg = new KnowledgeMessage(this);
+            DivineAdditions.networkWrapper.sendTo(msg, ((EntityPlayerMP) player));
         }
     }
 }

@@ -1,6 +1,7 @@
 package divineadditions.event;
 
 import divineadditions.DivineAdditions;
+import divineadditions.recipe.ISpecialRecipe;
 import divineadditions.recipe.SpecialShaped;
 import divineadditions.recipe.ingredient.RemainingIngredient;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,8 +24,8 @@ public class ItemCraftedEventHandler {
 
         if (craftMatrix instanceof InventoryCrafting) {
             IRecipe recipe = CraftingManager.findMatchingRecipe(((InventoryCrafting) craftMatrix), player.world);
-            if (recipe instanceof SpecialShaped) {
-                for (RemainingIngredient remainingIngredient : ((SpecialShaped) recipe).remaining) {
+            if (recipe instanceof ISpecialRecipe) {
+                for (RemainingIngredient remainingIngredient : ((SpecialShaped) recipe).getRemaining()) {
                     if (remainingIngredient.damage > 0) {
                         for (int i = 0; i < craftMatrix.getSizeInventory(); i++) {
                             ItemStack slot = craftMatrix.getStackInSlot(i);
