@@ -184,9 +184,8 @@ public class ItemCustomSword extends ItemSword {
     }
 
     protected boolean tryInstantKill(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {
-        InfiniteAttackEvent event = new InfiniteAttackEvent(target);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.isCanceled())
+        InfiniteAttackEvent event = new InfiniteAttackEvent(target, attacker);
+        if (MinecraftForge.EVENT_BUS.post(event))
             return false;
 
         String damageSourceName = attacker.getName();

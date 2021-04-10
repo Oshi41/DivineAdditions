@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class SpecialShaped extends ShapedRecipes implements ISpecialRecipe {
     private final List<RemainingIngredient> remaining;
-    private final int level;
+    public final int level;
 
     public SpecialShaped(String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, int level) {
         super(group, width, height, ingredients, result);

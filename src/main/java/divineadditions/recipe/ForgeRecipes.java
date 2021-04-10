@@ -27,14 +27,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ForgeRecipes extends SpecialShaped {
-    private final int level;
     private final int experience;
     private final int dna;
     private final NonNullList<NbtIngredient> ingredients;
 
-    public ForgeRecipes(SpecialShaped source, int level, int experience, int dna, NonNullList<NbtIngredient> ingredients) {
-        super(source.getGroup(), source.getWidth(), source.getHeight(), source.getIngredients(), source.getRecipeOutput(), level);
-        this.level = level;
+    public ForgeRecipes(SpecialShaped source, int experience, int dna, NonNullList<NbtIngredient> ingredients) {
+        super(source.getGroup(), source.getWidth(), source.getHeight(), source.getIngredients(), source.getRecipeOutput(), source.level);
         this.experience = experience;
         this.dna = dna;
         this.ingredients = ingredients;
@@ -49,7 +47,6 @@ public class ForgeRecipes extends SpecialShaped {
      */
     public static ForgeRecipes deserialize(JsonContext context, JsonObject json) {
         SpecialShaped source = SpecialShaped.deserialize(context, json);
-        int level = JsonUtils.getInt(json, "level", 1);
         int experience = JsonUtils.getInt(json, "experience", 0);
         int dna = JsonUtils.getInt(json, "dna", 100);
 
@@ -69,7 +66,7 @@ public class ForgeRecipes extends SpecialShaped {
             ingredients.set(i, ((NbtIngredient) catalystIngredients.get(i)));
         }
 
-        return new ForgeRecipes(source, level, experience, dna, ingredients);
+        return new ForgeRecipes(source, experience, dna, ingredients);
     }
 
     /**
@@ -97,7 +94,6 @@ public class ForgeRecipes extends SpecialShaped {
      */
     public boolean matchesWithoutGrid(IForgeInventory inv, World world) {
         return checkDna(inv, world)
-                && checkLevel(inv, world)
                 && checkExp(inv, world)
                 && checkCatalysts(inv, world);
     }
@@ -109,10 +105,6 @@ public class ForgeRecipes extends SpecialShaped {
         }
 
         return true;
-    }
-
-    public boolean checkLevel(IForgeInventory inv, World world) {
-        return inv.getCurrentLevel() >= level;
     }
 
     public boolean checkDna(IForgeInventory inv, World world) {
@@ -148,7 +140,7 @@ public class ForgeRecipes extends SpecialShaped {
         for (int i = 0; i < nonnulllist.size(); ++i) {
             final ItemStack originalStack = handler.getStackInSlot(i);
             ItemStack itemstack = handler.getStackInSlot(i).copy();
-            if (remaining.stream().noneMatch(x -> x.apply(originalStack))) {
+            if (getRemaining().stream().noneMatch(x -> x.apply(originalStack))) {
                 itemstack.shrink(1);
 
                 if (itemstack.isEmpty()) {

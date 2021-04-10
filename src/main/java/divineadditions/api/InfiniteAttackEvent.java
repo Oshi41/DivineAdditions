@@ -8,7 +8,13 @@ import net.minecraftforge.event.entity.EntityEvent;
  * if event was canceled means we cannot
  */
 public class InfiniteAttackEvent extends EntityEvent {
-    public InfiniteAttackEvent(Entity entity) {
+    /**
+     * The one who attacks
+     */
+    public final Entity attacker;
+
+    public InfiniteAttackEvent(Entity entity, Entity attacker) {
         super(entity);
+        this.attacker = attacker;
     }
 }

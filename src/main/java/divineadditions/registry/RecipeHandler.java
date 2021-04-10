@@ -54,10 +54,8 @@ public class RecipeHandler {
         });
 
         put(new ResourceLocation(DivineAdditions.MOD_ID, "shaped"), SpecialShaped::deserialize);
+        put(new ResourceLocation(DivineAdditions.MOD_ID, "shapeless"), SpecialShapeless::deserialize);
         put(new ResourceLocation(DivineAdditions.MOD_ID, "forge"), ForgeRecipes::deserialize);
-
-        put(new ResourceLocation(DivineAdditions.MOD_ID, "shaped_level"), LeveledRecipeShaped::deserialize);
-        put(new ResourceLocation(DivineAdditions.MOD_ID, "shapeless_level"), SpecialShapeless::deserialize);
     }};
 
     private static final Map<ResourceLocation, IIngredientFactory> ingredientMap = new HashMap<ResourceLocation, IIngredientFactory>() {{
