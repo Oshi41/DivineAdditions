@@ -36,6 +36,7 @@ block.time_beacon.name=Осколок прошлого
 tile.catalyst_stand.name=Стойка катализаторов
 tile.forge.name=Древний механизм
 tile.time_beacon.name=Осколок прошлого
+tile.potion_furnace.name=Закаливающая печь
 
 # biome
 biome.planet.name=Астероиды
@@ -112,4 +113,4 @@ item.blank_feet.name=blank_feet
 item.potion_furnace.name=potion_furnace
 block.potion_furnace_on.name=potion_furnace_on
 block.potion_furnace.name=potion_furnace
-tile.potion_furnace.name=potion_furnace
+

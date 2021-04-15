@@ -8,6 +8,9 @@ import divineadditions.item.rifle_core.ItemRifleCoreBullet;
 import divineadditions.item.rifle_core.ItemRifleMobCore;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.item.sword.SwordProperties;
+import divinerpg.DivineRPG;
+import divinerpg.registry.DivineRPGTabs;
+import divinerpg.registry.MaterialRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -55,9 +58,19 @@ public class ItemRegistryHandler {
         registerObj(registry, new ItemRifleCoreBullet().setCreativeTab(Tabs.Main), "rifle_bullet_core");
         registerObj(registry, new ItemDefenderStand(false).setCreativeTab(Tabs.Main), "defender_stand");
         registerObj(registry, new ItemDefenderStand(true).setCreativeTab(Tabs.Main), "defender_stand_activation");
-
-
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));
+    }
+
+    /**
+     * override section
+     *
+     * @param event
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void registerOverrides(final RegistryEvent.Register<Item> event) {
+        IForgeRegistry<Item> registry = event.getRegistry();
+
+        registerObj(registry, new ItemCustomSword(MaterialRegistry.HALITE_BLADE, new SwordProperties()).setCreativeTab(DivineRPGTabs.MELEE_WEAPONS), new ResourceLocation(DivineRPG.MODID, "halite_blade"));
     }
 
     private static void registerArmorSet(IForgeRegistry<Item> registry,
@@ -83,9 +96,11 @@ public class ItemRegistryHandler {
     }
 
     private static void registerObj(IForgeRegistry<Item> registry, Item value, String name) {
-        value.setUnlocalizedName(name)
-                .setRegistryName(new ResourceLocation(DivineAdditions.MOD_ID, name));
+        registerObj(registry, value, new ResourceLocation(DivineAdditions.MOD_ID, name));
+    }
 
+    private static void registerObj(IForgeRegistry<Item> registry, Item value, ResourceLocation id) {
+        value.setUnlocalizedName(id.getResourcePath()).setRegistryName(id);
         registry.register(value);
     }
 }

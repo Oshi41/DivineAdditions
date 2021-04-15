@@ -1,5 +1,6 @@
 package divineadditions.recipe;
 
+import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.item.sword.SwordProperties;
 import divineadditions.utils.InventoryHelper;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class PotionFurnaceRecipe {
+    private static final int baseCookTime = 200;
+
     private final List<ItemStack> inventory;
     private final ItemStack output;
     private final int cookTime;
@@ -81,7 +84,12 @@ public class PotionFurnaceRecipe {
             return null;
 
         SwordProperties props = ((ItemCustomSword) sword.getItem()).getSwordProps();
-        int cookTime = (props.getAttackEffects(sword).size() + effects.size()) * 200;
+        int totalEffectsCount = props.getAttackEffects(sword).size() + effects.size();
+
+        // More than machine can accept
+        if (totalEffectsCount > DivineAdditionsConfig.potionFurnaceConfig.maxPotionsCount) {
+            return null;
+        }
 
         for (PotionEffect effect : effects) {
             props.addAttackEffect(sword, effect);
@@ -91,7 +99,7 @@ public class PotionFurnaceRecipe {
                 .asStream(inventory)
                 .limit(3)
                 .map(ItemStack::copy)
-                .collect(Collectors.toList()), sword, cookTime, firstCauldron);
+                .collect(Collectors.toList()), sword, totalEffectsCount * baseCookTime, firstCauldron);
     }
 
     @Nullable

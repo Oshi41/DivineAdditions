@@ -364,7 +364,7 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
     }
 
     private int getBurnTime(ItemStack stack) {
-        Integer burnTime = DivineAdditionsConfig.potionFurnaceFuel.get(stack.getItem().getRegistryName().toString());
+        Integer burnTime = DivineAdditionsConfig.potionFurnaceConfig.potionFurnaceFuel.get(stack.getItem().getRegistryName().toString());
 
         if (burnTime == null) {
             burnTime = -1;
