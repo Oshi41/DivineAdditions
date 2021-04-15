@@ -35,11 +35,12 @@ public class BlockForge extends BlockContainer {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (tileEntity instanceof TileEntityForge) {
-            playerIn.openGui(DivineAdditions.instance, GuiHandler.ForgeGui, worldIn, pos.getX(), pos.getY(), pos.getZ());
-            return true;
+            if (!worldIn.isRemote) {
+                playerIn.openGui(DivineAdditions.instance, GuiHandler.ForgeGui, worldIn, pos.getX(), pos.getY(), pos.getZ());
+            }
         }
 
-        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+        return true;
     }
 
     @Override

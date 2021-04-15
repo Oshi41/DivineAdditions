@@ -3,6 +3,7 @@ package divineadditions.registry;
 import divineadditions.DivineAdditions;
 import divineadditions.block.BlockCatalystStand;
 import divineadditions.block.BlockForge;
+import divineadditions.block.BlockPotionFurnace;
 import divineadditions.block.BlockTimeBeacon;
 import divineadditions.holders.Tabs;
 import net.minecraft.block.Block;
@@ -38,6 +39,8 @@ public class BlockRegistryHandler {
         registerObj(registry, new BlockTimeBeacon().setLightLevel(1.0F).setHardness(3F).setBlockUnbreakable().setCreativeTab(Tabs.Main), "time_beacon", true);
         registerObj(registry, new BlockCatalystStand().setHardness(0.5F).setLightLevel(0.125F).setCreativeTab(Tabs.Main), "catalyst_stand", true);
         registerObj(registry, new BlockForge().setHardness(3).setCreativeTab(Tabs.Main), "forge", true);
+        registerObj(registry, new BlockPotionFurnace(false).setHardness(3.5f).setCreativeTab(Tabs.Main), "potion_furnace", true);
+        registerObj(registry, new BlockPotionFurnace(true).setHardness(3.5f).setLightLevel(0.945F).setCreativeTab(Tabs.Main), "potion_furnace_on", false);
     }
 
     private static void registerObj(IForgeRegistry<Block> registry, Block value, String name, boolean canBeItem) {

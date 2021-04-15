@@ -70,7 +70,7 @@ public class AttachCapabilitiesEventHandler {
         if (event.getObject().getItem() instanceof ItemRifle) {
             Map<ResourceLocation, ICapabilityProvider> map = event.getCapabilities();
             if (map != null) {
-                map.put(ItemHandlerId, new CapabilityItemProvider(new InvWrapper(new RifleInventory())));
+                event.addCapability(ItemHandlerId, new CapabilityItemProvider(new InvWrapper(new RifleInventory())));
             }
         }
     }

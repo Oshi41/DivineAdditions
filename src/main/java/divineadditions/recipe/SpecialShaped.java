@@ -7,7 +7,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import divineadditions.capability.knowledge.IKnowledgeInfo;
-import divineadditions.recipe.ingredient.RemainingIngredient;
 import divineadditions.utils.InventoryHelper;
 import divineadditions.utils.NbtUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,22 +20,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class SpecialShaped extends ShapedRecipes implements ISpecialRecipe {
-    private final List<RemainingIngredient> remaining;
     public final int level;
 
     public SpecialShaped(String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, int level) {
         super(group, width, height, ingredients, result);
         this.level = level;
-
-        remaining = getIngredients().stream().filter(x -> x instanceof RemainingIngredient)
-                .map(x -> ((RemainingIngredient) x))
-                .collect(Collectors.toList());
     }
 
     public static SpecialShaped deserialize(JsonContext context, JsonObject json) {
@@ -54,17 +46,7 @@ public class SpecialShaped extends ShapedRecipes implements ISpecialRecipe {
 
     @Override
     public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
-        NonNullList<ItemStack> stacks = super.getRemainingItems(inv);
-
-        for (int i = 0; i < inv.getSizeInventory(); i++) {
-            ItemStack itemStack = inv.getStackInSlot(i).copy();
-
-            if (getRemaining().stream().anyMatch(x -> x.apply(itemStack))) {
-                stacks.set(i, itemStack);
-            }
-        }
-
-        return stacks;
+        return remainingItems(inv);
     }
 
     @Override
@@ -80,11 +62,6 @@ public class SpecialShaped extends ShapedRecipes implements ISpecialRecipe {
         }
 
         return super.matches(inv, worldIn);
-    }
-
-    @Override
-    public List<RemainingIngredient> getRemaining() {
-        return remaining;
     }
 
     // region Legacy

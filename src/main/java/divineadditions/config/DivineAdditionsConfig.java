@@ -1,6 +1,7 @@
 package divineadditions.config;
 
 import divineadditions.DivineAdditions;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
 import java.util.HashMap;
@@ -32,7 +33,11 @@ public class DivineAdditionsConfig {
 
     @Config.Comment("Gravity for worlds")
     public static Map<String, Double> gravity = new HashMap<String, Double>() {{
-        put("overworld", 1.);
         put(DivineAdditions.MOD_ID + ":planets", 0.25);
+    }};
+
+    @Config.Comment("Fuel for potion furnace")
+    public static Map<String, Integer> potionFurnaceFuel = new HashMap<String, Integer>() {{
+        put(new ResourceLocation("blaze_powder").toString(), 100);
     }};
 }

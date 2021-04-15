@@ -109,3 +109,7 @@ entity.rifle_bullet.name=rifle_bullet
 item.catalyst_stand.name=catalyst_stand
 item.forge.name=forge
 item.blank_feet.name=blank_feet
+item.potion_furnace.name=potion_furnace
+block.potion_furnace_on.name=potion_furnace_on
+block.potion_furnace.name=potion_furnace
+tile.potion_furnace.name=potion_furnace

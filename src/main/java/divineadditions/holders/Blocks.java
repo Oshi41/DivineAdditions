@@ -9,4 +9,6 @@ public class Blocks {
     public static final Block time_beacon = null;
     public static final Block catalyst_stand = null;
     public static final Block forge = null;
+    public static final Block potion_furnace = null;
+    public static final Block potion_furnace_on = null;
 }

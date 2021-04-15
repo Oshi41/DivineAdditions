@@ -2,9 +2,9 @@ package divineadditions.gui.conainter;
 
 import divineadditions.api.IContainerSync;
 import divineadditions.api.IForgeInventory;
-import divineadditions.gui.CraftingSlot;
 import divineadditions.gui.conainter.base.ContainerItemHandler;
 import divineadditions.gui.inventory.InventoryCraftingHandler;
+import divineadditions.gui.slot.CraftingSlot;
 import divineadditions.recipe.ForgeRecipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemCustomSword extends ItemSword {
     private final SwordProperties properties;
@@ -173,6 +174,15 @@ public class ItemCustomSword extends ItemSword {
     protected int getAppliedPotionsCount(@Nonnull EntityLivingBase target, List<PotionEffect> effects) {
         int result = 0;
 
+        List<PotionEffect> instant = effects.stream().filter(x -> x.getPotion().isInstant()).collect(Collectors.toList());
+        for (PotionEffect effect : instant) {
+            target.hurtResistantTime = 0;
+            effect.performEffect(target);
+            result++;
+        }
+
+        effects.removeAll(instant);
+
         for (PotionEffect effect : effects) {
             if (target.getActivePotionEffect(effect.getPotion()) == null) {
                 target.addPotionEffect(effect);
@@ -196,10 +206,6 @@ public class ItemCustomSword extends ItemSword {
         stack.damageItem(10, attacker);
         return true;
     }
-
-    // endregion
-
-    // region Inner class
 
     // endregion
 }

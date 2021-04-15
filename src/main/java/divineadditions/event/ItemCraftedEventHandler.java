@@ -22,7 +22,7 @@ public class ItemCraftedEventHandler {
         IInventory craftMatrix = event.craftMatrix;
         EntityPlayer player = event.player;
 
-        if (craftMatrix instanceof InventoryCrafting) {
+        if (craftMatrix != null) {
             IRecipe recipe = CraftingManager.findMatchingRecipe(((InventoryCrafting) craftMatrix), player.world);
             if (recipe instanceof ISpecialRecipe) {
                 for (RemainingIngredient remainingIngredient : ((SpecialShaped) recipe).getRemaining()) {

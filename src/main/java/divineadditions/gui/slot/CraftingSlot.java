@@ -1,4 +1,4 @@
-package divineadditions.gui;
+package divineadditions.gui.slot;
 
 import com.google.common.collect.Lists;
 import divineadditions.DivineAdditions;
