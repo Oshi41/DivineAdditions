@@ -1,4 +1,4 @@
-package divineadditions.jei.recipe_wrapper;
+package divineadditions.jei.recipe;
 
 import mezz.jei.api.gui.ITooltipCallback;
 import mezz.jei.api.recipe.IRecipeWrapper;

@@ -30,6 +30,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -77,23 +78,49 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
 
         PotionFurnaceRecipe currentRecipe = getCurrentRecipe();
 
+        if (world.isRemote) {
+            BlockPos cauldronPos = cauldron;
+
+            if (Objects.equals(cauldronPos, BlockPos.ORIGIN)) {
+                cauldronPos = PotionFurnaceRecipe.findFirstCauldron(world, getPos(), true);
+            }
+
+            if (Objects.equals(cauldronPos, BlockPos.ORIGIN)) {
+                cauldronPos = PotionFurnaceRecipe.findFirstCauldron(world, getPos(), false);
+            }
+
+            if (!Objects.equals(cauldronPos, BlockPos.ORIGIN)) {
+                EnumParticleTypes type = EnumParticleTypes.SMOKE_NORMAL;
+                float scale = 0.1f;
+
+                if (isCooking()) {
+                    scale = 1;
+                    type = EnumParticleTypes.SPELL;
+                } else {
+                    IBlockState blockState = world.getBlockState(cauldronPos);
+
+                    if (blockState.getPropertyKeys().contains(BlockCauldron.LEVEL)
+                            && blockState.getValue(BlockCauldron.LEVEL) == 3) {
+                        type = EnumParticleTypes.FIREWORKS_SPARK;
+                        scale = 0.1f;
+                    }
+                }
+
+                world.spawnParticle(type,
+                        cauldronPos.getX() + 0.5,
+                        cauldronPos.getY() + 1,
+                        cauldronPos.getZ() + 0.5,
+                        (world.rand.nextFloat() - world.rand.nextFloat()) * scale,
+                        (world.rand.nextFloat() + world.rand.nextFloat()) * scale,
+                        (world.rand.nextFloat() - world.rand.nextFloat()) * scale
+                );
+            }
+        }
+
         if (currentRecipe == null) {
             cookTime = 0;
             recheckState(wasCooking, false);
             return;
-        }
-
-        if (world.isRemote) {
-            if (cauldron != BlockPos.ORIGIN && isCooking()) {
-                world.spawnParticle(EnumParticleTypes.SPELL,
-                        cauldron.getX() + 0.5,
-                        cauldron.getY() + 1,
-                        cauldron.getZ() + 0.5,
-                        world.rand.nextFloat() - world.rand.nextFloat(),
-                        world.rand.nextFloat() + world.rand.nextFloat(),
-                        world.rand.nextFloat() - world.rand.nextFloat()
-                );
-            }
         }
 
         // Trying to perform burn fuel (on server)
@@ -135,7 +162,7 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
                             (world.rand.nextFloat() - world.rand.nextFloat()) * 0.1);
                 }
 
-            } else {
+            } else if (getCurrentRecipe() != null) {
                 ItemStack result = getCurrentRecipe().getOutput();
                 BlockPos cauldron = getCurrentRecipe().getCauldron();
                 IBlockState blockState = world.getBlockState(cauldron);
@@ -395,14 +422,15 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
 
         EnumFacing facing = state.getValue(BlockHorizontal.FACING);
 
-        if (PotionFurnaceRecipe.findFirstCauldron(world, getPos(), facing) != null)
+        BlockPos firstCauldron = PotionFurnaceRecipe.findFirstCauldron(world, getPos(), false);
+        if (!Objects.equals(firstCauldron, BlockPos.ORIGIN))
             return null;
 
         return Stream.of(
                 getPos().offset(facing.getOpposite()),
                 getPos().offset(facing.rotateYCCW()),
-                getPos().offset(facing.rotateYCCW().getOpposite())
-        ).filter(x -> world.isAirBlock(x))
+                getPos().offset(facing.rotateYCCW().getOpposite()))
+                .filter(x -> world.isAirBlock(x))
                 .collect(Collectors.toMap(x -> x, x -> filledCauldron));
     }
 }

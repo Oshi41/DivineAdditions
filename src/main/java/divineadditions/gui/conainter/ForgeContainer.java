@@ -84,6 +84,7 @@ public class ForgeContainer extends ContainerItemHandler implements IContainerSy
         Map<TileEntity, IItemHandler> handlerCatalystStands = handler.findCatalystStands();
         int amount = 0;
 
+        // the last ones - catalyst slots with no access on it
         for (IItemHandler itemHandler : handlerCatalystStands.values()) {
             for (i = 0; i < itemHandler.getSlots(); i++) {
                 SlotItemHandler slot = new SlotItemHandler(itemHandler, i, 195, 3 + amount * 18) {

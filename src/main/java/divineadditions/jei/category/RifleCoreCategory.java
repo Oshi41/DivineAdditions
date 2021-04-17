@@ -72,7 +72,7 @@ public class RifleCoreCategory implements IRecipeCategory {
 
         IGuiItemStackGroup itemStacks = iRecipeLayout.getItemStacks();
 
-        int xPos = (recipeWidth - 18) / 2;
+        int xPos = 18 + 49;
         itemStacks.init(0, true, xPos, 0);
         itemStacks.setBackground(0, slotBackground);
 

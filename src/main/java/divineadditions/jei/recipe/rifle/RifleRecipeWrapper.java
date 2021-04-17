@@ -1,4 +1,4 @@
-package divineadditions.jei.recipe_wrapper.rifle;
+package divineadditions.jei.recipe.rifle;
 
 import divineadditions.api.IRifleCoreConfig;
 import mezz.jei.api.IGuiHelper;

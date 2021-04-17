@@ -4,12 +4,9 @@ import divineadditions.DivineAdditions;
 import divineadditions.gui.conainter.ForgeContainer;
 import divineadditions.gui.gui_container.ForgeGuiContainer;
 import divineadditions.holders.Blocks;
-import divineadditions.jei.recipe_wrapper.IForgeRecipeWrapper;
+import divineadditions.jei.recipe.IForgeRecipeWrapper;
 import mezz.jei.api.IGuiHelper;
-import mezz.jei.api.gui.IDrawable;
-import mezz.jei.api.gui.IDrawableStatic;
-import mezz.jei.api.gui.IGuiItemStackGroup;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.*;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeCategory;
@@ -20,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * See {@link ForgeGuiContainer}
@@ -116,5 +114,12 @@ public class ForgeRecipeCategory implements IRecipeCategory {
         }
 
         itemStacks.set(iIngredients);
+
+        Map<Integer, ? extends IGuiIngredient<ItemStack>> guiIngredients = itemStacks.getGuiIngredients();
+
+        // clear items NOT from crafting grid
+        for (int j = craftGridSize * craftGridSize; j < guiIngredients.size(); j++) {
+            guiIngredients.get(j).getAllIngredients().clear();
+        }
     }
 }

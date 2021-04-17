@@ -3,25 +3,28 @@ package divineadditions.jei;
 import com.google.common.collect.Lists;
 import divineadditions.DivineAdditions;
 import divineadditions.api.IEntityCage;
+import divineadditions.gui.conainter.ForgeContainer;
+import divineadditions.gui.conainter.PotionFurnaceContainer;
 import divineadditions.gui.gui_container.ForgeGuiContainer;
+import divineadditions.gui.gui_container.PotionFurnaceGuiContainer;
 import divineadditions.holders.Blocks;
 import divineadditions.holders.Dimensions;
 import divineadditions.holders.Items;
+import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.jei.category.ForgeRecipeCategory;
+import divineadditions.jei.category.PotionFurnaceCategory;
 import divineadditions.jei.category.RifleCoreCategory;
 import divineadditions.jei.category.SoulSwordCategory;
-import divineadditions.jei.recipe_wrapper.ForgeRecipeWrapper;
-import divineadditions.jei.recipe_wrapper.SoulSwordRecipeWrapper;
-import divineadditions.jei.recipe_wrapper.rifle.RifleMobRecipeWrapper;
+import divineadditions.jei.recipe.ForgeRecipeWrapper;
+import divineadditions.jei.recipe.PotionFurnaceRecipeWrapper;
+import divineadditions.jei.recipe.SoulSwordRecipeWrapper;
+import divineadditions.jei.recipe.rifle.RifleMobRecipeWrapper;
 import divineadditions.recipe.ForgeRecipes;
 import divinerpg.registry.ItemRegistry;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientRegistry;
 import mezz.jei.api.ingredients.VanillaTypes;
-import mezz.jei.api.recipe.IRecipeCategoryRegistration;
-import mezz.jei.api.recipe.IRecipeWrapper;
-import mezz.jei.api.recipe.IVanillaRecipeFactory;
-import mezz.jei.api.recipe.VanillaRecipeCategoryUid;
+import mezz.jei.api.recipe.*;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
@@ -61,13 +64,16 @@ public class JeiModule implements IModPlugin {
     @Override
     public void registerCategories(IRecipeCategoryRegistration registry) {
         IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
-        registry.addRecipeCategories(new ForgeRecipeCategory(guiHelper), new SoulSwordCategory(guiHelper), new RifleCoreCategory(guiHelper));
+
+        registry.addRecipeCategories(new ForgeRecipeCategory(guiHelper), new SoulSwordCategory(guiHelper), new RifleCoreCategory(guiHelper), new PotionFurnaceCategory(guiHelper));
     }
 
     @Override
     public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
         subtypeRegistry.registerSubtypeInterpreter(Items.caged_mob, itemStack -> itemStack.getOrCreateSubCompound(IEntityCage.cagedTagName).getString(IEntityCage.entityIdName));
         subtypeRegistry.useNbtForSubtypes(Items.soul_sword, Items.rifle_mob_core, ItemRegistry.teleportationStar);
+
+        ForgeRegistries.ITEMS.getValuesCollection().stream().filter(x -> x instanceof ItemCustomSword).forEach(subtypeRegistry::useNbtForSubtypes);
     }
 
     /**
@@ -129,10 +135,11 @@ public class JeiModule implements IModPlugin {
         registerAnvil(registry, registry.getIngredientRegistry());
 
         IGuiHelper guiHelper = registry.getJeiHelpers().getGuiHelper();
+        IStackHelper stackHelper = registry.getJeiHelpers().getStackHelper();
 
         registry.addRecipes(Arrays.asList(new SoulSwordRecipeWrapper()), SoulSwordCategory.ID);
         registry.addRecipes(Arrays.asList(new RifleMobRecipeWrapper(guiHelper)), RifleCoreCategory.ID);
-
+        registry.addRecipes(PotionFurnaceRecipeWrapper.getResults(guiHelper, stackHelper), PotionFurnaceCategory.ID);
 
         List<ForgeRecipes> recipesList = ForgeRegistries
                 .RECIPES
@@ -146,7 +153,12 @@ public class JeiModule implements IModPlugin {
                 .collect(Collectors.toList()), ForgeRecipeCategory.ID.toString());
 
 
-        registry.addGhostIngredientHandler(ForgeGuiContainer.class, new ForgeGhostIngredientHandler(registry.getIngredientRegistry()));
-        // registry.getRecipeTransferRegistry().addRecipeTransferHandler(ForgeContainer.class, ForgeRecipeCategory.ID.toString(), 0, 25, 27, 9 * 4);
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(ForgeContainer.class, ForgeRecipeCategory.ID.toString(), 0, 25, 27, 9 * 4);
+        registry.addRecipeClickArea(ForgeGuiContainer.class, 121, 46, 28, 22, ForgeRecipeCategory.ID.toString());
+
+
+        registry.getRecipeTransferRegistry().addRecipeTransferHandler(PotionFurnaceContainer.class, PotionFurnaceCategory.ID, 0, 3, 4, 9 * 4);
+        registry.addRecipeClickArea(PotionFurnaceGuiContainer.class, 139, 25, 32, 24, PotionFurnaceCategory.ID);
+
     }
 }

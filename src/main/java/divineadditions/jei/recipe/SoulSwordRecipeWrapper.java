@@ -1,4 +1,4 @@
-package divineadditions.jei.recipe_wrapper;
+package divineadditions.jei.recipe;
 
 import divineadditions.holders.Items;
 import mezz.jei.api.ingredients.IIngredients;

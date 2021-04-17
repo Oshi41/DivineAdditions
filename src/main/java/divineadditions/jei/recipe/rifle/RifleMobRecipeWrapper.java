@@ -1,9 +1,9 @@
-package divineadditions.jei.recipe_wrapper.rifle;
+package divineadditions.jei.recipe.rifle;
 
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.holders.Items;
 import divineadditions.jei.category.RifleCoreCategory;
-import divineadditions.jei.recipe_wrapper.ForgeRecipeWrapper;
+import divineadditions.jei.recipe.ForgeRecipeWrapper;
 import mezz.jei.api.IGuiHelper;
 import mezz.jei.api.gui.IDrawableStatic;
 import mezz.jei.api.ingredients.IIngredients;

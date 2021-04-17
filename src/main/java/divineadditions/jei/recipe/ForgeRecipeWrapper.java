@@ -1,4 +1,4 @@
-package divineadditions.jei.recipe_wrapper;
+package divineadditions.jei.recipe;
 
 import com.sun.javafx.geom.Rectangle;
 import divineadditions.api.IEntityCage;

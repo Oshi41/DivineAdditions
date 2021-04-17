@@ -6,7 +6,6 @@ import divineadditions.item.sword.SwordProperties;
 import divineadditions.utils.InventoryHelper;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -18,9 +17,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PotionFurnaceRecipe {
@@ -72,14 +72,8 @@ public class PotionFurnaceRecipe {
         TileEntity tileEntity = (TileEntity) inventory;
         BlockPos blockPos = tileEntity.getPos();
         World world = tileEntity.getWorld();
-        IBlockState blockState = world.getBlockState(blockPos);
-        PropertyDirection prop = BlockHorizontal.FACING;
 
-        EnumFacing enumFacing = blockState.getPropertyKeys().contains(prop)
-                ? blockState.getValue(prop)
-                : EnumFacing.NORTH;
-
-        BlockPos firstCauldron = findFirstCauldron(world, blockPos, enumFacing);
+        BlockPos firstCauldron = findFirstCauldron(world, blockPos, true);
         if (firstCauldron == null)
             return null;
 
@@ -102,18 +96,25 @@ public class PotionFurnaceRecipe {
                 .collect(Collectors.toList()), sword, totalEffectsCount * baseCookTime, firstCauldron);
     }
 
-    @Nullable
-    public static BlockPos findFirstCauldron(World world, BlockPos pos, EnumFacing facing) {
+    @Nonnull
+    public static BlockPos findFirstCauldron(World world, BlockPos pos, boolean checkLevel) {
+        IBlockState blockState = world.getBlockState(pos);
+
+        if (!blockState.getPropertyKeys().contains(BlockHorizontal.FACING))
+            return BlockPos.ORIGIN;
+
+        EnumFacing facing = blockState.getValue(BlockHorizontal.FACING);
+
         List<BlockPos> poses = Arrays.asList(pos.offset(facing.getOpposite()), pos.offset(facing.rotateYCCW()), pos.offset(facing.rotateYCCW().getOpposite()));
         BlockPos cauldronPos = poses.stream()
                 .collect(Collectors.toMap(x -> x, world::getBlockState))
                 .entrySet()
                 .stream()
                 .filter(x -> x.getValue().getBlock() == Blocks.CAULDRON)
-                .filter(x -> x.getValue().getValue(BlockCauldron.LEVEL) == 3)
-                .map(x -> x.getKey())
+                .filter(x -> !checkLevel || x.getValue().getValue(BlockCauldron.LEVEL) == 3)
+                .map(Map.Entry::getKey)
                 .findFirst()
-                .orElse(null);
+                .orElse(BlockPos.ORIGIN);
 
         return cauldronPos;
     }
