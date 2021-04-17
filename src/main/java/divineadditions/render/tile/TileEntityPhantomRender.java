@@ -22,6 +22,8 @@ public class TileEntityPhantomRender<T extends TileEntity & IPhantomRender> exte
 
     @Override
     public void render(T te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
+        super.render(te, x, y, z, partialTicks, destroyStage, alpha);
+
         EntityPlayerSP player = Minecraft.getMinecraft().player;
 
         Map<BlockPos, IBlockState> phantomBlocks = te.getPhantomBlocks();

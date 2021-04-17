@@ -27,7 +27,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -167,11 +166,6 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
     @Override
     public boolean hasCustomName() {
         return inner.hasCustomName();
-    }
-
-    @Override
-    public ITextComponent getDisplayName() {
-        return inner.getDisplayName();
     }
 
     @Override
