@@ -64,7 +64,7 @@ public class PotionFurnaceContainer extends Container {
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
             itemstack = itemstack1.copy();
-            if (index < 9) {
+            if (index < currentSlotsCount) {
                 if (!this.mergeItemStack(itemstack1, currentSlotsCount, inventorySlots.size() - 1, true)) {
                     return ItemStack.EMPTY;
                 }

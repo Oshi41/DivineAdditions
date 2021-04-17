@@ -1,6 +1,7 @@
 package divineadditions.msg;
 
 import divineadditions.capability.knowledge.IKnowledgeInfo;
+import divineadditions.msg.base.CapChangedMessageBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;

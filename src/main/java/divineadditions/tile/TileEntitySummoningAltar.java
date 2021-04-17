@@ -5,7 +5,7 @@ import divineadditions.api.IArmorEssence;
 import divineadditions.entity.EntityArmorDefender;
 import divineadditions.holders.Items;
 import divineadditions.item.ItemArmorEssence;
-import divineadditions.tile.base.TileSyncBase;
+import divineadditions.tile.base.TileEntitySync;
 import divinerpg.DivineRPG;
 import divinerpg.api.DivineAPI;
 import divinerpg.api.armor.ArmorEquippedEvent;
@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TileEntitySummoningAltar extends TileSyncBase {
+public class TileEntitySummoningAltar extends TileEntitySync {
     public TileEntitySummoningAltar() {
 
     }

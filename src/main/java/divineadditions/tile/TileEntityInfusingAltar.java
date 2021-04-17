@@ -2,7 +2,7 @@ package divineadditions.tile;
 
 import divineadditions.api.IItemCapacity;
 import divineadditions.recipe.InfusingRecipe;
-import divineadditions.tile.base.TileSyncBase;
+import divineadditions.tile.base.TileEntitySync;
 import divineadditions.utils.InventoryHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class TileEntityInfusingAltar extends TileSyncBase implements IItemCapacity {
+public class TileEntityInfusingAltar extends TileEntitySync implements IItemCapacity {
     private final List<InfusingRecipe> infusingRecipes;
     private final int radius = 5;
 

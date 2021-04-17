@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -121,6 +122,15 @@ public class BlockPotionFurnace extends BlockContainer {
         }
 
         super.breakBlock(worldIn, pos, state);
+    }
+
+    @Override
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        TileEntity tileEntity = world.getTileEntity(pos);
+
+        if (tileEntity != null) {
+            tileEntity.markDirty();
+        }
     }
 
     private void setDefaultFacing(World worldIn, BlockPos pos, IBlockState state) {

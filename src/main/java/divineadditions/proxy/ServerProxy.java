@@ -2,7 +2,7 @@ package divineadditions.proxy;
 
 import divineadditions.DivineAdditions;
 import divineadditions.api.IProxy;
-import divineadditions.msg.CapChangedMessageBase;
+import divineadditions.msg.base.CapChangedMessageBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;

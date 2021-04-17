@@ -1,4 +1,4 @@
-package divineadditions.msg;
+package divineadditions.msg.base;
 
 import divineadditions.DivineAdditions;
 import io.netty.buffer.ByteBuf;

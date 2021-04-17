@@ -7,17 +7,17 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
 import java.text.DecimalFormat;
 
 @SideOnly(Side.CLIENT)
 public class PotionFurnaceGuiContainer extends GuiContainer {
     private final ResourceLocation background = new ResourceLocation(DivineAdditions.MOD_ID, "textures/gui/potion_furnace.png");
     private final IInventory inventory;
-    private final int color = Color.darkGray.getRGB();
+    private final int color = 4210752;
 
     public PotionFurnaceGuiContainer(Container inventorySlotsIn, IInventory inventory) {
         super(inventorySlotsIn);
@@ -44,11 +44,12 @@ public class PotionFurnaceGuiContainer extends GuiContainer {
             this.drawTexturedModalRect(i + 149, j + 32 + height - k, 176, height - k, height, k + 1);
         }
 
-
         double percentage = (cookTime / (double) totalCookTime) * 100;
 
         if (percentage > 0)
-            drawString(fontRenderer, new DecimalFormat("###").format(percentage) + "%", this.guiLeft + 150, this.guiTop + 5, color);
+            fontRenderer.drawString(new DecimalFormat("###").format(percentage) + "%", this.guiLeft + 150, this.guiTop + 5, color);
+
+        fontRenderer.drawString(new TextComponentTranslation("tile.potion_furnace.name").getFormattedText(), this.guiLeft + 5, this.guiTop + 5, color);
     }
 
     @Override

@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 /**
  * Base tile entity with NBT syncing across sides
  */
-public abstract class TileSyncBase extends TileEntity {
+public abstract class TileEntitySync extends TileEntity {
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {

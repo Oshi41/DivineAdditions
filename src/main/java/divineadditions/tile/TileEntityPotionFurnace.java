@@ -1,9 +1,11 @@
 package divineadditions.tile;
 
+import divineadditions.api.IPhantomRender;
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.holders.Blocks;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.recipe.PotionFurnaceRecipe;
+import divineadditions.tile.base.TileEntitySync;
 import divineadditions.utils.InventoryHelper;
 import divineadditions.utils.WorldUtils;
 import net.minecraft.block.Block;
@@ -13,35 +15,37 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
-public class TileEntityPotionFurnace extends TileEntity implements ITickable, ISidedInventory {
-    private static final int[] SLOTS_TOP = IntStream.range(0, 3).toArray();
+public class TileEntityPotionFurnace extends TileEntitySync implements ITickable, ISidedInventory, IPhantomRender {
+    private static final IBlockState filledCauldron = net.minecraft.init.Blocks.CAULDRON.getDefaultState().withProperty(BlockCauldron.LEVEL, 3);
+    private static final int[] SLOTS_TOP = IntStream.range(0, 4).toArray();
     private static final int[] SLOTS_SIDES_FUEL = new int[]{3};
 
-    private final IInventory inner;
+    private final InventoryBasic inner;
 
     private int cookTime;
     private int burnTime;
     private int totalCookTime;
+    private BlockPos cauldron = BlockPos.ORIGIN;
     private PotionFurnaceRecipe currentRecipe;
 
     public TileEntityPotionFurnace() {
@@ -49,21 +53,39 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
     }
 
     @Override
+    public void markDirty() {
+        inner.markDirty();
+        super.markDirty();
+
+        PotionFurnaceRecipe current = getCurrentRecipe();
+
+        if (current == null) {
+            setCurrentRecipe(PotionFurnaceRecipe.find(this));
+        } else {
+            if (!current.isMatch(this)) {
+                setCurrentRecipe(null);
+            }
+        }
+    }
+
+    @Override
     public void update() {
-        boolean hadRecipe = currentRecipe != null;
-        boolean wasBurning = isBurning();
+        boolean wasCooking = isCooking();
 
         if (isBurning()) {
             burnTime = MathHelper.clamp(burnTime - 1, 0, Integer.MAX_VALUE);
         }
 
+        PotionFurnaceRecipe currentRecipe = getCurrentRecipe();
+
+        if (currentRecipe == null) {
+            cookTime = 0;
+            recheckState(wasCooking, false);
+            return;
+        }
 
         if (world.isRemote) {
-            recheckState(wasBurning, false);
-
-            if (currentRecipe != null && isBurning()) {
-                BlockPos cauldron = currentRecipe.getCauldron();
-
+            if (cauldron != BlockPos.ORIGIN && isCooking()) {
                 world.spawnParticle(EnumParticleTypes.SPELL,
                         cauldron.getX() + 0.5,
                         cauldron.getY() + 1,
@@ -73,28 +95,9 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
                         world.rand.nextFloat() - world.rand.nextFloat()
                 );
             }
-
-            return;
         }
 
-        if (currentRecipe != null && !currentRecipe.isMatch(this)) {
-            currentRecipe = null;
-        }
-
-        if (currentRecipe == null) {
-            currentRecipe = PotionFurnaceRecipe.find(this);
-        }
-
-        // recipe was not crafted
-        if (currentRecipe == null) {
-            cookTime = 0;
-            recheckState(wasBurning, false);
-            return;
-        }
-
-        totalCookTime = currentRecipe.getCookTime();
-
-        // begin crafting recipe
+        // Trying to perform burn fuel (on server)
         if (!isBurning()) {
             for (int index : SLOTS_SIDES_FUEL) {
                 ItemStack fuel = getStackInSlot(index);
@@ -102,24 +105,46 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
                 if (burnTime > 0) {
                     decrStackSize(index, 1);
                     this.burnTime = burnTime;
+                    markDirty();
                     break;
                 }
             }
         }
 
-        if (isBurning()) {
-            cookTime++;
+        // not burning, remove cooking progress
+        if (!isBurning()) {
+            cookTime = MathHelper.clamp(cookTime - 2, 0, Integer.MAX_VALUE);
+            recheckState(wasCooking, false);
+            return;
+        }
 
+        cookTime++;
+        recheckState(wasCooking, false);
 
-            if (currentRecipe.getCookTime() <= cookTime) {
+        if (totalCookTime <= cookTime) {
+            Vec3d position = new Vec3d(cauldron.getX() + 0.5, cauldron.getY() + 1.5, cauldron.getZ());
 
-                ItemStack result = currentRecipe.getOutput();
-                BlockPos cauldron = currentRecipe.getCauldron();
+            if (world.isRemote) {
+                for (int i = 0; i < 5; i++) {
+                    world.spawnParticle(
+                            EnumParticleTypes.EXPLOSION_LARGE,
+                            position.x,
+                            position.y,
+                            position.z,
+                            (world.rand.nextFloat() - world.rand.nextFloat()) * 0.1,
+                            world.rand.nextFloat() * 0.1,
+                            (world.rand.nextFloat() - world.rand.nextFloat()) * 0.1);
+                }
+
+            } else {
+                ItemStack result = getCurrentRecipe().getOutput();
+                BlockPos cauldron = getCurrentRecipe().getCauldron();
                 IBlockState blockState = world.getBlockState(cauldron);
+
                 if (blockState.getBlock() == net.minecraft.init.Blocks.CAULDRON) {
                     ((BlockCauldron) blockState.getBlock()).setWaterLevel(world, cauldron, blockState, 0);
-                    EntityItem item = new EntityItem(world, cauldron.getX() + 0.5, cauldron.getY() + 1.5, cauldron.getZ(), result);
-                    item.motionY = world.rand.nextFloat();
+                    EntityItem item = new EntityItem(world, position.x, position.y, position.z, result);
+                    item.motionZ = item.motionX = 0;
                     item.setDefaultPickupDelay();
                     world.spawnEntity(item);
                 }
@@ -128,22 +153,10 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
                     decrStackSize(i, 1);
                 }
 
-                for (int i = 0; i < 5; i++) {
-                    world.spawnParticle(EnumParticleTypes.SPELL,
-                            cauldron.getX(),
-                            cauldron.getY() + 1,
-                            cauldron.getZ(),
-                            world.rand.nextFloat() - world.rand.nextFloat(),
-                            world.rand.nextFloat(),
-                            world.rand.nextFloat() - world.rand.nextFloat()
-                    );
-                }
-
-                currentRecipe = null;
+                setCurrentRecipe(null);
+                recheckState(wasCooking, true);
             }
         }
-
-        recheckState(wasBurning, (currentRecipe != null) != hadRecipe);
     }
 
     @Override
@@ -178,7 +191,11 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
 
     @Override
     public ItemStack decrStackSize(int i, int i1) {
-        return inner.decrStackSize(i, i1);
+        ItemStack stack = inner.decrStackSize(i, i1);
+        if (!stack.isEmpty()) {
+            this.markDirty();
+        }
+        return stack;
     }
 
     @Override
@@ -200,14 +217,8 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
     }
 
     @Override
-    public void markDirty() {
-        inner.markDirty();
-        super.markDirty();
-    }
-
-    @Override
     public boolean isUsableByPlayer(EntityPlayer entityPlayer) {
-        return inner.isUsableByPlayer(entityPlayer);
+        return inner.isUsableByPlayer(entityPlayer) && world.getTileEntity(getPos()) == this;
     }
 
     @Override
@@ -251,9 +262,10 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
 
             case 2:
                 return totalCookTime;
-        }
 
-        return 0;
+            default:
+                return 0;
+        }
     }
 
     @Override
@@ -288,7 +300,7 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
         if (side == EnumFacing.DOWN) {
             return SLOTS_SIDES_FUEL;
         } else {
-            return side == EnumFacing.UP ? SLOTS_TOP : SLOTS_SIDES_FUEL;
+            return SLOTS_TOP;
         }
     }
 
@@ -315,6 +327,7 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
         cookTime = compound.getInteger("cookTime");
         burnTime = compound.getInteger("burnTime");
         totalCookTime = compound.getInteger("totalCookTime");
+        cauldron = BlockPos.fromLong(compound.getLong("cauldron"));
         InventoryHelper.load(inner, compound.getCompoundTag("Inv"));
     }
 
@@ -325,36 +338,25 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
         compound.setInteger("cookTime", cookTime);
         compound.setInteger("burnTime", burnTime);
         compound.setInteger("totalCookTime", totalCookTime);
+        compound.setLong("cauldron", cauldron.toLong());
         compound.setTag("Inv", InventoryHelper.save(inner));
 
         return nbt;
-    }
-
-    @Nullable
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        return new SPacketUpdateTileEntity(this.pos, getBlockMetadata(), getUpdateTag());
-    }
-
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
-    }
-
-    @Override
-    public void handleUpdateTag(NBTTagCompound tag) {
-        readFromNBT(tag);
     }
 
     private boolean isBurning() {
         return burnTime > 0;
     }
 
-    private void recheckState(boolean wasBurning, boolean forceMarkDirty) {
-        if (wasBurning != isBurning()) {
+    private boolean isCooking() {
+        return cookTime > 0;
+    }
+
+    private void recheckState(boolean wasCooking, boolean forceMarkDirty) {
+        if (wasCooking != isCooking()) {
             forceMarkDirty = true;
 
-            Block toPlace = isBurning() ? Blocks.potion_furnace_on : Blocks.potion_furnace;
+            Block toPlace = isCooking() ? Blocks.potion_furnace_on : Blocks.potion_furnace;
             WorldUtils.swapBlocks(world, getPos(), state -> toPlace.getDefaultState().withProperty(BlockHorizontal.FACING, state.getValue(BlockHorizontal.FACING)));
         }
 
@@ -371,5 +373,42 @@ public class TileEntityPotionFurnace extends TileEntity implements ITickable, IS
         }
 
         return burnTime;
+    }
+
+    public PotionFurnaceRecipe getCurrentRecipe() {
+        return currentRecipe;
+    }
+
+    public void setCurrentRecipe(PotionFurnaceRecipe currentRecipe) {
+        if (this.currentRecipe == currentRecipe)
+            return;
+
+        this.currentRecipe = currentRecipe;
+
+        cauldron = currentRecipe != null ? currentRecipe.getCauldron() : BlockPos.ORIGIN;
+        totalCookTime = currentRecipe != null ? currentRecipe.getCookTime() : -1;
+        cookTime = currentRecipe == null ? 0 : cookTime;
+    }
+
+    @Override
+    public Map<BlockPos, IBlockState> getPhantomBlocks() {
+        if (getCurrentRecipe() != null || world == null)
+            return null;
+
+        IBlockState state = world.getBlockState(getPos());
+        if (!state.getPropertyKeys().contains(BlockHorizontal.FACING))
+            return null;
+
+        EnumFacing facing = state.getValue(BlockHorizontal.FACING);
+
+        if (PotionFurnaceRecipe.findFirstCauldron(world, getPos(), facing) != null)
+            return null;
+
+        return Stream.of(
+                getPos().offset(facing.getOpposite()),
+                getPos().offset(facing.rotateYCCW()),
+                getPos().offset(facing.rotateYCCW().getOpposite())
+        ).filter(x -> world.isAirBlock(x))
+                .collect(Collectors.toMap(x -> x, x -> filledCauldron));
     }
 }
