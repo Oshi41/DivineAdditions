@@ -22,6 +22,7 @@ item.defender_stand.name=Модуль Защитника
 item.defender_stand_activation.name=Активатор Защитника
 item.power_gem.name=Камень силы
 item.rifle_template.name=Шаблон высекания патронов
+item.serenade_of_damage.name=Серенада урона
 
 # Entity
 entity.divineadditions:entity_cage_bullet.name=Пуля
@@ -70,6 +71,7 @@ divineadditions.tooltip.not_using_in_craft=Не используется в кр
 divineadditions.tooltip.knowledge_level=Даёт %s уровень древних знаний
 divineadditions.tooltip.defender_stand=При использовании создаст Модуль Защитника. Экиперовав его в броню с умениями и дав ему меч, можно получить требуемую эссенцию брони.
 divineadditions.tooltip.defender_stand_activation=Полностью экиперованный Модуль Защитника требует только своего модуля активации. С каждым разом он будет всё сильнее. Осторожнее!
+divineadditions.tooltip.range_damage=Мгновенный урон до %s блоков
 
 #messages
 divineadditions.message.current_knowledge_level_changed=Уровень древних знаний повышен: %s

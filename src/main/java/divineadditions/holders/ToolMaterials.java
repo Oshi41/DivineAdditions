@@ -2,9 +2,11 @@ package divineadditions.holders;
 
 import divineadditions.DivineAdditions;
 import divinerpg.enums.ArmorInfo;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -18,6 +20,15 @@ public class ToolMaterials {
             1,
             10,
             14);
+    public static final Item.ToolMaterial SerenadeDamageMaterial = EnumHelper.addToolMaterial(
+            new ResourceLocation(DivineAdditions.MOD_ID, "serenade_of_damage").toString(),
+            0,
+            873,
+            1,
+            10,
+            15)
+            .setRepairItem(new ItemStack(Items.DIAMOND));
+
     public static ItemArmor.ArmorMaterial BlankMaterial = createArmorMaterial(new ResourceLocation(DivineAdditions.MOD_ID, "blank"),
             15,
             new int[]{2, 5, 6, 2},

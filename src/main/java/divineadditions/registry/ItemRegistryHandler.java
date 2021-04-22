@@ -59,6 +59,8 @@ public class ItemRegistryHandler {
         registerObj(registry, new ItemDefenderStand(false).setCreativeTab(Tabs.Main), "defender_stand");
         registerObj(registry, new ItemDefenderStand(true).setCreativeTab(Tabs.Main), "defender_stand_activation");
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));
+
+        registerObj(registry, new ItemInstantRangedWeapon(32, ToolMaterials.SerenadeDamageMaterial).setCreativeTab(Tabs.Main), "serenade_of_damage");
     }
 
     /**

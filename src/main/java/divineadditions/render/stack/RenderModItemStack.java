@@ -31,6 +31,9 @@ public class RenderModItemStack extends TileEntityItemStackRenderer {
                     Render render = Minecraft.getMinecraft().getRenderManager().entityRenderMap.get(entity.getClass());
                     if (render != null) {
                         float maxSize = Math.max(entity.width, entity.height);
+
+                        GlStateManager.enableLighting();
+
                         if (maxSize > 2) {
                             float scale = 2 / (maxSize);
                             GlStateManager.scale(scale, scale, scale);
@@ -43,9 +46,7 @@ public class RenderModItemStack extends TileEntityItemStackRenderer {
                         }
 
                         GlStateManager.translate(0, 0, 0.7);
-                        GlStateManager.disableLighting();
                         render.doRender(entity, 0, 0, 0, 0, partialTicks);
-                        GlStateManager.enableLighting();
                         return;
                     }
                 }

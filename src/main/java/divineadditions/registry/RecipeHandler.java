@@ -24,15 +24,13 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = DivineAdditions.MOD_ID)
 public class RecipeHandler {
@@ -77,35 +75,36 @@ public class RecipeHandler {
 
     @SubscribeEvent()
     public static void registerRecipe(final RegistryEvent.Register<IRecipe> event) {
-        File recipesFile = new File(Loader.instance().getConfigDir(), DivineAdditions.MOD_ID + "/recipes");
-        if (recipesFile.exists() && recipesFile.listFiles() != null) {
-            List<File> recipeFiles = Arrays.stream(recipesFile.listFiles()).filter(x -> x.getName().endsWith(".json")).collect(Collectors.toList());
-            if (!recipeFiles.isEmpty()) {
-                ingredientMap.forEach(CraftingHelper::register);
-                recipeMap.forEach(CraftingHelper::register);
 
-                IForgeRegistry<IRecipe> registry = event.getRegistry();
+        ingredientMap.forEach(CraftingHelper::register);
+        recipeMap.forEach(CraftingHelper::register);
+        final JsonContext ctx = new JsonContext(DivineAdditions.MOD_ID);
 
-                JsonContext ctx = new JsonContext(DivineAdditions.MOD_ID);
-
-                for (File file : recipeFiles) {
+        CraftingHelper.findFiles(Loader.instance().activeModContainer(),
+                "assets/" + DivineAdditions.MOD_ID + "/custom_recipes",
+                null,
+                (root, file) -> {
                     try {
-                        JsonObject json = GSON.fromJson(FileUtils.readFileToString(file, StandardCharsets.UTF_8), JsonObject.class);
-                        if (!CraftingHelper.processConditions(json, "conditions", ctx))
-                            continue;
-
-                        if (json.has("type") && recipeMap.containsKey(new ResourceLocation(JsonUtils.getString(json, "type")))) {
-                            IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
-                            if (recipe != null) {
-                                ResourceLocation id = new ResourceLocation(DivineAdditions.MOD_ID, file.getName());
-                                if (!registry.containsKey(id)) {
-                                    registry.register(recipe.setRegistryName(id));
-                                }
-                            }
-                        }
+                        registerRecipe(file, ctx, event.getRegistry());
+                        return true;
                     } catch (Exception e) {
                         DivineAdditions.logger.warn(e);
+                        return false;
                     }
+                }, true, true);
+    }
+
+    private static void registerRecipe(Path file, JsonContext ctx, IForgeRegistry<IRecipe> registry) throws IOException {
+        JsonObject json = GSON.fromJson(IOUtils.toString(Files.newBufferedReader(file)), JsonObject.class);
+        if (!CraftingHelper.processConditions(json, "conditions", ctx))
+            return;
+
+        if (json.has("type") && recipeMap.containsKey(new ResourceLocation(JsonUtils.getString(json, "type")))) {
+            IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
+            if (recipe != null) {
+                ResourceLocation id = new ResourceLocation(DivineAdditions.MOD_ID, file.getFileName().toString());
+                if (!registry.containsKey(id)) {
+                    registry.register(recipe.setRegistryName(id));
                 }
             }
         }

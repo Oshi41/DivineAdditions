@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ItemMod extends Item {
-    private final List<TextComponentTranslation> tooltip = new ArrayList<>();
+    protected final List<TextComponentTranslation> tooltip = new ArrayList<>();
     private final List<Item> repair = new ArrayList<>();
 
     private boolean immortal = false;
