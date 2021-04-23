@@ -1,0 +1,45 @@
+{
+  "type": "divineadditions:shaped",
+  "pattern": [
+    "RWR",
+    "FSF",
+    "PBP"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:blaze_powder"
+    },
+    "B": {
+      "item": "minecraft:water_bucket"
+    },
+    "S": {
+      "item": "minecraft:brewing_stand"
+    },
+    "R": {
+      "item": "minecraft:golden_apple",
+      "data": 1
+    },
+    "F": {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:potion",
+      "nbt": {
+        "Potion": "minecraft:strong_strength"
+      }
+    },
+    "P": {
+      "item": "minecraft:shield"
+    }
+  },
+  "result": {
+    "item": "divineadditions:potion_bucket",
+    "nbt": {
+      "CustomPotionEffects": [
+        {
+          "Id": "22b",
+          "Duration": 2400,
+          "Amplifier": "2b"
+        }
+      ]
+    }
+  }
+}

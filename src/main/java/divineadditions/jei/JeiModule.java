@@ -1,6 +1,8 @@
 package divineadditions.jei;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import divineadditions.DivineAdditions;
 import divineadditions.api.IEntityCage;
 import divineadditions.gui.conainter.ForgeContainer;
@@ -20,6 +22,7 @@ import divineadditions.jei.recipe.PotionFurnaceRecipeWrapper;
 import divineadditions.jei.recipe.SoulSwordRecipeWrapper;
 import divineadditions.jei.recipe.rifle.RifleMobRecipeWrapper;
 import divineadditions.recipe.ForgeRecipes;
+import divineadditions.recipe.SpecialShaped;
 import divinerpg.registry.ItemRegistry;
 import mezz.jei.api.*;
 import mezz.jei.api.ingredients.IIngredientRegistry;
@@ -32,12 +35,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @JEIPlugin
 public class JeiModule implements IModPlugin {
+    private static Multimap<Integer, IRecipeWrapper> leveledRecipes = HashMultimap.create();
+    private static IRecipeRegistry recipeRegistry;
+
     /**
      * Registering special item info
      *
@@ -68,12 +77,17 @@ public class JeiModule implements IModPlugin {
         registry.addRecipeCategories(new ForgeRecipeCategory(guiHelper), new SoulSwordCategory(guiHelper), new RifleCoreCategory(guiHelper), new PotionFurnaceCategory(guiHelper));
     }
 
-    @Override
-    public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
-        subtypeRegistry.registerSubtypeInterpreter(Items.caged_mob, itemStack -> itemStack.getOrCreateSubCompound(IEntityCage.cagedTagName).getString(IEntityCage.entityIdName));
-        subtypeRegistry.useNbtForSubtypes(Items.soul_sword, Items.rifle_mob_core, ItemRegistry.teleportationStar);
+    @SideOnly(Side.CLIENT)
+    public static void recalculateRecipes(int currentLevel) {
+        for (Integer level : leveledRecipes.keySet()) {
+            Collection<IRecipeWrapper> recipes = leveledRecipes.get(level);
 
-        ForgeRegistries.ITEMS.getValuesCollection().stream().filter(x -> x instanceof ItemCustomSword).forEach(subtypeRegistry::useNbtForSubtypes);
+            Consumer<IRecipeWrapper> func = level <= currentLevel
+                    ? r -> recipeRegistry.unhideRecipe(r, VanillaRecipeCategoryUid.CRAFTING)
+                    : r -> recipeRegistry.hideRecipe(r, VanillaRecipeCategoryUid.CRAFTING);
+
+            recipes.forEach(func);
+        }
     }
 
     /**
@@ -130,6 +144,14 @@ public class JeiModule implements IModPlugin {
     }
 
     @Override
+    public void registerItemSubtypes(ISubtypeRegistry subtypeRegistry) {
+        subtypeRegistry.registerSubtypeInterpreter(Items.caged_mob, itemStack -> itemStack.getOrCreateSubCompound(IEntityCage.cagedTagName).getString(IEntityCage.entityIdName));
+        subtypeRegistry.useNbtForSubtypes(Items.rifle_mob_core, ItemRegistry.teleportationStar, Items.potion_bucket);
+
+        ForgeRegistries.ITEMS.getValuesCollection().stream().filter(x -> x instanceof ItemCustomSword).forEach(subtypeRegistry::useNbtForSubtypes);
+    }
+
+    @Override
     public void register(IModRegistry registry) {
         registerInfos(registry);
         registerAnvil(registry, registry.getIngredientRegistry());
@@ -159,6 +181,19 @@ public class JeiModule implements IModPlugin {
 
         registry.getRecipeTransferRegistry().addRecipeTransferHandler(PotionFurnaceContainer.class, PotionFurnaceCategory.ID, 0, 3, 4, 9 * 4);
         registry.addRecipeClickArea(PotionFurnaceGuiContainer.class, 139, 25, 32, 24, PotionFurnaceCategory.ID);
+    }
 
+    @Override
+    public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+        recipeRegistry = jeiRuntime.getRecipeRegistry();
+
+        ForgeRegistries
+                .RECIPES
+                .getValuesCollection()
+                .stream()
+                .filter(x -> x instanceof SpecialShaped)
+                .map(x -> ((SpecialShaped) x))
+                .filter(x -> x.level > 0)
+                .forEach(x -> leveledRecipes.put(x.level, recipeRegistry.getRecipeWrapper(x, VanillaRecipeCategoryUid.CRAFTING)));
     }
 }

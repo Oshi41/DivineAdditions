@@ -5,9 +5,11 @@ import divineadditions.event.EntityJoinedEventHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
+import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 import java.util.function.Function;
@@ -19,22 +21,24 @@ import java.util.function.Function;
  * @param <T>
  */
 public class ObservableCapabilityProvider<T> extends DefaultCapabilityProvider<T> {
-    private final WeakReference<EntityPlayerMP> reference;
+    private final WeakReference<EntityPlayer> reference;
     private final Function<T, IMessage> createMsg;
+    private final T prevInstance;
 
     /**
      * previous nbt state. If changed, we'll send message to client
      */
-    private NBTBase prev = null;
+    private NBTBase prev;
 
     public ObservableCapabilityProvider(Capability<T> current, T instance, EntityPlayer player, Function<T, IMessage> createMsg) {
         super(current, instance);
         this.createMsg = createMsg;
-        reference = player instanceof EntityPlayerMP
-                ? new WeakReference<>(((EntityPlayerMP) player))
-                : null;
+        reference = new WeakReference<>(player);
 
-        if (reference == null) {
+        prev = new NBTTagCompound();
+        prevInstance = current.getDefaultInstance();
+
+        if (player.getEntityWorld().isRemote) {
             // registering current capability as syns only on client
             EntityJoinedEventHandler.register(current, createMsg);
         }
@@ -54,9 +58,25 @@ public class ObservableCapabilityProvider<T> extends DefaultCapabilityProvider<T
         if (Objects.equals(newValue, prev))
             return;
 
+        EntityPlayer player = reference.get();
+        if (player == null)
+            return;
+
+        onChange(player, prevInstance);
+
         prev = newValue.copy();
-        EntityPlayerMP entityPlayer = reference.get();
-        IMessage msg = createMsg.apply(instance);
-        DivineAdditions.networkWrapper.sendTo(msg, entityPlayer);
+        current.readNBT(prevInstance, null, prev);
+    }
+
+    /**
+     * Called after detecting actual changes
+     *
+     * @param player
+     */
+    protected void onChange(@Nonnull EntityPlayer player, T old) {
+        if (player instanceof EntityPlayerMP) {
+            IMessage message = createMsg.apply(instance);
+            DivineAdditions.networkWrapper.sendTo(message, ((EntityPlayerMP) player));
+        }
     }
 }

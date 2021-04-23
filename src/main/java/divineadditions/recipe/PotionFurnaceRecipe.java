@@ -1,6 +1,7 @@
 package divineadditions.recipe;
 
 import divineadditions.config.DivineAdditionsConfig;
+import divineadditions.holders.Items;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.item.sword.SwordProperties;
 import divineadditions.utils.InventoryHelper;
@@ -24,7 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PotionFurnaceRecipe {
-    private static final int baseCookTime = 200;
+    private static final int baseCookTime = 300;
 
     private final List<ItemStack> inventory;
     private final ItemStack output;
@@ -56,8 +57,17 @@ public class PotionFurnaceRecipe {
             return null;
         }
 
-        List<PotionEffect> left = PotionUtils.getEffectsFromStack(inventory.getStackInSlot(0));
-        List<PotionEffect> effects = PotionUtils.getEffectsFromStack(inventory.getStackInSlot(2));
+        ItemStack firstPotion = inventory.getStackInSlot(0);
+        ItemStack secondPotion = inventory.getStackInSlot(2);
+
+        if (firstPotion.getItem() != secondPotion.getItem()
+                || firstPotion.getItem() != Items.potion_bucket) {
+            return null;
+        }
+
+
+        List<PotionEffect> left = PotionUtils.getEffectsFromStack(firstPotion);
+        List<PotionEffect> effects = PotionUtils.getEffectsFromStack(secondPotion);
 
         // same size, not empty
         if (effects.size() == 0 || effects.size() != left.size()) {

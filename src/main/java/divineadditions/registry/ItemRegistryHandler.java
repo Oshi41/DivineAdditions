@@ -61,6 +61,7 @@ public class ItemRegistryHandler {
         registerArmorSet(registry, Tabs.Main, "blank", (slot) -> new ItemBlankArmor(ToolMaterials.BlankMaterial, slot, ToolMaterials.BlankArmorInfo));
 
         registerObj(registry, new ItemInstantRangedWeapon(32, ToolMaterials.SerenadeDamageMaterial).setCreativeTab(Tabs.Main), "serenade_of_damage");
+        registerObj(registry, new ItemPotionBucket().setCreativeTab(CreativeTabs.BREWING), "potion_bucket");
     }
 
     /**

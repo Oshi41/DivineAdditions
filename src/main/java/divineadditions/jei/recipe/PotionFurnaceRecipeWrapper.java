@@ -1,6 +1,8 @@
 package divineadditions.jei.recipe;
 
 import divineadditions.config.DivineAdditionsConfig;
+import divineadditions.holders.Items;
+import divineadditions.item.ItemPotionBucket;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.item.sword.SwordProperties;
 import divineadditions.jei.category.PotionFurnaceCategory;
@@ -13,13 +15,10 @@ import mezz.jei.api.ingredients.VanillaTypes;
 import mezz.jei.api.recipe.IRecipeWrapper;
 import mezz.jei.api.recipe.IStackHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -63,20 +62,7 @@ public class PotionFurnaceRecipeWrapper implements ITooltipCallback<ItemStack>, 
                 .map(Item::getDefaultInstance)
                 .collect(Collectors.toList());
 
-        List<ItemStack> possiblePotions = ForgeRegistries
-                .ITEMS
-                .getValuesCollection()
-                .stream()
-                .filter(x -> x instanceof ItemPotion)
-                .flatMap(x -> {
-                    NonNullList<ItemStack> list = NonNullList.create();
-                    x.getSubItems(CreativeTabs.BREWING, list);
-                    list.addAll(stackHelper.getSubtypes(x.getDefaultInstance()));
-                    return list.stream();
-                })
-                .distinct()
-                .filter(x -> !PotionUtils.getEffectsFromStack(x).isEmpty())
-                .collect(Collectors.toList());
+        List<ItemStack> possiblePotions = ItemPotionBucket.getSubItems(Items.potion_bucket);
 
         ForgeRegistries
                 .ITEMS

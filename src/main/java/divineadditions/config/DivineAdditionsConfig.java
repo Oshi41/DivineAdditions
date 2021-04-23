@@ -11,9 +11,6 @@ public class DivineAdditionsConfig {
     @Config.Comment("Settings for rifle")
     public static RifleConfig rifleConfig = new RifleConfig();
 
-    @Config.Comment("Entities configuration")
-    public static MobConfig mobsConfig = new MobConfig();
-
     @Config.Comment({
             "Config for planet dimension",
             "Plants config are placing in plants.json file",

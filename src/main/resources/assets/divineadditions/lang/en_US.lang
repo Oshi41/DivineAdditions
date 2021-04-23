@@ -23,6 +23,7 @@ item.defender_stand_activation.name=Активатор Защитника
 item.power_gem.name=Камень силы
 item.rifle_template.name=Шаблон высекания патронов
 item.serenade_of_damage.name=Серенада урона
+item.potion_bucket.name=Ведро зелья
 
 # Entity
 entity.divineadditions:entity_cage_bullet.name=Пуля
@@ -89,6 +90,8 @@ divineadditions.message.ancient_villager.gift.end_chest=Проверь свой 
 
 divineadditions.message.ancient_villager.need_to_go=О нет, мне ещё нужно вытащить остальных! Мне надо бежать!
 
+divineadditions.message.knowledge.someone_else_book=Книга принадлежит не тебе!
+
 #Jei
 divineadditions.jei.rifle_core.insert=Поместите данное ядро в винтовку
 divineadditions.jei.rifle_core.catalyst=Катализатор для произведения выстрела
@@ -117,4 +120,5 @@ item.blank_feet.name=blank_feet
 item.potion_furnace.name=potion_furnace
 block.potion_furnace_on.name=potion_furnace_on
 block.potion_furnace.name=potion_furnace
+
 

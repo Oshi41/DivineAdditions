@@ -2,6 +2,6 @@ package divineadditions.api;
 
 import net.minecraft.entity.player.EntityPlayer;
 
-public interface ICapabilitySyns {
+public interface ICapabilitySync {
     void update(EntityPlayer player);
 }

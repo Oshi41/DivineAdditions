@@ -74,7 +74,7 @@ public class TileEntityForge extends TileFluidHandler implements IForgeInventory
                     }
                 }
 
-                sendUpdate(TileEntityForge.this);
+                super.onContentsChanged(slot);
             }
         };
     }

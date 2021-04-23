@@ -35,4 +35,5 @@ public class Items {
     public static final Item time_drop = null;
     public static final Item defender_stand = null;
     public static final Item defender_stand_activation = null;
+    public static final Item potion_bucket = null;
 }

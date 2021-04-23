@@ -1,0 +1,47 @@
+{
+  "type": "divineadditions:shaped",
+  "pattern": [
+    "RWR",
+    "FSF",
+    "PBP"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:blaze_powder"
+    },
+    "B": {
+      "item": "minecraft:water_bucket"
+    },
+    "S": {
+      "item": "minecraft:brewing_stand"
+    },
+    "R": {
+      "item": "minecraft:poisonous_potato"
+    },
+    "F": {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:potion",
+      "nbt": {
+        "Potion": "minecraft:long_poison"
+      }
+    },
+    "P": {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:potion",
+      "nbt": {
+        "Potion": "minecraft:long_weakness"
+      }
+    }
+  },
+  "result": {
+    "item": "divineadditions:potion_bucket",
+    "nbt": {
+      "CustomPotionEffects": [
+        {
+          "Id": "9b",
+          "Duration": 3600
+        }
+      ]
+    }
+  }
+}

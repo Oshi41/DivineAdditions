@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import divineadditions.DivineAdditions;
 import divineadditions.recipe.ForgeRecipes;
+import divineadditions.recipe.PotionBucketRecipe;
 import divineadditions.recipe.SpecialShaped;
 import divineadditions.recipe.SpecialShapeless;
 import divineadditions.recipe.ingredient.NbtIngredient;
@@ -79,19 +80,22 @@ public class RecipeHandler {
         ingredientMap.forEach(CraftingHelper::register);
         recipeMap.forEach(CraftingHelper::register);
         final JsonContext ctx = new JsonContext(DivineAdditions.MOD_ID);
+        final IForgeRegistry<IRecipe> registry = event.getRegistry();
 
         CraftingHelper.findFiles(Loader.instance().activeModContainer(),
                 "assets/" + DivineAdditions.MOD_ID + "/custom_recipes",
                 null,
                 (root, file) -> {
                     try {
-                        registerRecipe(file, ctx, event.getRegistry());
+                        registerRecipe(file, ctx, registry);
                         return true;
                     } catch (Exception e) {
                         DivineAdditions.logger.warn(e);
                         return false;
                     }
                 }, true, true);
+
+        PotionBucketRecipe.createRecipes().forEach(registry::register);
     }
 
     private static void registerRecipe(Path file, JsonContext ctx, IForgeRegistry<IRecipe> registry) throws IOException {

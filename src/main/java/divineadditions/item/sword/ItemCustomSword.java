@@ -1,6 +1,8 @@
 package divineadditions.item.sword;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import divineadditions.DivineAdditions;
 import divineadditions.api.InfiniteAttackEvent;
 import divineadditions.event.LivingDropsEventHandler;
 import divineadditions.item.ItemMod;
@@ -15,6 +17,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.*;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -26,7 +29,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ItemCustomSword extends ItemSword {
@@ -183,14 +188,48 @@ public class ItemCustomSword extends ItemSword {
 
         effects.removeAll(instant);
 
-        for (PotionEffect effect : effects) {
-            if (target.getActivePotionEffect(effect.getPotion()) == null) {
-                target.addPotionEffect(effect);
-                result++;
+        Multimap<Potion, PotionEffect> multimap = HashMultimap.create();
+        effects.forEach(x -> multimap.put(x.getPotion(), x));
+
+        for (Potion potion : multimap.keys()) {
+            if (target.getActivePotionEffect(potion) != null)
+                continue;
+
+            Collection<PotionEffect> potionEffects = multimap.get(potion);
+            if (potionEffects.isEmpty()) {
+                continue;
             }
+
+            result += potionEffects.size();
+
+            Optional<PotionEffect> effect = potionEffects.stream().reduce(this::mergePotion);
+            target.addPotionEffect(effect.get());
         }
 
         return result;
+    }
+
+    protected PotionEffect mergePotion(PotionEffect source, PotionEffect other) {
+        if (source.getPotion() != other.getPotion()) {
+            DivineAdditions.logger.warn("This method should only be called for matching effects!");
+            return source;
+        }
+
+        int amplifier = source.getAmplifier();
+        int duration = source.getDuration();
+        boolean isAmbient = source.getIsAmbient();
+        boolean showParticles = other.doesShowParticles();
+
+        if (other.getAmplifier() > source.getAmplifier()) {
+            amplifier = other.getAmplifier();
+            duration = other.getDuration();
+        } else if (other.getAmplifier() == source.getAmplifier()) {
+            duration += other.getDuration();
+        } else if (!other.getIsAmbient() && source.getIsAmbient()) {
+            isAmbient = source.getIsAmbient();
+        }
+
+        return new PotionEffect(source.getPotion(), amplifier, duration, isAmbient, showParticles);
     }
 
     protected boolean tryInstantKill(ItemStack stack, EntityLivingBase target, EntityLivingBase attacker) {

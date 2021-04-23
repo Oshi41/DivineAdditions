@@ -15,5 +15,5 @@ public class PotionFurnaceConfig {
 
     @Config.Comment("Max potion effects can be applied on single sword")
     @Config.RangeInt(min = 1)
-    public int maxPotionsCount = 10;
+    public int maxPotionsCount = 6;
 }

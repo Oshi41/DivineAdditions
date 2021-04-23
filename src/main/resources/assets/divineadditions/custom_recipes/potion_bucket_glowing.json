@@ -1,0 +1,44 @@
+{
+  "type": "divineadditions:shaped",
+  "pattern": [
+    "RWR",
+    "FSF",
+    "PBP"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:blaze_powder"
+    },
+    "B": {
+      "item": "minecraft:water_bucket"
+    },
+    "S": {
+      "item": "minecraft:brewing_stand"
+    },
+    "R": {
+      "item": "minecraft:glowstone"
+    },
+    "F": {
+      "type": "divineadditions:item_nbt",
+      "item": "minecraft:potion",
+      "nbt": {
+        "Potion": "minecraft:long_night_vision"
+      }
+    },
+    "P": {
+      "item": "minecraft:golden_apple",
+      "data": 0
+    }
+  },
+  "result": {
+    "item": "divineadditions:potion_bucket",
+    "nbt": {
+      "CustomPotionEffects": [
+        {
+          "Id": "24b",
+          "Duration": 3600
+        }
+      ]
+    }
+  }
+}

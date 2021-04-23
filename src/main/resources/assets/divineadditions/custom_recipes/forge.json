@@ -1,52 +1,31 @@
 {
-  "type": "divineadditions:forge",
+  "type": "divineadditions:shaped",
   "pattern": [
-    "NCCCN",
-    "IVSVI",
-    "LSGSL",
-    "IVSVI",
-    "LMIML"
+    "RSK",
+    "ACA",
+    "BBB"
   ],
   "key": {
-    "G": {
-      "type": "divineadditions:item_nbt",
-      "item": "divineadditions:caged_mob",
-      "nbt": {
-        "cage": {
-          "id": "minecraft:villager_golem"
-        }
-      }
+    "B": {
+      "item": "minecraft:bucket"
     },
-    "V": {
-      "type": "divineadditions:item_nbt",
-      "item": "divineadditions:caged_mob",
-      "nbt": {
-        "cage": {
-          "id": "minecraft:villager"
-        }
-      }
+    "A": {
+      "item": "minecraft:anvil",
+      "data": 0
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "S": {
+      "item": "minecraft:chest"
+    },
+    "K": {
+      "item": "minecraft:book"
     },
     "C": {
       "item": "minecraft:crafting_table"
-    },
-    "N": {
-      "item": "divinerpg:netherite_lamp"
-    },
-    "I": {
-      "item": "divinerpg:ice_lamp"
-    },
-    "L": {
-      "item": "divinerpg:lapis_lazuli_lamp"
-    },
-    "M": {
-      "item": "divinerpg:milky_lamp"
-    },
-    "S": {
-      "item": "divineadditions:empty_infinite_gem"
     }
   },
-  "dna": 1000,
-  "experience": 30,
   "level": 1,
   "result": {
     "item": "divineadditions:forge"

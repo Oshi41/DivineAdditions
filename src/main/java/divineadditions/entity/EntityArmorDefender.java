@@ -3,7 +3,7 @@ package divineadditions.entity;
 import divineadditions.ai.EntityAIAttackMelee;
 import divineadditions.api.IArmorEssence;
 import divineadditions.capability.knowledge.IKnowledgeInfo;
-import divineadditions.config.DivineAdditionsConfig;
+import divineadditions.config.MobConfig;
 import divineadditions.utils.EntityAttributeHelper;
 import divinerpg.objects.entities.ai.AIDivineLookAround;
 import divinerpg.objects.entities.ai.AIDivineRandomFly;
@@ -80,7 +80,7 @@ public class EntityArmorDefender extends AbstractSkeleton {
     @Override
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
-        EntityAttributeHelper.applyAttributes(DivineAdditionsConfig.mobsConfig.armor_defender_attrs, this);
+        EntityAttributeHelper.applyAttributes(MobConfig.armor_defender_attrs, this);
     }
 
     @Override
@@ -311,17 +311,17 @@ public class EntityArmorDefender extends AbstractSkeleton {
         if (description != null) {
             String id = description.toString();
 
-            if (Arrays.asList(DivineAdditionsConfig.mobsConfig.aerSets).contains(id)) {
+            if (Arrays.asList(MobConfig.aerSets).contains(id)) {
                 canFly = true;
             }
 
             List<PathNodeType> paths = new ArrayList<>();
 
-            if (Arrays.asList(DivineAdditionsConfig.mobsConfig.waterSets).contains(id)) {
+            if (Arrays.asList(MobConfig.waterSets).contains(id)) {
                 paths.add(PathNodeType.WATER);
             }
 
-            if (Arrays.asList(DivineAdditionsConfig.mobsConfig.fireSets).contains(id)) {
+            if (Arrays.asList(MobConfig.fireSets).contains(id)) {
                 paths.add(PathNodeType.LAVA);
                 paths.add(PathNodeType.DAMAGE_FIRE);
             }

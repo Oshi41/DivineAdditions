@@ -3,9 +3,9 @@ package divineadditions.entity;
 import divineadditions.DivineAdditions;
 import divineadditions.api.ISkinProvider;
 import divineadditions.capability.knowledge.IKnowledgeInfo;
-import divineadditions.config.DivineAdditionsConfig;
-import divineadditions.holders.Blocks;
+import divineadditions.config.MobConfig;
 import divineadditions.holders.Items;
+import divineadditions.item.ItemKnowledgeBook;
 import divineadditions.utils.EntityAttributeHelper;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,7 +27,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class EntityAncientVillager extends EntityCreature implements ISkinProvider {
@@ -72,7 +72,7 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
 
-        EntityAttributeHelper.applyAttributes(DivineAdditionsConfig.mobsConfig.ancient_villager_attrs, this);
+        EntityAttributeHelper.applyAttributes(MobConfig.ancient_villager_attrs, this);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
                     IKnowledgeInfo iKnowledgeInfo = summoner.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
                     if (iKnowledgeInfo != null && iKnowledgeInfo.getLevel() < 1) {
                         sendMsg(new TextComponentTranslation("divineadditions.message.ancient_villager.gift" + world.getTotalWorldTime() % 2));
-                        sendMsg(insertStacks(summoner, Arrays.asList(new ItemStack(Items.book_of_knowledge_1), new ItemStack(Blocks.forge))));
+                        sendMsg(insertStacks(summoner, Collections.singletonList(ItemKnowledgeBook.createForPlayer(Items.book_of_knowledge_1, summoner))));
                     }
                 }
                 break;
