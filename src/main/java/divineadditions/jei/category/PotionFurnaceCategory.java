@@ -27,7 +27,7 @@ public class PotionFurnaceCategory implements IRecipeCategory {
 
         // see PotionFurnaceGuiContainer.ctor
         background = helper.createDrawable(Background, 0, 0, 175, 165);
-        drawableIcon = helper.createDrawableIngredient(new ItemStack(Blocks.potion_furnace));
+        drawableIcon = helper.createDrawableIngredient(new ItemStack(Blocks.attack_potion_furnace));
     }
 
     @Override

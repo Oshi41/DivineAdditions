@@ -49,7 +49,7 @@ public class PotionFurnaceGuiContainer extends GuiContainer {
         if (percentage > 0)
             fontRenderer.drawString(new DecimalFormat("###").format(percentage) + "%", this.guiLeft + 150, this.guiTop + 5, color);
 
-        fontRenderer.drawString(new TextComponentTranslation("tile.potion_furnace.name").getFormattedText(), this.guiLeft + 5, this.guiTop + 5, color);
+        fontRenderer.drawString(new TextComponentTranslation(inventory.getName()).getFormattedText(), this.guiLeft + 5, this.guiTop + 5, color);
     }
 
     @Override

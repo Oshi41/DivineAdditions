@@ -5,6 +5,7 @@ import divineadditions.holders.Items;
 import divineadditions.item.sword.ItemCustomSword;
 import divineadditions.item.sword.SwordProperties;
 import divineadditions.utils.InventoryHelper;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
@@ -52,6 +53,10 @@ public class PotionFurnaceRecipe {
             return null;
         }
 
+        TileEntity tileEntity = (TileEntity) inventory;
+        BlockPos blockPos = tileEntity.getPos();
+        World world = tileEntity.getWorld();
+
         ItemStack sword = inventory.getStackInSlot(1).copy();
         if (!(sword.getItem() instanceof ItemCustomSword)) {
             return null;
@@ -64,7 +69,6 @@ public class PotionFurnaceRecipe {
                 || firstPotion.getItem() != Items.potion_bucket) {
             return null;
         }
-
 
         List<PotionEffect> left = PotionUtils.getEffectsFromStack(firstPotion);
         List<PotionEffect> effects = PotionUtils.getEffectsFromStack(secondPotion);
@@ -79,24 +83,19 @@ public class PotionFurnaceRecipe {
             return null;
         }
 
-        TileEntity tileEntity = (TileEntity) inventory;
-        BlockPos blockPos = tileEntity.getPos();
-        World world = tileEntity.getWorld();
-
         BlockPos firstCauldron = findFirstCauldron(world, blockPos, true);
         if (firstCauldron == null)
             return null;
 
         SwordProperties props = ((ItemCustomSword) sword.getItem()).getSwordProps();
-        int totalEffectsCount = props.getAttackEffects(sword).size() + effects.size();
+
+        getSword(tileEntity, sword, props, effects);
+
+        int totalEffectsCount = Math.max(props.getAttackEffects(sword).size(), props.getDefendEffects(sword).size());
 
         // More than machine can accept
         if (totalEffectsCount > DivineAdditionsConfig.potionFurnaceConfig.maxPotionsCount) {
             return null;
-        }
-
-        for (PotionEffect effect : effects) {
-            props.addAttackEffect(sword, effect);
         }
 
         return new PotionFurnaceRecipe(InventoryHelper
@@ -104,6 +103,24 @@ public class PotionFurnaceRecipe {
                 .limit(3)
                 .map(ItemStack::copy)
                 .collect(Collectors.toList()), sword, totalEffectsCount * baseCookTime, firstCauldron);
+    }
+
+    private static void getSword(TileEntity entity, ItemStack sword, SwordProperties properties, List<PotionEffect> effects) {
+        World world = entity.getWorld();
+        IBlockState blockState = world.getBlockState(entity.getPos());
+        Block block = blockState.getBlock();
+
+        if (block == divineadditions.holders.Blocks.attack_potion_furnace || block == divineadditions.holders.Blocks.attack_potion_furnace_on) {
+            for (PotionEffect effect : effects) {
+                properties.addAttackEffect(sword, effect);
+            }
+        }
+
+        if (block == divineadditions.holders.Blocks.defence_potion_furnace || block == divineadditions.holders.Blocks.defence_potion_furnace_on) {
+            for (PotionEffect effect : effects) {
+                properties.addDefendEffect(sword, effect);
+            }
+        }
     }
 
     @Nonnull

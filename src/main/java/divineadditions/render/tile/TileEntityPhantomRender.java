@@ -30,16 +30,17 @@ public class TileEntityPhantomRender<T extends TileEntity & IPhantomRender> exte
         if (phantomBlocks == null || phantomBlocks.isEmpty())
             return;
 
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 0.03f);
+        GlStateManager.depthMask(false);
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GlStateManager.alphaFunc(516, 0.003921569F);
+        GlStateManager.disableLighting();
+
         for (Map.Entry<BlockPos, IBlockState> entry : phantomBlocks.entrySet()) {
             IBlockState stateToRender = entry.getValue();
             Vec3d blockpos = new Vec3d(entry.getKey());
             Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-            GlStateManager.pushMatrix();
-
-            GlStateManager.disableLighting();
-            GlStateManager.enableAlpha();
-            GlStateManager.enableBlend();
 
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder buffer = tessellator.getBuffer();
@@ -48,7 +49,6 @@ public class TileEntityPhantomRender<T extends TileEntity & IPhantomRender> exte
             double d2 = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
             buffer.setTranslation(-d0, -d1, -d2);
             buffer.begin(7, DefaultVertexFormats.BLOCK);
-            GlStateManager.color(1, 1, 1, 0.7f);
             BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
             blockrendererdispatcher.getBlockModelRenderer().renderModel(te.getWorld(), blockrendererdispatcher.getModelForState(stateToRender),
                     stateToRender,
@@ -58,11 +58,11 @@ public class TileEntityPhantomRender<T extends TileEntity & IPhantomRender> exte
                     MathHelper.getCoordinateRandom(((int) blockpos.x), (int) blockpos.y, (int) blockpos.z));
             tessellator.draw();
             buffer.setTranslation(0, 0, 0);
-
-            GlStateManager.disableAlpha();
-            GlStateManager.disableBlend();
-            GlStateManager.enableLighting();
-            GlStateManager.popMatrix();
         }
+
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.depthMask(true);
     }
 }

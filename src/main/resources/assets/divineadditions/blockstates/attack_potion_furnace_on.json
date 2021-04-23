@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "divineadditions:attack_potion_furnace_on"
+    },
+    "facing=south": {
+      "model": "divineadditions:attack_potion_furnace_on",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "divineadditions:attack_potion_furnace_on",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "divineadditions:attack_potion_furnace_on",
+      "y": 90
+    }
+  }
+}

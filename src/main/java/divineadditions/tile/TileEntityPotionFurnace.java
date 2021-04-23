@@ -47,9 +47,15 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
     private int totalCookTime;
     private BlockPos cauldron = BlockPos.ORIGIN;
     private PotionFurnaceRecipe currentRecipe;
+    private String name;
 
     public TileEntityPotionFurnace() {
         inner = new InventoryBasic("name", false, 4);
+    }
+
+    public TileEntityPotionFurnace(String translationKey) {
+        this();
+        name = translationKey;
     }
 
     @Override
@@ -187,7 +193,7 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
 
     @Override
     public String getName() {
-        return inner.getName();
+        return name;
     }
 
     @Override
@@ -349,6 +355,7 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
         burnTime = compound.getInteger("burnTime");
         totalCookTime = compound.getInteger("totalCookTime");
         cauldron = BlockPos.fromLong(compound.getLong("cauldron"));
+        name = compound.getString("name");
         InventoryHelper.load(inner, compound.getCompoundTag("Inv"));
     }
 
@@ -361,6 +368,7 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
         compound.setInteger("totalCookTime", totalCookTime);
         compound.setLong("cauldron", cauldron.toLong());
         compound.setTag("Inv", InventoryHelper.save(inner));
+        compound.setString("name", name);
 
         return nbt;
     }
@@ -377,8 +385,21 @@ public class TileEntityPotionFurnace extends TileEntitySync implements ITickable
         if (wasCooking != isCooking()) {
             forceMarkDirty = true;
 
-            Block toPlace = isCooking() ? Blocks.potion_furnace_on : Blocks.potion_furnace;
-            WorldUtils.swapBlocks(world, getPos(), state -> toPlace.getDefaultState().withProperty(BlockHorizontal.FACING, state.getValue(BlockHorizontal.FACING)));
+            Block currentBlock = world.getBlockState(getPos()).getBlock();
+            Block opposite = null;
+
+            if (currentBlock == Blocks.attack_potion_furnace_on || currentBlock == Blocks.attack_potion_furnace) {
+                opposite = isCooking() ? Blocks.attack_potion_furnace_on : Blocks.attack_potion_furnace;
+            }
+
+            if (currentBlock == Blocks.defence_potion_furnace_on || currentBlock == Blocks.defence_potion_furnace) {
+                opposite = isCooking() ? Blocks.defence_potion_furnace_on : Blocks.defence_potion_furnace;
+            }
+
+            if (opposite != null) {
+                IBlockState otherBlockState = opposite.getDefaultState();
+                WorldUtils.swapBlocks(world, getPos(), state -> otherBlockState.withProperty(BlockHorizontal.FACING, state.getValue(BlockHorizontal.FACING)));
+            }
         }
 
         if (forceMarkDirty) {

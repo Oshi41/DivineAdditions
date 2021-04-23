@@ -73,6 +73,11 @@ public class ItemRegistryHandler {
     public static void registerOverrides(final RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
 
+        registerObj(registry, new ItemCustomSword(MaterialRegistry.EDEN_BLADE, new SwordProperties()).setCreativeTab(DivineRPGTabs.MELEE_WEAPONS), new ResourceLocation(DivineRPG.MODID, "eden_blade"));
+        registerObj(registry, new ItemCustomSword(MaterialRegistry.WILDWOOD_BLADE, new SwordProperties()).setCreativeTab(DivineRPGTabs.MELEE_WEAPONS), new ResourceLocation(DivineRPG.MODID, "wildwood_blade"));
+        registerObj(registry, new ItemCustomSword(MaterialRegistry.APALACHIA_BLADE, new SwordProperties()).setCreativeTab(DivineRPGTabs.MELEE_WEAPONS), new ResourceLocation(DivineRPG.MODID, "apalachia_blade"));
+        registerObj(registry, new ItemCustomSword(MaterialRegistry.SKYTHERN_BLADE, new SwordProperties()).setCreativeTab(DivineRPGTabs.MELEE_WEAPONS), new ResourceLocation(DivineRPG.MODID, "skythern_blade"));
+        registerObj(registry, new ItemCustomSword(MaterialRegistry.MORTUM_BLADE, new SwordProperties()).setCreativeTab(DivineRPGTabs.MELEE_WEAPONS), new ResourceLocation(DivineRPG.MODID, "mortum_blade"));
         registerObj(registry, new ItemCustomSword(MaterialRegistry.HALITE_BLADE, new SwordProperties()).setCreativeTab(DivineRPGTabs.MELEE_WEAPONS), new ResourceLocation(DivineRPG.MODID, "halite_blade"));
     }
 

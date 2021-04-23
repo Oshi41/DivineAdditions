@@ -38,7 +38,7 @@ public class BlockPotionFurnace extends BlockContainer {
 
     @Override
     public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return Item.getItemFromBlock(Blocks.potion_furnace);
+        return Item.getItemFromBlock(Blocks.attack_potion_furnace);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class BlockPotionFurnace extends BlockContainer {
 
     @Override
     public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
-        return new ItemStack(Blocks.potion_furnace);
+        return new ItemStack(Blocks.attack_potion_furnace);
     }
 
     @Override
@@ -105,7 +105,8 @@ public class BlockPotionFurnace extends BlockContainer {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World world, int i) {
-        return new TileEntityPotionFurnace();
+        String tileName = getRegistryName().getResourcePath().replace("_on", "");
+        return new TileEntityPotionFurnace(String.format("tile.%s.name", tileName));
     }
 
     @Override

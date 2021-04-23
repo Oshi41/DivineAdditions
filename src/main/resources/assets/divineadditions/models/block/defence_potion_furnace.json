@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "divineadditions:blocks/potion_defence_furnace_top_off",
+    "front": "divineadditions:blocks/potion_defence_furnace_front_off",
+    "side": "divineadditions:blocks/potion_defence_furnace_side_off"
+  }
+}
