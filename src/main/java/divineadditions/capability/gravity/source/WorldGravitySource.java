@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.List;
-import java.util.Objects;
 
 public class WorldGravitySource extends GravitySourceBase<World> {
     private final String name;
@@ -51,11 +50,6 @@ public class WorldGravitySource extends GravitySourceBase<World> {
     @Override
     public boolean canApplyTo(Entity e) {
         return e != null && getOwner() == e.getEntityWorld();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
     }
 
     @SubscribeEvent

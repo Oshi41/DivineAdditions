@@ -11,13 +11,21 @@ public interface IProxy extends IMessageHandler<IMessage, IMessage> {
      */
     boolean isDedicatedServer();
 
-    void pre();
+    default void pre() {
 
-    void init();
+    }
 
-    void post();
+    default void init() {
+
+    }
+
+    default void post() {
+
+    }
 
     void scheduleTask(Runnable runnable);
+
+    void scheduleUpdate(Object key, Runnable runnable);
 }
 
 

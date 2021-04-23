@@ -162,9 +162,7 @@ public class ItemDefenderStand extends Item {
                                 IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
                                 if (capability != null) {
                                     // increasing summon Armor Defender stats
-                                    capability.setArmorDefenderSummonCount(capability.armorDefenderSummonCount() + 1);
-                                    // send updates to client
-                                    capability.update(player);
+                                    capability.defender().set(capability.defender().get() + 1);
 
                                     Random rand = worldIn.rand;
 

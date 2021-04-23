@@ -87,12 +87,15 @@ public class RecipeHandler {
                 null,
                 (root, file) -> {
                     try {
-                        registerRecipe(file, ctx, registry);
-                        return true;
+                        if (file.toFile().isFile()) {
+                            registerRecipe(file, ctx, registry);
+                            return true;
+                        }
                     } catch (Exception e) {
                         DivineAdditions.logger.warn(e);
-                        return false;
                     }
+
+                    return false;
                 }, true, true);
 
         PotionBucketRecipe.createRecipes().forEach(registry::register);

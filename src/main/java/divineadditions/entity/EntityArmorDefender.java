@@ -61,7 +61,7 @@ public class EntityArmorDefender extends AbstractSkeleton {
 
         IKnowledgeInfo capability = summoner.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
         if (capability != null) {
-            generation = capability.armorDefenderSummonCount();
+            generation = capability.defender().get();
         }
 
         this.summoner = summoner;

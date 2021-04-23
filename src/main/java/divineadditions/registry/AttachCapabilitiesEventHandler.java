@@ -3,7 +3,6 @@ package divineadditions.registry;
 import divineadditions.DivineAdditions;
 import divineadditions.api.IItemCapacity;
 import divineadditions.capability.DefaultCapabilityProvider;
-import divineadditions.capability.ObservableCapabilityProvider;
 import divineadditions.capability.gravity.source.WorldGravitySource;
 import divineadditions.capability.gravity.source.base.IGravitySource;
 import divineadditions.capability.item_provider.CapabilityItemProvider;
@@ -13,7 +12,6 @@ import divineadditions.capability.knowledge.KnowledgeInfo;
 import divineadditions.config.DivineAdditionsConfig;
 import divineadditions.gui.inventory.RifleInventory;
 import divineadditions.item.ItemRifle;
-import divineadditions.msg.KnowledgeMessage;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,12 +20,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = DivineAdditions.MOD_ID)
@@ -59,22 +55,7 @@ public class AttachCapabilitiesEventHandler {
     @SubscribeEvent
     public static void attachToEntity(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof EntityPlayer) {
-            event.addCapability(KnowledgeCap, new ObservableCapabilityProvider<IKnowledgeInfo>(
-                    IKnowledgeInfo.KnowledgeCapability,
-                    new KnowledgeInfo(),
-                    (EntityPlayer) event.getObject(),
-                    KnowledgeMessage::new) {
-                @Override
-                protected void onChange(@Nonnull EntityPlayer player, IKnowledgeInfo old) {
-                    super.onChange(player, old);
-
-                    if (player.getEntityWorld().isRemote && instance.getLevel() != old.getLevel()) {
-                        if (Loader.isModLoaded("jei")) {
-                            divineadditions.jei.JeiModule.recalculateRecipes(instance.getLevel());
-                        }
-                    }
-                }
-            });
+            event.addCapability(KnowledgeCap, new DefaultCapabilityProvider<>(IKnowledgeInfo.KnowledgeCapability, new KnowledgeInfo(event.getObject())));
         }
     }
 

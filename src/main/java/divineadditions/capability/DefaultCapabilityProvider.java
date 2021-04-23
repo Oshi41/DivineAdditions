@@ -32,7 +32,7 @@ public class DefaultCapabilityProvider<T> implements ICapabilitySerializable<NBT
 
     @Override
     public NBTBase serializeNBT() {
-        return current.getStorage().writeNBT(current, instance, null);
+        return current.writeNBT(instance, null);
     }
 
     @Override

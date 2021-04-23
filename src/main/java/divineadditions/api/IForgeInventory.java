@@ -65,7 +65,7 @@ public interface IForgeInventory {
         if (player != null) {
             IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
             if (capability != null) {
-                return capability.getLevel();
+                return capability.level().get();
             }
         }
 

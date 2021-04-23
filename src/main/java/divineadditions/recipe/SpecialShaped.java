@@ -57,7 +57,7 @@ public class SpecialShaped extends ShapedRecipes implements ISpecialRecipe {
                 return false;
 
             IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
-            if (capability == null || capability.getLevel() < level)
+            if (capability == null || capability.level().get() < level)
                 return false;
         }
 

@@ -1,24 +1,14 @@
 package divineadditions.capability.gravity.source.base;
 
+import divineadditions.capability.base.IOwnerCap;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
-import javax.annotation.Nullable;
-
-public interface IGravitySource<T extends ICapabilityProvider> {
+public interface IGravitySource<T extends ICapabilityProvider> extends IOwnerCap<T> {
     @CapabilityInject(IGravitySource.class)
     Capability<IGravitySource> GravitySourceCap = null;
-
-
-    /**
-     * Owner of current gravity source
-     *
-     * @return
-     */
-    @Nullable
-    T getOwner();
 
     /**
      * Gets current multiplier

@@ -18,7 +18,6 @@ import java.util.function.Function;
 public class EntityJoinedEventHandler {
     /**
      * Capabilities we need to sync.
-     * Filling from {@link divineadditions.capability.ObservableCapabilityProvider}
      */
     private static Map<Capability, Function<Object, IMessage>> capabilities = new HashMap<>();
 

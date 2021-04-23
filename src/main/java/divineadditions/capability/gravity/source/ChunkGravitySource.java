@@ -14,13 +14,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import javax.annotation.Nonnull;
 
 public class ChunkGravitySource extends GravitySourceBase<Chunk> {
-    private final int hashCode;
     private double multiplier;
 
     public ChunkGravitySource(Chunk owner, double multiplier) {
         super(owner);
         this.multiplier = multiplier;
-        hashCode = owner.getPos().hashCode();
     }
 
     @Override
@@ -65,11 +63,6 @@ public class ChunkGravitySource extends GravitySourceBase<Chunk> {
         }
 
         return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return hashCode;
     }
 
     @SubscribeEvent

@@ -12,14 +12,12 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import javax.annotation.Nonnull;
 
 public class TileGravitySource<T extends TileEntity & ITickable> extends GravitySourceBase<T> {
-    private final int hashCode;
     private final int radius;
     private double multiplier;
 
     public TileGravitySource(T owner, int radius, double multiplier) {
         super(owner);
 
-        hashCode = owner.hashCode();
         this.radius = radius;
         this.multiplier = multiplier;
     }
@@ -69,12 +67,6 @@ public class TileGravitySource<T extends TileEntity & ITickable> extends Gravity
         }
 
         return tileEntity.getWorld().getEntitiesWithinAABB(Entity.class, size).contains(e);
-    }
-
-    @Override
-    public int hashCode() {
-        TileEntity owner = getOwner();
-        return owner == null ? 0 : owner.hashCode();
     }
 
     private AxisAlignedBB getSize() {

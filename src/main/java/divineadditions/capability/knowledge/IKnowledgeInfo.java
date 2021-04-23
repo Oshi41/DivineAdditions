@@ -1,6 +1,7 @@
 package divineadditions.capability.knowledge;
 
 import divineadditions.api.ICapabilitySync;
+import divineadditions.utils.Property;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 
@@ -9,30 +10,16 @@ public interface IKnowledgeInfo extends ICapabilitySync {
     Capability<IKnowledgeInfo> KnowledgeCapability = null;
 
     /**
-     * Returns current knowledge level
+     * Level of old knowledges
      *
      * @return
      */
-    int getLevel();
+    Property<Integer> level();
 
     /**
-     * Settings current knowledge level
-     *
-     * @param lvl
-     */
-    void setLevel(int lvl);
-
-    /**
-     * Gets current amount of cummoned armor defenders
+     * Count of defender summones
      *
      * @return
      */
-    int armorDefenderSummonCount();
-
-    /**
-     * Sets current armor defender summon count
-     *
-     * @param count
-     */
-    void setArmorDefenderSummonCount(int count);
+    Property<Integer> defender();
 }

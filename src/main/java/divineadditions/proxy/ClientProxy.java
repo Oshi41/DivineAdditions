@@ -1,7 +1,6 @@
 package divineadditions.proxy;
 
 import divineadditions.DivineAdditions;
-import divineadditions.api.IProxy;
 import divineadditions.debug.LangHelper;
 import divineadditions.gui.conainter.ForgeContainer;
 import divineadditions.msg.ChangeRecipeMsg;
@@ -9,6 +8,8 @@ import divineadditions.msg.ParticleMessage;
 import divineadditions.msg.base.CapChangedMessageBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.IThreadListener;
@@ -19,15 +20,28 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 @SideOnly(Side.CLIENT)
-public class ClientProxy implements IProxy {
+public class ClientProxy extends ProxyBase {
+    @Override
+    protected long getCurrentTick() {
+        WorldClient world = Minecraft.getMinecraft().world;
+        return world == null ? 0 : world.getTotalWorldTime();
+    }
+
+    @Nonnull
+    @Override
+    protected IThreadListener getThreadListener() {
+        return Minecraft.getMinecraft();
+    }
 
     @Override
     public boolean isDedicatedServer() {
@@ -41,6 +55,7 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void init() {
+
     }
 
     @Override
@@ -49,17 +64,10 @@ public class ClientProxy implements IProxy {
     }
 
     @Override
-    public void scheduleTask(Runnable runnable) {
-        Minecraft.getMinecraft().addScheduledTask(runnable);
-    }
-
-    @Override
-    public IMessage onMessage(final IMessage message, MessageContext ctx) {
-        if (message == null || ctx == null)
-            return null;
+    protected IMessage handleClientMessages(IMessage message, NetHandlerPlayClient ctx) {
 
         final EntityPlayerSP player = Minecraft.getMinecraft().player;
-        IThreadListener worldThread = FMLCommonHandler.instance().getWorldThread(ctx.netHandler);
+        IThreadListener worldThread = FMLCommonHandler.instance().getWorldThread(ctx);
 
         if (message instanceof CapChangedMessageBase) {
             worldThread.addScheduledTask(() -> handleCapMsg(((CapChangedMessageBase) message), player));
@@ -75,7 +83,17 @@ public class ClientProxy implements IProxy {
             worldThread.addScheduledTask(() -> handleParticles(((ParticleMessage) message), player.world));
         }
 
-        return null;
+        return super.handleClientMessages(message, ctx);
+    }
+
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END
+                && event.side == Side.CLIENT
+                && !Minecraft.getMinecraft().isGamePaused()
+                && Minecraft.getMinecraft().player != null) {
+            update();
+        }
     }
 
     private void handleParticles(ParticleMessage message, World world) {
@@ -115,16 +133,18 @@ public class ClientProxy implements IProxy {
 
     private void handleCapMsg(CapChangedMessageBase msg, EntityPlayer player) {
         ICapabilityProvider provider = msg.getFromPlayer(player);
-        if (provider != null) {
-            Object capability = provider.getCapability(msg.getCap(), null);
-            if (capability != null) {
-                msg.getCap().getStorage().readNBT(msg.getCap(), capability, null, msg.getCompound());
-            } else {
-                DivineAdditions.logger.warn("ClientProxy.handleCapMsg: Capability was not found");
-            }
-        } else {
+        if (provider == null) {
             DivineAdditions.logger.warn("ClientProxy.handleCapMsg: Capability provider was not found from player");
         }
+
+        Object capability = provider.getCapability(msg.getCap(), null);
+        if (capability == null) {
+            DivineAdditions.logger.warn("ClientProxy.handleCapMsg: Capability was not found");
+            return;
+        }
+
+        msg.getCap().readNBT(capability, null, msg.getCompound());
+
     }
 
     private void handleChangeRecipeMessage(ChangeRecipeMsg msg, EntityPlayer player) {

@@ -79,6 +79,9 @@ public class JeiModule implements IModPlugin {
 
     @SideOnly(Side.CLIENT)
     public static void recalculateRecipes(int currentLevel) {
+        if (leveledRecipes.isEmpty() || recipeRegistry == null)
+            return;
+
         for (Integer level : leveledRecipes.keySet()) {
             Collection<IRecipeWrapper> recipes = leveledRecipes.get(level);
 
@@ -195,5 +198,7 @@ public class JeiModule implements IModPlugin {
                 .map(x -> ((SpecialShaped) x))
                 .filter(x -> x.level > 0)
                 .forEach(x -> leveledRecipes.put(x.level, recipeRegistry.getRecipeWrapper(x, VanillaRecipeCategoryUid.CRAFTING)));
+
+        recalculateRecipes(0);
     }
 }

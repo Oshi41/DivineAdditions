@@ -67,11 +67,4 @@ public class ItemGravitySource extends GravitySourceBase<ItemStack> {
 
         return false;
     }
-
-    @Override
-    public int hashCode() {
-        return getOwner() == null
-                ? 0
-                : getOwner().hashCode();
-    }
 }

@@ -44,33 +44,43 @@ public class ItemKnowledgeBook extends ItemBook {
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack itemStack = playerIn.getHeldItem(handIn);
-        NBTTagCompound compound = itemStack.getTagCompound();
-        if (compound != null) {
-            UUID id = compound.getUniqueId(guidName);
-            if (id != playerIn.getUniqueID()) {
+
+        if (checkName(playerIn, itemStack)) {
+
+            IKnowledgeInfo capability = playerIn.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
+            if (capability != null && capability.level().get() < level) {
+                capability.level().set(level);
+
+                ItemStack heldItem = itemStack;
+                heldItem.shrink(1);
+
                 if (!playerIn.getEntityWorld().isRemote) {
-                    playerIn.sendMessage(new TextComponentTranslation("divineadditions.message.knowledge.someone_else_book"));
+                    TextComponentTranslation translation = new TextComponentTranslation("divineadditions.message.current_knowledge_level_changed", level);
+                    translation.getStyle().setColor(TextFormatting.GRAY);
+                    playerIn.sendMessage(translation);
                 }
-            } else {
-                IKnowledgeInfo capability = playerIn.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
-                if (capability != null && capability.getLevel() < level) {
-                    capability.setLevel(level);
 
-                    ItemStack heldItem = itemStack;
-                    heldItem.shrink(1);
-
-                    if (!playerIn.getEntityWorld().isRemote) {
-                        TextComponentTranslation translation = new TextComponentTranslation("divineadditions.message.current_knowledge_level_changed", level);
-                        translation.getStyle().setColor(TextFormatting.GRAY);
-                        playerIn.sendMessage(translation);
-                    }
-
-                    return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
-                }
+                return ActionResult.newResult(EnumActionResult.SUCCESS, heldItem);
+            }
+        } else {
+            if (!playerIn.getEntityWorld().isRemote) {
+                playerIn.sendMessage(new TextComponentTranslation("divineadditions.message.knowledge.someone_else_book"));
             }
         }
 
-        return super.onItemRightClick(worldIn, playerIn, handIn);
+        return ActionResult.newResult(EnumActionResult.FAIL, itemStack);
+    }
+
+    private boolean checkName(EntityPlayer player, ItemStack stack) {
+        if (player.isCreative())
+            return true;
+
+        NBTTagCompound tag = stack.getTagCompound();
+        if (tag == null)
+            return false;
+
+        UUID id = tag.getUniqueId(guidName);
+        return id == player.getUniqueID();
     }
 
     @Override

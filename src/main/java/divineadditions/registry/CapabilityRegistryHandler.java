@@ -25,8 +25,8 @@ public class CapabilityRegistryHandler {
             @Override
             public NBTBase writeNBT(Capability<IKnowledgeInfo> capability, IKnowledgeInfo instance, EnumFacing side) {
                 NBTTagCompound compound = new NBTTagCompound();
-                compound.setInteger("Level", instance.getLevel());
-                compound.setInteger("DefenderSummon", instance.armorDefenderSummonCount());
+                compound.setInteger("Level", instance.level().get());
+                compound.setInteger("DefenderSummon", instance.defender().get());
                 return compound;
             }
 
@@ -37,8 +37,8 @@ public class CapabilityRegistryHandler {
 
                 NBTTagCompound compound = (NBTTagCompound) nbt;
 
-                instance.setLevel(compound.getInteger("Level"));
-                instance.setArmorDefenderSummonCount(compound.getInteger("DefenderSummon"));
+                instance.level().set(compound.getInteger("Level"));
+                instance.defender().set(compound.getInteger("DefenderSummon"));
             }
         }, KnowledgeInfo::new);
 

@@ -89,7 +89,7 @@ public class EntityAncientVillager extends EntityCreature implements ISkinProvid
             case 20 * step:
                 if (!world.isRemote && summoner != null) {
                     IKnowledgeInfo iKnowledgeInfo = summoner.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
-                    if (iKnowledgeInfo != null && iKnowledgeInfo.getLevel() < 1) {
+                    if (iKnowledgeInfo != null && iKnowledgeInfo.level().get() < 1) {
                         sendMsg(new TextComponentTranslation("divineadditions.message.ancient_villager.gift" + world.getTotalWorldTime() % 2));
                         sendMsg(insertStacks(summoner, Collections.singletonList(ItemKnowledgeBook.createForPlayer(Items.book_of_knowledge_1, summoner))));
                     }

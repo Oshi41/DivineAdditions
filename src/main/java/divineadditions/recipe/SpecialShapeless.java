@@ -35,7 +35,7 @@ public class SpecialShapeless extends ShapelessRecipes implements ISpecialRecipe
             return false;
 
         IKnowledgeInfo capability = player.getCapability(IKnowledgeInfo.KnowledgeCapability, null);
-        if (capability == null || capability.getLevel() < level)
+        if (capability == null || capability.level().get() < level)
             return false;
 
         return super.matches(inv, worldIn);

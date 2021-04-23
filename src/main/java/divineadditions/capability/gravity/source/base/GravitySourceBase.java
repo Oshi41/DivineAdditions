@@ -1,26 +1,15 @@
 package divineadditions.capability.gravity.source.base;
 
+import divineadditions.capability.base.OwnerCap;
 import divineadditions.capability.gravity.event.AffectiveGravityEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
-import java.util.Objects;
-
-public abstract class GravitySourceBase<T extends ICapabilityProvider> implements IGravitySource<T> {
-    private final WeakReference<T> reference;
-
+public abstract class GravitySourceBase<T extends ICapabilityProvider> extends OwnerCap<T> implements IGravitySource<T> {
     protected GravitySourceBase(T owner) {
-        reference = new WeakReference<>(owner);
+        super(owner);
         MinecraftForge.EVENT_BUS.register(this);
-    }
-
-    @Nullable
-    @Override
-    public T getOwner() {
-        return reference.get();
     }
 
     @SubscribeEvent
@@ -43,15 +32,4 @@ public abstract class GravitySourceBase<T extends ICapabilityProvider> implement
             return true;
         }
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GravitySourceBase)) return false;
-        GravitySourceBase<?> that = (GravitySourceBase<?>) o;
-        return Objects.equals(reference.get(), that.reference.get());
-    }
-
-    @Override
-    public abstract int hashCode();
 }
